@@ -1,4 +1,4 @@
-const CACHE_NAME = 'farmer-connect-v2';
+const CACHE_NAME = 'farmer-connect-v3'; // Increment version when assets change
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -19,6 +19,13 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// Listen for SKIP_WAITING message
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -34,14 +41,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - Network-first strategy for development
 self.addEventListener('fetch', (event) => {
   // Skip cross-origin requests
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
 
-  // Handle navigation requests differently
+  // Handle navigation requests with network-first
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
@@ -51,32 +58,40 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For asset requests, use cache-first strategy
+  // For development: Network-first strategy with cache fallback
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((response) => {
+    fetch(event.request)
+      .then((response) => {
         // Don't cache non-successful responses
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
 
-        // Cache successful responses
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
+        // Only cache static assets in production
+        // In dev, we want fresh content always
+        if (event.request.url.includes('/assets/') || 
+            event.request.url.includes('.png') || 
+            event.request.url.includes('.jpg') ||
+            event.request.url.includes('manifest.json')) {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
 
         return response;
-      }).catch(() => {
-        // Return default offline page for HTML requests
-        if (event.request.headers.get('accept').includes('text/html')) {
-          return caches.match('/index.html');
-        }
-      });
-    })
+      })
+      .catch(() => {
+        // Fallback to cache only when offline
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // Return offline page for HTML requests
+          if (event.request.headers.get('accept')?.includes('text/html')) {
+            return caches.match('/index.html');
+          }
+        });
+      })
   );
 });
