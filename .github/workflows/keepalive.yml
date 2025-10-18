@@ -1,0 +1,32 @@
+name: Keep-Alive Ping
+
+on:
+  schedule:
+    # Runs every 5 minutes (cron syntax: minute hour day month day-of-week)
+    - cron: '*/5 * * * *'
+  
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  ping-server:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping Health Endpoint
+        run: |
+          echo "Pinging server at $(date)"
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://farm-connnect.onrender.com/api/ping)
+          echo "Response code: $response"
+          
+          if [ $response -eq 200 ]; then
+            echo "✅ Ping successful!"
+          else
+            echo "❌ Ping failed with status code: $response"
+            exit 1
+          fi
+      
+      - name: Check Health Status
+        run: |
+          echo "Checking health status..."
+          curl -s https://farm-connnect.onrender.com/api/health | jq '.'
