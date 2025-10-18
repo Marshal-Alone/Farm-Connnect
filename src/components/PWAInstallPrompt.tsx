@@ -69,7 +69,7 @@ export default function PWAInstallPrompt() {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          Install Farmer Connect for quick access and offline features.
+          Install FarmConnect for quick access and offline features.
         </p>
         <div className="flex space-x-2">
           <Button

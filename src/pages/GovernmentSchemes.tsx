@@ -35,7 +35,7 @@ const schemesData: Scheme[] = [
     maxAmount: 6000,
     eligibility: ['Small & Marginal Farmers', 'Land ownership documents', 'Valid Aadhaar'],
     documents: ['Aadhaar Card', 'Land Records', 'Bank Passbook', 'Passport Photo'],
-    deadline: '2024-03-31',
+    deadline: '2025-03-31',
     status: 'active',
     description: 'Direct income support of ₹6000 per year to farmer families',
     applicationProcess: [
@@ -56,7 +56,7 @@ const schemesData: Scheme[] = [
     maxAmount: 200000,
     eligibility: ['All farmers', 'Valid crop insurance', 'Land records'],
     documents: ['Aadhaar Card', 'Land Records', 'Sowing Certificate', 'Bank Details'],
-    deadline: '2024-02-15',
+    deadline: '2025-02-15',
     status: 'deadline-soon',
     description: 'Comprehensive crop insurance scheme covering yield losses',
     applicationProcess: [
@@ -77,7 +77,7 @@ const schemesData: Scheme[] = [
     maxAmount: 0,
     eligibility: ['All farmers with land', 'Soil testing required'],
     documents: ['Land Records', 'Aadhaar Card', 'Mobile Number'],
-    deadline: '2024-06-30',
+    deadline: '2025-06-30',
     status: 'active',
     description: 'Free soil testing and health cards for farmers',
     applicationProcess: [
@@ -98,7 +98,7 @@ const schemesData: Scheme[] = [
     maxAmount: 300000,
     eligibility: ['Crop cultivators', 'Good credit history', 'Land ownership'],
     documents: ['Aadhaar Card', 'Land Records', 'Income Certificate', 'Bank Statements'],
-    deadline: '2024-12-31',
+    deadline: '2025-12-31',
     status: 'active',
     description: 'Easy credit access for agriculture and allied activities',
     applicationProcess: [

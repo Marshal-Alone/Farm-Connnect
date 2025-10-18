@@ -1,6 +1,6 @@
 {
-  "name": "Farmer Connect - Smart Agriculture Platform",
-  "short_name": "Farmer Connect",
+  "name": "FarmConnect - Smart Agriculture Platform",
+  "short_name": "FarmConnect",
   "description": "Empowering farmers with technology and data-driven insights for better agriculture",
   "start_url": "/",
   "display": "standalone",

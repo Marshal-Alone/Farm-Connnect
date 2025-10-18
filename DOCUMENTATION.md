@@ -1,7 +1,7 @@
-# Farmer_Connect - Technical Documentation
+# FarmConnect - Technical Documentation
 
 ## Project Overview
-Farmer_Connect is a comprehensive agricultural technology platform designed for the Smart India Hackathon. The platform empowers farmers with AI-driven insights, disease detection, weather monitoring, machinery rental, and government scheme access.
+FarmConnect is a comprehensive agricultural technology platform designed for the Smart India Hackathon. The platform empowers farmers with AI-driven insights, disease detection, weather monitoring, machinery rental, and government scheme access.
 
 ## Technology Stack
 - **Frontend**: React 18, TypeScript, Vite

@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
-const uri = "mongodb+srv://trylaptop2024:trylaptop2024@cluster0.q8qtgtu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://trylaptop2025:trylaptop2025@cluster0.q8qtgtu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -18,7 +18,7 @@ export async function connectToDatabase() {
   
   try {
     await client.connect();
-    db = client.db("farmer_connect");
+    db = client.db("FarmConnect");
     console.log("Successfully connected to MongoDB!");
     return db;
   } catch (error) {

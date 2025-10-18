@@ -1,4 +1,4 @@
-#Farmer Connect
+#FarmConnect
 
 To run this project locally, follow these steps:
 

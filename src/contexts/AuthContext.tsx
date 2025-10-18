@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check if user is logged in from localStorage
-    const savedUser = localStorage.getItem('farmer_connect_user');
+    const savedUser = localStorage.getItem('FarmConnect_user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (foundUser) {
         const { password: _, ...userWithoutPassword } = foundUser;
         setUser(userWithoutPassword);
-        localStorage.setItem('farmer_connect_user', JSON.stringify(userWithoutPassword));
+        localStorage.setItem('FarmConnect_user', JSON.stringify(userWithoutPassword));
         setLoading(false);
         return true;
       }
@@ -97,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (foundUser) {
         const { password: _, ...userWithoutPassword } = foundUser;
         setUser(userWithoutPassword);
-        localStorage.setItem('farmer_connect_user', JSON.stringify(userWithoutPassword));
+        localStorage.setItem('FarmConnect_user', JSON.stringify(userWithoutPassword));
         setLoading(false);
         return true;
       }
@@ -140,14 +140,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dummyUsers.push({...newUser, password: userData.password});
     
     setUser(newUser);
-    localStorage.setItem('farmer_connect_user', JSON.stringify(newUser));
+    localStorage.setItem('FarmConnect_user', JSON.stringify(newUser));
     setLoading(false);
     return true;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('farmer_connect_user');
+    localStorage.removeItem('FarmConnect_user');
   };
 
   const value = {

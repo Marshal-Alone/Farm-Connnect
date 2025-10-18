@@ -100,9 +100,9 @@ export default function UserProfile() {
 
   // Mock data for demonstration
   const recentActivity = [
-    { id: 1, type: 'disease-check', description: 'Checked tomato leaf disease', date: '2024-01-15', result: 'Early Blight detected' },
-    { id: 2, type: 'machinery-booking', description: 'Booked John Deere tractor', date: '2024-01-13', result: 'Booking confirmed' },
-    { id: 3, type: 'scheme-application', description: 'Applied for PM-KISAN scheme', date: '2024-01-12', result: 'Application submitted' }
+    { id: 1, type: 'disease-check', description: 'Checked tomato leaf disease', date: '2025-01-15', result: 'Early Blight detected' },
+    { id: 2, type: 'machinery-booking', description: 'Booked John Deere tractor', date: '2025-01-13', result: 'Booking confirmed' },
+    { id: 3, type: 'scheme-application', description: 'Applied for PM-KISAN scheme', date: '2025-01-12', result: 'Application submitted' }
   ];
 
   const notifications = [

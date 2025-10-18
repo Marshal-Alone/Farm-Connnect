@@ -40,7 +40,7 @@ const productsData: Product[] = [
     rating: 4.8,
     image: '/api/placeholder/300/200',
     description: 'High-quality organic wheat, chemical-free cultivation',
-    harvestDate: '2024-01-10',
+    harvestDate: '2025-01-10',
     type: 'sell'
   },
   {
@@ -56,7 +56,7 @@ const productsData: Product[] = [
     rating: 4.9,
     image: '/api/placeholder/300/200',
     description: 'Premium basmati rice, aged for perfect aroma',
-    harvestDate: '2024-01-05',
+    harvestDate: '2025-01-05',
     type: 'sell'
   },
   {
@@ -72,7 +72,7 @@ const productsData: Product[] = [
     rating: 4.6,
     image: '/api/placeholder/300/200',
     description: 'Fresh coconuts from organic farms',
-    harvestDate: '2024-01-12',
+    harvestDate: '2025-01-12',
     type: 'sell'
   },
   {
@@ -88,7 +88,7 @@ const productsData: Product[] = [
     rating: 4.5,
     image: '/api/placeholder/300/200',
     description: 'High-grade raw cotton for textile industry',
-    harvestDate: '2024-01-08',
+    harvestDate: '2025-01-08',
     type: 'sell'
   },
   {

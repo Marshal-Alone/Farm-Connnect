@@ -150,7 +150,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         if (success) {
           toast({
             title: "Login Successful",
-            description: "Welcome back to Farmer Connect!",
+            description: "Welcome back to FarmConnect!",
           });
           onClose();
           resetForm();
@@ -223,7 +223,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       if (success) {
         toast({
           title: "Registration Successful",
-          description: "Welcome to Farmer Connect!",
+          description: "Welcome to FarmConnect!",
         });
         onClose();
         resetForm();
@@ -281,7 +281,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         <CardHeader className="text-center pt-8">
           <CardTitle className="flex items-center justify-center space-x-2">
             <Sprout className="h-6 w-6 text-primary" />
-            <span>Farmer Connect</span>
+            <span>FarmConnect</span>
           </CardTitle>
           <CardDescription>
             Join our agricultural community platform

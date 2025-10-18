@@ -73,7 +73,7 @@ class DetectionStorageService {
         disease: 'Late Blight',
         treatment: 'Applied copper fungicide and improved drainage',
         outcome: 'Successful',
-        date: '2024-01-10',
+        date: '2025-01-10',
         distance: 12.5
       },
       {
@@ -84,7 +84,7 @@ class DetectionStorageService {
         disease: 'Late Blight',
         treatment: 'Used organic neem spray and removed affected plants',
         outcome: 'Partial',
-        date: '2024-01-08',
+        date: '2025-01-08',
         distance: 45.2
       },
       {
@@ -95,7 +95,7 @@ class DetectionStorageService {
         disease: 'Late Blight',
         treatment: 'Preventive copper spray and proper spacing',
         outcome: 'Successful',
-        date: '2024-01-05',
+        date: '2025-01-05',
         distance: 78.1
       },
       {

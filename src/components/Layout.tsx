@@ -57,7 +57,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
               <Leaf className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-primary">Farmer_Connect</span>
+            <span className="text-xl font-bold text-primary">FarmConnect</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -140,7 +140,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-primary">
                   <Leaf className="h-4 w-4 text-white" />
                 </div>
-                <span className="font-bold text-primary">Farmer_Connect</span>
+                <span className="font-bold text-primary">FarmConnect</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Empowering farmers with technology and data-driven insights for better agriculture.
@@ -175,7 +175,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 Farmer_Connect. Built for Smart India Hackathon.</p>
+            <p>&copy; 2025 FarmConnect</p>
           </div>
         </div>
       </footer>

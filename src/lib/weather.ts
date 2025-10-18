@@ -244,7 +244,7 @@ export const getMockWeatherData = (): WeatherData => {
     icon: '02d',
     forecast: [
       {
-        date: '2024-01-15',
+        date: '2025-01-15',
         high: 30,
         low: 22,
         condition: 'Sunny',
@@ -253,7 +253,7 @@ export const getMockWeatherData = (): WeatherData => {
         humidity: 60,
       },
       {
-        date: '2024-01-16',
+        date: '2025-01-16',
         high: 28,
         low: 20,
         condition: 'Cloudy',
@@ -262,7 +262,7 @@ export const getMockWeatherData = (): WeatherData => {
         humidity: 70,
       },
       {
-        date: '2024-01-17',
+        date: '2025-01-17',
         high: 26,
         low: 18,
         condition: 'Rain',
@@ -271,7 +271,7 @@ export const getMockWeatherData = (): WeatherData => {
         humidity: 85,
       },
       {
-        date: '2024-01-18',
+        date: '2025-01-18',
         high: 29,
         low: 21,
         condition: 'Partly Cloudy',
@@ -280,7 +280,7 @@ export const getMockWeatherData = (): WeatherData => {
         humidity: 65,
       },
       {
-        date: '2024-01-19',
+        date: '2025-01-19',
         high: 31,
         low: 23,
         condition: 'Sunny',

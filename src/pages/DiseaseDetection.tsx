@@ -236,10 +236,20 @@ export default function DiseaseDetection() {
       <div className="container px-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <Badge variant="outline" className="mb-4">
+          {/* <Badge variant="outline" className="mb-4">
             <Brain className="w-3 h-3 mr-1" />
             AI Disease Detection
-          </Badge>
+          </Badge> */}
+          <div className="flex items-center justify-center mt-9 space-x-4">
+            <Badge 
+              variant="outline"
+              className="px-4 py-1.5 text-sm font-medium bg-primary/5 border-primary/20 text-primary flex items-center gap-2"
+            >
+              <Brain className="w-4 h-4" />
+              AI Disease Detection
+            </Badge>
+          </div>
+          <br />
           <h1 className="text-3xl md:text-4xl font-bold mb-4 hidden">
             Crop Disease Detection
             <span className="block text-primary flex items-center justify-center">
@@ -253,18 +263,15 @@ export default function DiseaseDetection() {
           </p>
           
           {/* AI Toggle */}
-          <div className="flex items-center justify-center mt-6 space-x-4">
-            <Badge variant={useAI ? "default" : "outline"}>
-              Real AI Analysis
-            </Badge>
-            <Button
+          {/* <div className="flex items-center justify-center mt-6 space-x-4">
+            <Badge 
               variant="outline"
-              size="sm"
-              onClick={() => setUseAI(!useAI)}
+              className="px-4 py-1.5 text-sm font-medium bg-primary/5 border-primary/20 text-primary flex items-center gap-2"
             >
-              {useAI ? 'Switch to Demo' : 'Switch to AI'}
-            </Button>
-          </div>
+              <Brain className="w-4 h-4" />
+              AI Disease Detection
+            </Badge>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -373,7 +380,7 @@ export default function DiseaseDetection() {
                           {useAI ? (
                             <>
                               <Brain className="w-4 h-4 mr-2" />
-                              Start AI Analysis Analysis
+                              Start AI Analysis 
                             </>
                           ) : (
                             <>

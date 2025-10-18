@@ -74,7 +74,7 @@ The `analyzeCropImage()` method now includes:
 1. Click the preview browser button to open the app
 2. Navigate to "Disease Detection" page
 3. Upload a plant image (can use test images or take a photo)
-4. Click "Start AI Analysis Analysis"
+4. Click "Start AI Analysis "
 5. View the AI-powered results!
 
 ## Technical Details
