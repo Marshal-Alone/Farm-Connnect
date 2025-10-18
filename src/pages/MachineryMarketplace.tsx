@@ -24,55 +24,42 @@ interface Machinery {
 const machineryData: Machinery[] = [
   {
     id: '1',
-    name: 'John Deere 5050D',
+    name: 'John Deere 5050D Tractor',
     type: 'tractor',
     owner: 'राम शर्मा',
     location: 'Pune, Maharashtra',
     pricePerDay: 1200,
     rating: 4.8,
     available: true,
-    image: '/api/placeholder/300/200',
+    image: 'https://agri-buddy-chi.vercel.app/assets/green-tractor-WU5CtJez.jpg',
     description: '50 HP tractor perfect for medium farms',
     specs: ['50 HP', '4WD', 'Power Steering', 'Front Loader']
   },
   {
     id: '2',
-    name: 'Mahindra 575 DI',
-    type: 'tractor',
-    owner: 'Priya Nair',
-    location: 'Kochi, Kerala',
-    pricePerDay: 1000,
-    rating: 4.6,
+    name: 'Working Bullocks Pair',
+    type: 'livestock',
+    owner: 'किसान भाई',
+    location: 'Solapur, Maharashtra',
+    pricePerDay: 800,
+    rating: 4.9,
     available: true,
-    image: '/api/placeholder/300/200',
-    description: 'Reliable tractor for paddy fields',
-    specs: ['47 HP', '2WD', 'Hydraulic Steering', 'PTO']
+    image: 'https://agri-buddy-chi.vercel.app/assets/bullocks-BRC40xSB.jpg',
+    description: 'Strong pair of trained bullocks for traditional farming',
+    specs: ['Trained Bulls', 'Healthy', 'Experienced', 'Traditional Farming']
   },
   {
     id: '3',
-    name: 'Combine Harvester',
-    type: 'harvester',
-    owner: 'Harpreet Singh',
-    location: 'Ludhiana, Punjab',
-    pricePerDay: 2500,
-    rating: 4.9,
-    available: false,
-    image: '/api/placeholder/300/200',
-    description: 'Modern combine harvester for wheat',
-    specs: ['6 feet cutting width', 'Grain tank', 'Threshing unit']
-  },
-  {
-    id: '4',
-    name: 'Rotavator',
-    type: 'equipment',
-    owner: 'अमित पटेल',
-    location: 'Nashik, Maharashtra',
-    pricePerDay: 400,
-    rating: 4.5,
+    name: 'Irrigation Pipe System',
+    type: 'irrigation',
+    owner: 'Priya Nair',
+    location: 'Kochi, Kerala',
+    pricePerDay: 300,
+    rating: 4.6,
     available: true,
-    image: '/api/placeholder/300/200',
-    description: 'Soil preparation equipment',
-    specs: ['7 feet width', 'Heavy duty blades', 'Adjustable depth']
+    image: 'https://agri-buddy-chi.vercel.app/assets/irrigation-pipes-DoYSmP0f.jpg',
+    description: 'Complete drip irrigation system with pipes',
+    specs: ['500m Pipes', 'Drip System', 'Sprinklers', 'Connectors']
   }
 ];
 
@@ -141,6 +128,8 @@ export default function MachineryMarketplace() {
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="tractor">Tractors</SelectItem>
+                <SelectItem value="livestock">Livestock</SelectItem>
+                <SelectItem value="irrigation">Irrigation</SelectItem>
                 <SelectItem value="harvester">Harvesters</SelectItem>
                 <SelectItem value="equipment">Equipment</SelectItem>
               </SelectContent>
@@ -169,7 +158,7 @@ export default function MachineryMarketplace() {
         {/* Machinery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMachinery.map((machinery) => (
-            <Card key={machinery.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card key={machinery.id} className="overflow-hidden hover:shadow-lg transition-shadow border-0 shadow-md">
               <div className="relative">
                 <img 
                   src={machinery.image} 
@@ -177,39 +166,42 @@ export default function MachineryMarketplace() {
                   className="w-full h-48 object-cover"
                 />
                 <Badge 
-                  variant={machinery.available ? "default" : "secondary"}
-                  className="absolute top-2 right-2"
+                  className="absolute top-3 right-3 bg-green-500 text-white border-0 px-2 py-1 text-xs font-medium"
                 >
-                  {machinery.available ? "Available" : "Booked"}
+                  Available
                 </Badge>
               </div>
               
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  {machinery.name}
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 fill-primary text-primary mr-1" />
-                    <span className="text-sm">{machinery.rating}</span>
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between mb-2">
+                  <CardTitle className="text-lg font-semibold leading-tight">
+                    {machinery.name}
+                  </CardTitle>
+                  <div className="flex items-center bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                    <Star className="h-3 w-3 fill-current mr-1" />
+                    <span className="text-sm font-medium">{machinery.rating}</span>
                   </div>
-                </CardTitle>
-                <CardDescription>{machinery.description}</CardDescription>
+                </div>
+                <CardDescription className="text-sm text-gray-600 leading-relaxed">
+                  {machinery.description}
+                </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4 mr-2" />
+              <CardContent className="pt-0 pb-4">
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm text-gray-500">
+                    <MapPin className="h-4 w-4 mr-2 text-gray-400" />
                     {machinery.location}
                   </div>
                   
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Truck className="h-4 w-4 mr-2" />
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Truck className="h-4 w-4 mr-2 text-gray-400" />
                     Owner: {machinery.owner}
                   </div>
 
-                  <div className="flex flex-wrap gap-1 mt-2">
+                  <div className="flex flex-wrap gap-1">
                     {machinery.specs.map((spec, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
+                      <Badge key={index} variant="outline" className="text-xs border-gray-200 text-gray-600 px-2 py-1">
                         {spec}
                       </Badge>
                     ))}
@@ -217,16 +209,16 @@ export default function MachineryMarketplace() {
                 </div>
               </CardContent>
 
-              <CardFooter className="flex items-center justify-between">
-                <div className="text-xl font-bold text-primary">
+              <CardFooter className="flex items-center justify-between pt-0">
+                <div className="text-xl font-bold text-green-600">
                   ₹{machinery.pricePerDay}/day
                 </div>
                 <Button 
                   onClick={() => handleBookMachinery(machinery)}
                   disabled={!machinery.available}
-                  variant={machinery.available ? "default" : "secondary"}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium"
                 >
-                  {machinery.available ? "Book Now" : "Not Available"}
+                  Rent Now
                 </Button>
               </CardFooter>
             </Card>

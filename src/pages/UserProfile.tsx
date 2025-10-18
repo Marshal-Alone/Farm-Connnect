@@ -381,7 +381,7 @@ export default function UserProfile() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Key className="h-5 w-5 mr-2" />
-                    Gemini AI API Key
+                    AI Analysis API Key
                   </CardTitle>
                   <CardDescription>
                     Use your own Gemini API key for unlimited AI analysis or rely on our default key

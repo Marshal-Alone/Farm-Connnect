@@ -40,7 +40,7 @@ Farmer_Connect is a comprehensive agricultural technology platform designed for 
 
 ## API Integration
 
-### Google Gemini AI
+### Google AI Analysis
 - **API Key**: Configured and active
 - **Features**: 
   - Crop disease detection and treatment recommendations
@@ -67,7 +67,7 @@ src/
 │   └── homepage/        # Homepage-specific components
 ├── contexts/            # React contexts (Auth, etc.)
 ├── hooks/               # Custom React hooks
-├── lib/                 # Utility libraries (Gemini AI, database, utils)
+├── lib/                 # Utility libraries (AI Analysis, database, utils)
 ├── pages/               # Route components
 └── assets/              # Images and static assets
 ```

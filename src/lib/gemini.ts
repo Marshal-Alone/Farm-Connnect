@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI, Type } from '@google/genai';
 
 const DEFAULT_API_KEY = 'AIzaSyDIKFIoTjUyjG1kJmPRI6oenhYk4qKjytY';
 
@@ -8,7 +8,7 @@ const getAPIKey = () => {
   return userAPIKey || DEFAULT_API_KEY;
 };
 
-let genAI = new GoogleGenerativeAI(getAPIKey());
+let genAI = new GoogleGenAI({ apiKey: getAPIKey() });
 
 export interface AICropAnalysis {
   disease: string;
@@ -30,18 +30,18 @@ export interface AIFarmingAdvice {
 class GeminiAIService {
   private getModel() {
     // Refresh genAI instance with current API key
-    genAI = new GoogleGenerativeAI(getAPIKey());
-    return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    genAI = new GoogleGenAI({ apiKey: getAPIKey() });
+    return genAI;
   }
 
   updateAPIKey(apiKey: string) {
     localStorage.setItem('gemini_api_key', apiKey);
-    genAI = new GoogleGenerativeAI(apiKey);
+    genAI = new GoogleGenAI({ apiKey: apiKey });
   }
 
   removeAPIKey() {
     localStorage.removeItem('gemini_api_key');
-    genAI = new GoogleGenerativeAI(DEFAULT_API_KEY);
+    genAI = new GoogleGenAI({ apiKey: DEFAULT_API_KEY });
   }
 
   async analyzeCropImage(imageBase64: string): Promise<AICropAnalysis> {
@@ -49,59 +49,142 @@ class GeminiAIService {
       // Remove data URL prefix if present
       const base64Data = imageBase64.replace(/^data:image\/[a-z]+;base64,/, '');
       
-      const prompt = `
-        Analyze this crop/plant image for diseases and provide a detailed agricultural assessment.
+      // Determine MIME type from base64 prefix
+      let mimeType = 'image/jpeg';
+      if (imageBase64.includes('data:image/png')) {
+        mimeType = 'image/png';
+      } else if (imageBase64.includes('data:image/webp')) {
+        mimeType = 'image/webp';
+      }
+
+      // Define the response schema
+      const diagnosisSchema = {
+        type: Type.OBJECT,
+        properties: {
+          isPlant: {
+            type: Type.BOOLEAN,
+            description: "Is the image of a plant? If not, all other fields can be empty/false."
+          },
+          hasDisease: {
+            type: Type.BOOLEAN,
+            description: "Does the plant appear to have a disease?"
+          },
+          disease: {
+            type: Type.STRING,
+            description: "The common name of the identified plant disease. If healthy, state 'Healthy Plant'."
+          },
+          confidence: {
+            type: Type.NUMBER,
+            description: "Confidence level of the diagnosis (0-100)"
+          },
+          severity: {
+            type: Type.STRING,
+            description: "Severity level: Low, Medium, or High"
+          },
+          description: {
+            type: Type.STRING,
+            description: "A brief, easy-to-understand description of the disease or the plant's healthy state."
+          },
+          treatment: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.STRING
+            },
+            description: "A list of actionable steps or treatments to help the plant recover."
+          },
+          prevention: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.STRING
+            },
+            description: "A list of prevention methods for this disease."
+          },
+          affectedArea: {
+            type: Type.NUMBER,
+            description: "Estimated percentage of plant affected (0-100)"
+          }
+        },
+        required: ['isPlant', 'hasDisease', 'disease', 'confidence', 'severity', 'description', 'treatment', 'prevention', 'affectedArea']
+      };
+
+      const imagePart = {
+        inlineData: {
+          data: base64Data,
+          mimeType: mimeType,
+        },
+      };
+
+      const textPart = {
+        text: `You are a specialized plant pathologist and agricultural expert. Analyze this image of a crop/plant for diseases.
         
-        Please provide your response in the following JSON format:
-        {
-          "disease": "Disease name or 'Healthy Plant'",
-          "confidence": number (0-100),
-          "severity": "Low" | "Medium" | "High",
-          "description": "Detailed description of findings",
-          "treatment": ["step1", "step2", "step3"],
-          "prevention": ["prevention1", "prevention2", "prevention3"],
-          "affectedArea": number (0-100, percentage of plant affected)
-        }
+        If the image is not a plant, indicate that with isPlant: false.
+        If it is a healthy plant, state that with hasDisease: false.
         
         Focus on common crop diseases in India like:
         - Late Blight, Early Blight for tomatoes/potatoes
         - Rust diseases for wheat
         - Bacterial leaf blight for rice
         - Powdery mildew for various crops
+        - Leaf spot diseases
+        - Fungal and bacterial infections
         
-        If the plant appears healthy, indicate so with appropriate confidence level.
-      `;
-
-      const imagePart = {
-        inlineData: {
-          data: base64Data,
-          mimeType: 'image/jpeg'
-        }
+        Provide:
+        - Disease name (or 'Healthy Plant')
+        - Confidence level (0-100)
+        - Severity (Low, Medium, High)
+        - Simple description
+        - Practical treatment steps for Indian farmers
+        - Prevention methods
+        - Estimated affected area percentage
+        
+        Respond with the JSON schema provided.`,
       };
 
-      const result = await this.getModel().generateContent([prompt, imagePart]);
-      const response = await result.response;
-      const text = response.text();
+      const response = await this.getModel().models.generateContent({
+        model: 'gemini-2.0-flash-exp',
+        contents: { parts: [textPart, imagePart] },
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: diagnosisSchema,
+          temperature: 0.2,
+        },
+      });
+
+      const jsonText = response.text.trim();
+      const result = JSON.parse(jsonText);
       
-      // Extract JSON from response
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
+      // Basic validation to ensure the result matches the expected structure
+      if (typeof result.isPlant === 'undefined' || typeof result.disease === 'undefined') {
+        throw new Error("Invalid response structure from API.");
       }
-      
-      // Fallback response
+
+      // If not a plant, return error-like result
+      if (!result.isPlant) {
+        return {
+          disease: 'Not a Plant',
+          confidence: 95,
+          severity: 'Low' as const,
+          description: 'The uploaded image does not appear to be a plant. Please upload a clear image of a crop or plant.',
+          treatment: ['Upload a valid plant image'],
+          prevention: ['Ensure proper image capture'],
+          affectedArea: 0
+        };
+      }
+
+      // Return the analyzed result
       return {
-        disease: 'Analysis Unavailable',
-        confidence: 0,
-        severity: 'Low' as const,
-        description: 'Unable to analyze the image. Please try with a clearer photo.',
-        treatment: ['Consult local agricultural expert'],
-        prevention: ['Regular crop monitoring'],
-        affectedArea: 0
+        disease: result.disease,
+        confidence: Math.round(result.confidence),
+        severity: result.severity as 'Low' | 'Medium' | 'High',
+        description: result.description,
+        treatment: result.treatment,
+        prevention: result.prevention,
+        affectedArea: Math.round(result.affectedArea)
       };
+      
     } catch (error) {
       console.error('Gemini API error:', error);
-      throw new Error('Failed to analyze crop image');
+      throw new Error('Could not get a diagnosis from the AI model. Please check your API key and try again.');
     }
   }
 
@@ -133,9 +216,14 @@ class GeminiAIService {
         Focus on immediate actionable steps.
       `;
 
-      const result = await this.getModel().generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const result = await this.getModel().models.generateContent({
+        model: 'gemini-2.0-flash-exp',
+        contents: { parts: [{ text: prompt }] },
+        config: {
+          temperature: 0.7,
+        },
+      });
+      const text = result.text;
 
       // Determine category based on query keywords
       const queryLower = query.toLowerCase();
@@ -190,9 +278,14 @@ class GeminiAIService {
         Keep it practical and actionable for Indian farmers.
       `;
 
-      const result = await this.getModel().generateContent(prompt);
-      const response = await result.response;
-      return response.text().trim();
+      const result = await this.getModel().models.generateContent({
+        model: 'gemini-2.0-flash-exp',
+        contents: { parts: [{ text: prompt }] },
+        config: {
+          temperature: 0.7,
+        },
+      });
+      return result.text.trim();
     } catch (error) {
       console.error('Weather advice error:', error);
       return 'Unable to fetch weather advice at the moment. Please check local weather conditions and plan accordingly.';
@@ -210,9 +303,14 @@ class GeminiAIService {
         Focus on crops suitable for Indian farmers.
       `;
 
-      const result = await this.getModel().generateContent(prompt);
-      const response = await result.response;
-      const text = response.text().trim();
+      const result = await this.getModel().models.generateContent({
+        model: 'gemini-2.0-flash-exp',
+        contents: { parts: [{ text: prompt }] },
+        config: {
+          temperature: 0.7,
+        },
+      });
+      const text = result.text.trim();
       
       return text.split('\n').filter(line => line.trim()).slice(0, 7);
     } catch (error) {
@@ -227,10 +325,15 @@ export const geminiAI = new GeminiAIService();
 // Direct API access for general AI insights
 export const getAIInsights = async (prompt: string): Promise<string[]> => {
   try {
-    const model = new GoogleGenerativeAI(getAPIKey()).getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const ai = new GoogleGenAI({ apiKey: getAPIKey() });
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.0-flash-exp',
+      contents: { parts: [{ text: prompt }] },
+      config: {
+        temperature: 0.7,
+      },
+    });
+    const text = result.text;
     
     // Split response into individual insights/recommendations
     const insights = text

@@ -1,0 +1,5 @@
+{
+  "name": "Plant Disease Identifier",
+  "description": "An AI-powered web application that helps users identify plant diseases by uploading an image. The app provides a diagnosis, description, possible causes, and suggested treatments.",
+  "requestFramePermissions": []
+}

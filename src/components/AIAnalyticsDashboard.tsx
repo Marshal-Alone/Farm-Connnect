@@ -156,7 +156,7 @@ export default function AIAnalyticsDashboard() {
         </p>
         <Badge variant="outline" className="mt-2">
           <Sparkles className="w-3 h-3 mr-1" />
-          Gemini AI Powered
+          AI Analysis Powered
         </Badge>
       </div>
 

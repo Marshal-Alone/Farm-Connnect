@@ -148,13 +148,13 @@ export default function DiseaseDetection() {
       let analysisResult: DetectionResult;
       
       if (useAI) {
-        // Use Gemini AI for real analysis
+        // Use AI Analysis for real analysis
         const aiResult = await geminiAI.analyzeCropImage(selectedImage);
         analysisResult = aiResult;
         
         toast({
           title: "AI Analysis Complete",
-          description: `Gemini AI analysis with ${aiResult.confidence}% confidence`,
+          description: `AI Analysis analysis with ${aiResult.confidence}% confidence`,
         });
       } else {
         // Simulate AI analysis with mock data
@@ -240,11 +240,11 @@ export default function DiseaseDetection() {
             <Brain className="w-3 h-3 mr-1" />
             AI Disease Detection
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 hidden">
             Crop Disease Detection
             <span className="block text-primary flex items-center justify-center">
               <Sparkles className="w-5 h-5 mr-2" />
-              Powered by Gemini AI
+              Powered by AI Analysis
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -373,7 +373,7 @@ export default function DiseaseDetection() {
                           {useAI ? (
                             <>
                               <Brain className="w-4 h-4 mr-2" />
-                              Start Gemini AI Analysis
+                              Start AI Analysis Analysis
                             </>
                           ) : (
                             <>

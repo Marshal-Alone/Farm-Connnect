@@ -211,7 +211,7 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
             Ask me anything about farming in your preferred language
           </p>
           <Badge variant="outline" className="mt-2">
-            Powered by Gemini AI
+            Powered by AI Analysis
           </Badge>
         </div>
 
