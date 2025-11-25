@@ -115,12 +115,14 @@ class GeminiAIService {
       };
 
       const textPart = {
-        text: `You are a specialized plant pathologist and agricultural expert. Analyze this image of a crop/plant for diseases.
+        text: `You are a specialized plant pathologist and entomologist. Analyze this image of a crop/plant for diseases and pest infestations.
         
         If the image is not a plant, indicate that with isPlant: false.
-        If it is a healthy plant, state that with hasDisease: false.
+        If it is a healthy plant with no visible issues, state that with hasDisease: false.
         
-        Focus on common crop diseases in India like:
+        IMPORTANT: Look for BOTH diseases AND pests:
+        
+        Common crop DISEASES in India:
         - Late Blight, Early Blight for tomatoes/potatoes
         - Rust diseases for wheat
         - Bacterial leaf blight for rice
@@ -128,11 +130,22 @@ class GeminiAIService {
         - Leaf spot diseases
         - Fungal and bacterial infections
         
+        Common crop PESTS (insects/infestations):
+        - Aphids (small green/yellow insects clustered on leaves/stems)
+        - Whiteflies (tiny white flying insects)
+        - Spider Mites (tiny dots, webbing on leaves)
+        - Caterpillars/worms (visible larvae eating leaves)
+        - Thrips, Mealybugs, Scale insects
+        - Any visible insect infestation
+        
+        If you detect ANY issue (disease OR pest infestation), set hasDisease to true.
+        For pests, set disease name to the specific pest (e.g., "Aphid Infestation", "Whitefly Attack").
+        
         Provide:
-        - Disease name (or 'Healthy Plant')
+        - Disease/pest name (or 'Healthy Plant')
         - Confidence level (0-100)
         - Severity (Low, Medium, High)
-        - Simple description
+        - Simple description including visual evidence
         - Practical treatment steps for Indian farmers
         - Prevention methods
         - Estimated affected area percentage

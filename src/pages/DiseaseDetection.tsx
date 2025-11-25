@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Camera, 
-  Upload, 
-  Scan, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Camera,
+  Upload,
+  Scan,
+  AlertTriangle,
+  CheckCircle,
   MapPin,
   Clock,
   Leaf,
@@ -22,7 +22,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { geminiAI } from "@/lib/gemini";
+import { analyzeCropImage } from "@/lib/ai";
 import { detectionStorage } from "@/lib/detections";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DetectionRecord, SimilarCase } from "@/lib/detections";
@@ -84,7 +84,7 @@ export default function DiseaseDetection() {
       treatment: ["Continue regular care", "Monitor for early signs of stress"],
       prevention: [
         "Maintain proper watering schedule",
-        "Ensure adequate nutrition", 
+        "Ensure adequate nutrition",
         "Regular monitoring for pests"
       ],
       affectedArea: 0
@@ -146,12 +146,12 @@ export default function DiseaseDetection() {
 
     try {
       let analysisResult: DetectionResult;
-      
+
       if (useAI) {
         // Use AI Analysis for real analysis
-        const aiResult = await geminiAI.analyzeCropImage(selectedImage);
+        const aiResult = await analyzeCropImage(selectedImage);
         analysisResult = aiResult;
-        
+
         toast({
           title: "AI Analysis Complete",
           description: `AI Analysis analysis with ${aiResult.confidence}% confidence`,
@@ -160,15 +160,15 @@ export default function DiseaseDetection() {
         // Simulate AI analysis with mock data
         await new Promise(resolve => setTimeout(resolve, 3000));
         analysisResult = mockResults[Math.floor(Math.random() * mockResults.length)];
-        
+
         toast({
           title: "Mock Analysis Complete",
           description: `Simulated analysis with ${analysisResult.confidence}% confidence`,
         });
       }
-      
+
       setResult(analysisResult);
-      
+
       // Save detection to storage
       const savedDetection = detectionStorage.saveDetection({
         crop: 'Unknown Crop', // You could add crop detection logic here
@@ -179,17 +179,17 @@ export default function DiseaseDetection() {
         userId: user?.id,
         location: user?.location
       });
-      
+
       // Update recent detections
       setRecentDetections(detectionStorage.getRecentDetections(user?.id));
-      
+
     } catch (error) {
       console.error('Analysis error:', error);
-      
+
       // Fallback to mock result on error
       const fallbackResult = mockResults[Math.floor(Math.random() * mockResults.length)];
       setResult(fallbackResult);
-      
+
       toast({
         title: "Analysis Error",
         description: "Using fallback analysis. Please check your internet connection.",
@@ -205,7 +205,7 @@ export default function DiseaseDetection() {
       const cases = detectionStorage.getSimilarCases(result.disease, user?.location);
       setSimilarCases(cases);
       setShowSimilarCases(true);
-      
+
       toast({
         title: "Similar Cases Found",
         description: `Found ${cases.length} similar cases in your area`,
@@ -241,7 +241,7 @@ export default function DiseaseDetection() {
             AI Disease Detection
           </Badge> */}
           <div className="flex items-center justify-center mt-9 space-x-4">
-            <Badge 
+            <Badge
               variant="outline"
               className="px-4 py-1.5 text-sm font-medium bg-primary/5 border-primary/20 text-primary flex items-center gap-2"
             >
@@ -258,10 +258,10 @@ export default function DiseaseDetection() {
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Upload a photo of your crop to get instant AI-powered disease identification 
+            Upload a photo of your crop to get instant AI-powered disease identification
             with treatment recommendations from agricultural experts.
           </p>
-          
+
           {/* AI Toggle */}
           {/* <div className="flex items-center justify-center mt-6 space-x-4">
             <Badge 
@@ -299,12 +299,12 @@ export default function DiseaseDetection() {
                     onChange={handleFileSelect}
                     className="hidden"
                   />
-                  
+
                   {selectedImage ? (
                     <div className="space-y-4">
-                      <img 
-                        src={selectedImage} 
-                        alt="Selected crop" 
+                      <img
+                        src={selectedImage}
+                        alt="Selected crop"
                         className="max-h-64 mx-auto rounded-lg shadow-md"
                       />
                       <p className="text-sm text-muted-foreground">
@@ -328,16 +328,16 @@ export default function DiseaseDetection() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 mt-6">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => fileInputRef.current?.click()}
                     className="flex-1"
                   >
                     <Upload className="w-4 h-4 mr-2" />
                     Choose File
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => {
                       // Simulate camera capture
                       toast({
@@ -364,10 +364,10 @@ export default function DiseaseDetection() {
                         <Progress value={uploadProgress} />
                       </div>
                     )}
-                    
-                    <Button 
+
+                    <Button
                       className="w-full bg-gradient-primary hover:bg-gradient-primary/90"
-                      onClick={startAnalysis} 
+                      onClick={startAnalysis}
                       disabled={isAnalyzing}
                     >
                       {isAnalyzing ? (
@@ -380,7 +380,7 @@ export default function DiseaseDetection() {
                           {useAI ? (
                             <>
                               <Brain className="w-4 h-4 mr-2" />
-                              Start AI Analysis 
+                              Start AI Analysis
                             </>
                           ) : (
                             <>
@@ -484,7 +484,7 @@ export default function DiseaseDetection() {
                         <TabsTrigger value="treatment">Treatment</TabsTrigger>
                         <TabsTrigger value="prevention">Prevention</TabsTrigger>
                       </TabsList>
-                      
+
                       <TabsContent value="treatment" className="p-6 space-y-4">
                         <h3 className="font-semibold text-lg">Recommended Treatment</h3>
                         <ul className="space-y-3">
@@ -498,7 +498,7 @@ export default function DiseaseDetection() {
                           ))}
                         </ul>
                       </TabsContent>
-                      
+
                       <TabsContent value="prevention" className="p-6 space-y-4">
                         <h3 className="font-semibold text-lg">Prevention Methods</h3>
                         <ul className="space-y-3">
@@ -628,8 +628,8 @@ export default function DiseaseDetection() {
                         </div>
                       </div>
                     </div>
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className={getSeverityTextColor(item.severity)}
                     >
                       {item.severity}

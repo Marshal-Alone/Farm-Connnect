@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Server Health Dashboard - FarmConnect</title>
-    <script src="/keepalive.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -37,6 +38,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -89,13 +91,27 @@
         }
 
         @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
         }
 
         .stats-grid {
@@ -257,7 +273,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .back-link {
@@ -354,6 +372,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <a href="/" class="back-link">
@@ -413,11 +432,13 @@
 
         <div class="continuous-ping-section">
             <h3>🔄 Continuous Background Ping</h3>
-            <p>Enable 24/7 background pinging to keep your server alive even when no one is visiting the frontend. Perfect for ensuring instant availability!</p>
-            
+            <p>Enable 24/7 background pinging to keep your server alive even when no one is visiting the frontend.
+                Perfect for ensuring instant availability!</p>
+
             <div class="continuous-ping-info">
                 <p><strong>Ping Interval:</strong> Every 5 minutes</p>
-                <p><strong>Status:</strong> <span class="ping-status stopped" id="continuousStatus">⏹️ Stopped</span></p>
+                <p><strong>Status:</strong> <span class="ping-status stopped" id="continuousStatus">⏹️ Stopped</span>
+                </p>
                 <p id="continuousPingCount"><strong>Background Pings Sent:</strong> 0</p>
             </div>
 
@@ -494,13 +515,13 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 healthData = await response.json();
                 updateDashboard(healthData);
-                
+
                 // Update last update time
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
-                
+
             } catch (error) {
                 console.error('Failed to fetch health data:', error);
                 showError();
@@ -512,7 +533,7 @@
             // Update status
             const statusIndicator = document.getElementById('statusIndicator');
             const statusText = document.getElementById('statusText');
-            
+
             if (data.status === 'active') {
                 statusIndicator.className = 'status-indicator active';
                 statusText.textContent = 'Server Active';
@@ -537,15 +558,15 @@
             const timeSinceLastPing = now - data.lastPing.timestamp;
             const timeUntilNext = Math.max(0, data.nextPing.timestamp - now);
             const totalInterval = data.pingInterval.milliseconds;
-            
+
             // Calculate progress percentage
             const progress = Math.min(100, (timeSinceLastPing / totalInterval) * 100);
-            
+
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
             const timeRemaining = document.getElementById('timeRemaining');
             const nextPingTime = document.getElementById('nextPingTime');
-            
+
             progressBar.style.width = `${progress}%`;
             progressText.textContent = `${Math.round(progress)}%`;
             timeRemaining.textContent = `Time remaining: ${formatDuration(timeUntilNext)}`;
@@ -565,7 +586,7 @@
             const btn = document.getElementById('pingNowBtn');
             btn.disabled = true;
             btn.innerHTML = '<div class="loading-spinner"></div> Sending...';
-            
+
             try {
                 const response = await fetch(`${config.API_URL}/api/ping`, {
                     method: 'POST',
@@ -573,20 +594,20 @@
                         'Content-Type': 'application/json'
                     }
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 // Refresh health data after ping
                 await fetchHealth();
-                
+
                 btn.innerHTML = '✓ Ping Sent!';
                 setTimeout(() => {
                     btn.innerHTML = '📡 Send Ping Now';
                     btn.disabled = false;
                 }, 2000);
-                
+
             } catch (error) {
                 console.error('Failed to send ping:', error);
                 btn.innerHTML = '❌ Failed';
@@ -600,7 +621,7 @@
         // Toggle auto-refresh
         function toggleAutoRefresh() {
             const btn = document.getElementById('autoRefreshBtn');
-            
+
             if (autoRefreshEnabled) {
                 clearInterval(autoRefreshInterval);
                 autoRefreshEnabled = false;
@@ -622,28 +643,28 @@
         // Start continuous background ping
         function startContinuousPing() {
             if (continuousPingEnabled) return;
-            
+
             continuousPingEnabled = true;
             continuousPingCount = 0;
-            
+
             // Update UI
             document.getElementById('startContinuousBtn').style.display = 'none';
             document.getElementById('stopContinuousBtn').style.display = 'block';
-            
+
             const statusEl = document.getElementById('continuousStatus');
             statusEl.className = 'ping-status running';
             statusEl.textContent = '▶️ Running';
-            
+
             // Send initial ping
             sendContinuousPing();
-            
+
             // Set up interval (5 minutes)
             continuousPingInterval = setInterval(() => {
                 sendContinuousPing();
             }, 5 * 60 * 1000); // 5 minutes
-            
+
             console.log('[Continuous Ping] Started with 5-minute interval');
-            
+
             // Save state to localStorage
             localStorage.setItem('continuousPingEnabled', 'true');
         }
@@ -651,25 +672,25 @@
         // Stop continuous background ping
         function stopContinuousPing() {
             if (!continuousPingEnabled) return;
-            
+
             continuousPingEnabled = false;
-            
+
             // Clear interval
             if (continuousPingInterval) {
                 clearInterval(continuousPingInterval);
                 continuousPingInterval = null;
             }
-            
+
             // Update UI
             document.getElementById('startContinuousBtn').style.display = 'block';
             document.getElementById('stopContinuousBtn').style.display = 'none';
-            
+
             const statusEl = document.getElementById('continuousStatus');
             statusEl.className = 'ping-status stopped';
             statusEl.textContent = '⏹️ Stopped';
-            
+
             console.log('[Continuous Ping] Stopped');
-            
+
             // Save state to localStorage
             localStorage.setItem('continuousPingEnabled', 'false');
         }
@@ -684,23 +705,23 @@
                         'Content-Type': 'application/json'
                     }
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const responseTime = Date.now() - startTime;
                 continuousPingCount++;
-                
+
                 // Update UI
-                document.getElementById('continuousPingCount').innerHTML = 
+                document.getElementById('continuousPingCount').innerHTML =
                     `<strong>Background Pings Sent:</strong> ${continuousPingCount} (Last: ${responseTime}ms ago)`;
-                
+
                 console.log(`[Continuous Ping] #${continuousPingCount} successful (${responseTime}ms)`);
-                
+
                 // Refresh health data
                 await fetchHealth();
-                
+
             } catch (error) {
                 console.error('[Continuous Ping] Failed:', error);
             }
@@ -734,4 +755,5 @@
         }, 1000);
     </script>
 </body>
+
 </html>

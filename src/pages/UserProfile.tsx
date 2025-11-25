@@ -11,6 +11,9 @@ import { Progress } from '@/components/ui/progress';
 import { User, MapPin, Phone, Mail, Globe, Sprout, TrendingUp, Calendar, Bell, Settings, Key, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { geminiAI } from '@/lib/gemini';
+import { groqAI } from '@/lib/groq';
+import { getModelConfig, saveModelConfig, ModelConfig } from '@/lib/ai';
+
 
 export default function UserProfile() {
   const { user, logout } = useAuth();
@@ -18,6 +21,10 @@ export default function UserProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
+  const [groqApiKey, setGroqApiKey] = useState('');
+  const [showGroqApiKey, setShowGroqApiKey] = useState(false);
+  const [modelConfig, setModelConfig] = useState<ModelConfig>(getModelConfig());
+
   const [formData, setFormData] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
@@ -58,6 +65,42 @@ export default function UserProfile() {
   const getCurrentApiKey = () => {
     const saved = localStorage.getItem('gemini_api_key');
     return saved ? `${saved.substring(0, 8)}...${saved.substring(saved.length - 4)}` : 'Using default key';
+  };
+
+
+  // Groq API key handlers
+  const handleSaveGroqApiKey = () => {
+    if (groqApiKey.trim()) {
+      groqAI.updateAPIKey(groqApiKey.trim());
+      toast({
+        title: "API Key Saved",
+        description: "Your Groq API key has been saved and will be used when Groq model is selected.",
+      });
+      setGroqApiKey('');
+      setShowGroqApiKey(false);
+    }
+  };
+
+  const handleRemoveGroqApiKey = () => {
+    groqAI.removeAPIKey();
+    toast({
+      title: "API Key Removed",
+      description: "Removed your Groq API key.",
+    });
+  };
+
+  const getCurrentGroqApiKey = () => {
+    const saved = localStorage.getItem('groq_api_key');
+    return saved ? `${saved.substring(0, 8)}...${saved.substring(saved.length - 4)}` : 'Not configured';
+  };
+
+  // Model config handler
+  const handleSaveModelConfig = () => {
+    saveModelConfig(modelConfig);
+    toast({
+      title: "Model Settings Saved",
+      description: "Your preferred AI model has been saved.",
+    });
   };
 
   const handleLogout = () => {
@@ -376,60 +419,157 @@ export default function UserProfile() {
           {/* Settings Tab */}
           <TabsContent value="settings">
             <div className="space-y-6">
-              {/* API Key Management */}
+              {/* API Keys Management */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Key className="h-5 w-5 mr-2" />
-                    AI Analysis API Key
+                    AI Analysis API Keys
                   </CardTitle>
                   <CardDescription>
-                    Use your own Gemini API key for unlimited AI analysis or rely on our default key
+                    Configure your API keys for Gemini and Groq models
                   </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Gemini API Key */}
+                  <div className="space-y-3 pb-4 border-b">
+                    <h3 className="font-medium">Gemini API Key</h3>
+                    <div>
+                      <Label>Current Status</Label>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        {getCurrentApiKey()}
+                      </div>
+                    </div>
+                    
+                    {showApiKey ? (
+                      <div className="space-y-3">
+                        <div>
+                          <Label htmlFor="api-key">Enter your Gemini API Key</Label>
+                          <Input
+                            id="api-key"
+                            placeholder="AIzaSy..."
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                            type="password"
+                          />
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google AI Studio</a>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button onClick={handleSaveApiKey}>Save API Key</Button>
+                          <Button variant="outline" onClick={() => {setShowApiKey(false); setApiKey('');}}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex space-x-2">
+                        <Button variant="outline" onClick={() => setShowApiKey(true)}>
+                          Add API Key
+                        </Button>
+                        {localStorage.getItem('gemini_api_key') && (
+                          <Button variant="outline" onClick={handleRemoveApiKey}>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Remove Custom Key
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Groq API Key */}
+                  <div className="space-y-3">
+                    <h3 className="font-medium">Groq API Key</h3>
+                    <div>
+                      <Label>Current Status</Label>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        {getCurrentGroqApiKey()}
+                      </div>
+                    </div>
+                    
+                    {showGroqApiKey ? (
+                      <div className="space-y-3">
+                        <div>
+                          <Label htmlFor="groq-api-key">Enter your Groq API Key</Label>
+                          <Input
+                            id="groq-api-key"
+                            placeholder="gsk_..."
+                            value={groqApiKey}
+                            onChange={(e) => setGroqApiKey(e.target.value)}
+                            type="password"
+                          />
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Get your free API key from <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Groq Console</a>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button onClick={handleSaveGroqApiKey}>Save API Key</Button>
+                          <Button variant="outline" onClick={() => {setShowGroqApiKey(false); setGroqApiKey('');}}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex space-x-2">
+                        <Button variant="outline" onClick={() => setShowGroqApiKey(true)}>
+                          Add API Key
+                        </Button>
+                        {localStorage.getItem('groq_api_key') && (
+                          <Button variant="outline" onClick={handleRemoveGroqApiKey}>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Remove Key
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Model Selection */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Settings className="h-5 w-5 mr-2" />
+                    AI Model Selection
+                  </CardTitle>
+                  <CardDescription>Choose which AI model to use for disease detection</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label>Current API Key Status</Label>
-                    <div className="text-sm text-muted-foreground mt-1">
-                      {getCurrentApiKey()}
-                    </div>
+                    <Label>Disease Detection Model</Label>
+                    <Select 
+                      value={modelConfig.diseaseDetection} 
+                      onValueChange={(value) => setModelConfig({...modelConfig, diseaseDetection: value as 'gemini' | 'groq'})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="gemini">Google Gemini 2.0 Flash - Fast & accurate</SelectItem>
+                        <SelectItem value="groq">Groq Llama 4 Scout - Ultra-fast inference</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  
-                  {showApiKey ? (
-                    <div className="space-y-3">
-                      <div>
-                        <Label htmlFor="api-key">Enter your Gemini API Key</Label>
-                        <Input
-                          id="api-key"
-                          placeholder="AIzaSy..."
-                          value={apiKey}
-                          onChange={(e) => setApiKey(e.target.value)}
-                          type="password"
-                        />
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google AI Studio</a>
-                        </div>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Button onClick={handleSaveApiKey}>Save API Key</Button>
-                        <Button variant="outline" onClick={() => {setShowApiKey(false); setApiKey('');}}>
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex space-x-2">
-                      <Button variant="outline" onClick={() => setShowApiKey(true)}>
-                        Add API Key
-                      </Button>
-                      {localStorage.getItem('gemini_api_key') && (
-                        <Button variant="outline" onClick={handleRemoveApiKey}>
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Remove Custom Key
-                        </Button>
-                      )}
-                    </div>
-                  )}
+
+                  <div>
+                    <Label>Chatbot Model (Future Feature)</Label>
+                    <Select 
+                      value={modelConfig.chatbot} 
+                      onValueChange={(value) => setModelConfig({...modelConfig, chatbot: value as 'gemini' | 'groq'})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="gemini">Google Gemini - Advanced conversational AI</SelectItem>
+                        <SelectItem value="groq">Groq Llama - Lightning-fast responses</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Button onClick={handleSaveModelConfig}>Save Model Preferences</Button>
                 </CardContent>
               </Card>
 
