@@ -153,6 +153,68 @@ class GroqAIService {
             throw new Error('Could not get a diagnosis from the Groq model. Please check your API key and try again.');
         }
     }
+
+    async getFarmingAdvice(query: string, language: string = 'english'): Promise<{ response: string; category: string }> {
+        try {
+            const client = this.getClient();
+
+            const languagePrompts = {
+                hindi: 'कृपया हिंदी में जवाब दें।',
+                marathi: 'कृपया मराठीत उत्तर द्या।',
+                malayalam: 'ദയവായി മലയാളത്തിൽ ഉത്തരം നൽകുക.',
+                punjabi: 'ਕਿਰਪਾ ਕਰਕੇ ਪੰਜਾਬੀ ਵਿੱਚ ਜਵਾਬ ਦਿਓ।',
+                english: 'Please respond in English.'
+            };
+
+            const languageInstruction = languagePrompts[language as keyof typeof languagePrompts] || languagePrompts.english;
+
+            const prompt = `You are a helpful farming assistant for Indian farmers. Answer the following question about farming, agriculture, crops, weather, or rural life.
+
+${languageInstruction}
+
+Keep your response concise (2-3 sentences), practical, and relevant to Indian farming context.
+
+Question: ${query}`;
+
+            const completion = await client.chat.completions.create({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a knowledgeable farming assistant helping Indian farmers with agricultural advice."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.7,
+                max_tokens: 200,
+            });
+
+            const response = completion.choices[0]?.message?.content || "I couldn't generate a response. Please try again.";
+
+            // Determine category based on keywords
+            const queryLower = query.toLowerCase();
+            let category = 'general';
+            if (queryLower.includes('weather') || queryLower.includes('मौसम') || queryLower.includes('rain')) {
+                category = 'weather';
+            } else if (queryLower.includes('crop') || queryLower.includes('फसल') || queryLower.includes('पीक')) {
+                category = 'crops';
+            } else if (queryLower.includes('fertilizer') || queryLower.includes('खाद') || queryLower.includes('pest')) {
+                category = 'farming-practices';
+            }
+
+            return {
+                response: response.trim(),
+                category
+            };
+
+        } catch (error) {
+            console.error('Groq API error:', error);
+            throw new Error('Could not get farming advice from Groq. Please check your API key and try again.');
+        }
+    }
 }
 
 export const groqAI = new GroqAIService();

@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Mic, MicOff, Volume2, VolumeX, MessageCircle, Brain, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { geminiAI } from '@/lib/gemini';
+import { groqAI } from '@/lib/groq';
 
 interface VoiceInterfaceProps {
   onVoiceQuery?: (query: string, language: string) => void;
@@ -102,8 +102,8 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
     setIsProcessing(true);
     
     try {
-      // Get AI-powered response using Gemini
-      const aiAdvice = await geminiAI.getFarmingAdvice(query, selectedLanguage);
+      // Get AI-powered response using Groq
+      const aiAdvice = await groqAI.getFarmingAdvice(query, selectedLanguage);
       setResponse(aiAdvice.response);
       speakResponse(aiAdvice.response, currentLang?.locale || 'en-IN');
       

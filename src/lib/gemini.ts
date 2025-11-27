@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
 
-const DEFAULT_API_KEY = 'AIzaSyDIKFIoTjUyjG1kJmPRI6oenhYk4qKjytY';
+const DEFAULT_API_KEY = ''; // No default key - users must add their own
 
 // Get API key from localStorage or use default
 const getAPIKey = () => {
@@ -48,7 +48,7 @@ class GeminiAIService {
     try {
       // Remove data URL prefix if present
       const base64Data = imageBase64.replace(/^data:image\/[a-z]+;base64,/, '');
-      
+
       // Determine MIME type from base64 prefix
       let mimeType = 'image/jpeg';
       if (imageBase64.includes('data:image/png')) {
@@ -165,7 +165,7 @@ class GeminiAIService {
 
       const jsonText = response.text.trim();
       const result = JSON.parse(jsonText);
-      
+
       // Basic validation to ensure the result matches the expected structure
       if (typeof result.isPlant === 'undefined' || typeof result.disease === 'undefined') {
         throw new Error("Invalid response structure from API.");
@@ -194,7 +194,7 @@ class GeminiAIService {
         prevention: result.prevention,
         affectedArea: Math.round(result.affectedArea)
       };
-      
+
     } catch (error) {
       console.error('Gemini API error:', error);
       throw new Error('Could not get a diagnosis from the AI model. Please check your API key and try again.');
@@ -205,7 +205,7 @@ class GeminiAIService {
     try {
       const languageInstructions = {
         hindi: 'Respond in Hindi (Devanagari script)',
-        marathi: 'Respond in Marathi (Devanagari script)', 
+        marathi: 'Respond in Marathi (Devanagari script)',
         malayalam: 'Respond in Malayalam (Malayalam script)',
         punjabi: 'Respond in Punjabi (Gurmukhi script)',
         english: 'Respond in English'
@@ -241,7 +241,7 @@ class GeminiAIService {
       // Determine category based on query keywords
       const queryLower = query.toLowerCase();
       let category: AIFarmingAdvice['category'] = 'general';
-      
+
       if (queryLower.includes('weather') || queryLower.includes('rain') || queryLower.includes('मौसम')) {
         category = 'weather';
       } else if (queryLower.includes('disease') || queryLower.includes('pest') || queryLower.includes('बीमारी')) {
@@ -260,7 +260,7 @@ class GeminiAIService {
       };
     } catch (error) {
       console.error('Gemini API error:', error);
-      
+
       // Fallback responses in different languages
       const fallbackResponses = {
         hindi: 'क्षमा करें, मैं अभी आपकी मदद नहीं कर सकता। कृपया बाद में पुनः प्रयास करें।',
@@ -324,7 +324,7 @@ class GeminiAIService {
         },
       });
       const text = result.text.trim();
-      
+
       return text.split('\n').filter(line => line.trim()).slice(0, 7);
     } catch (error) {
       console.error('Crop recommendations error:', error);
@@ -347,14 +347,14 @@ export const getAIInsights = async (prompt: string): Promise<string[]> => {
       },
     });
     const text = result.text;
-    
+
     // Split response into individual insights/recommendations
     const insights = text
       .split('\n')
       .filter(line => line.trim().length > 0)
       .map(line => line.replace(/^\*\s*|\d+\.\s*/, '').trim())
       .filter(line => line.length > 10); // Filter out very short lines
-    
+
     return insights.slice(0, 6); // Return up to 6 insights
   } catch (error) {
     console.error('Error getting AI insights:', error);

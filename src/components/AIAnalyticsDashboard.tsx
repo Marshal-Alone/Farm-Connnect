@@ -22,7 +22,6 @@ import {
   Clock,
   Zap
 } from 'lucide-react';
-import { geminiAI } from '@/lib/gemini';
 import { useToast } from '@/hooks/use-toast';
 
 interface FarmMetrics {
@@ -100,27 +99,14 @@ export default function AIAnalyticsDashboard() {
     setRecommendations(mockRecommendations);
   };
 
-  const loadWeatherAdvice = async () => {
-    setIsLoadingAdvice(true);
-    try {
-      const advice = await geminiAI.getWeatherAdvice('Maharashtra, India');
-      setWeatherAdvice(advice);
-    } catch (error) {
-      console.error('Weather advice error:', error);
-      setWeatherAdvice('Current weather conditions are suitable for most crops. Monitor for sudden changes.');
-    } finally {
-      setIsLoadingAdvice(false);
-    }
+  const loadWeatherAdvice = () => {
+    // Using static data - no API calls
+    setWeatherAdvice('Current weather conditions in Maharashtra are suitable for most crops. Monitor for sudden changes and maintain proper irrigation schedules.');
   };
 
-  const loadCropSuggestions = async () => {
-    try {
-      const suggestions = await geminiAI.getCropRecommendations('Rabi', 'Alluvial', 'Maharashtra');
-      setCropSuggestions(suggestions);
-    } catch (error) {
-      console.error('Crop suggestions error:', error);
-      setCropSuggestions(['Wheat', 'Mustard', 'Chickpea', 'Barley', 'Peas']);
-    }
+  const loadCropSuggestions = () => {
+    // Using static data - no API calls
+    setCropSuggestions(['Wheat', 'Mustard', 'Chickpea', 'Barley', 'Peas', 'Lentils']);
   };
 
   const getMetricColor = (value: number) => {

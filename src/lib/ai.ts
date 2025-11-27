@@ -11,8 +11,8 @@ export interface ModelConfig {
 const SETTINGS_KEY = 'farm-connect-model-settings';
 
 const getDefaultConfig = (): ModelConfig => ({
-    diseaseDetection: 'gemini',
-    chatbot: 'gemini',
+    diseaseDetection: 'groq',
+    chatbot: 'groq',
 });
 
 export const getModelConfig = (): ModelConfig => {
