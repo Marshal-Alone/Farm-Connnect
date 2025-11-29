@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const OPENWEATHER_API_KEY = 'your_openweather_api_key_here'; // This should be moved to environment variables
-const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+// Use relative path for API calls to leverage Vite proxy or direct backend connection
+const API_BASE_URL = '/api/weather';
 
 export interface WeatherData {
   location: string;
@@ -70,82 +70,65 @@ export const getCurrentLocation = (): Promise<LocationCoords> => {
   });
 };
 
-// Fetch current weather data
+// Map WeatherAPI.com response to our WeatherData interface
+const mapWeatherResponse = (data: any): WeatherData => {
+  const current = data.current;
+  const location = data.location;
+  const forecastDays = data.forecast.forecastday;
+
+  // Map daily forecast
+  const dailyForecasts: DailyForecast[] = forecastDays.map((day: any) => ({
+    date: day.date,
+    high: Math.round(day.day.maxtemp_c),
+    low: Math.round(day.day.mintemp_c),
+    condition: day.day.condition.text,
+    icon: day.day.condition.icon, // WeatherAPI returns full URL usually, or we might need to prepend 'https:'
+    precipitation: day.day.totalprecip_mm,
+    humidity: day.day.avghumidity,
+  }));
+
+  // Map alerts if any
+  const alerts: WeatherAlert[] = data.alerts?.alert?.map((alert: any) => ({
+    title: alert.event,
+    description: alert.desc,
+    severity: 'moderate', // WeatherAPI doesn't strictly map to our types, defaulting to moderate or parsing severity field
+    startTime: alert.effective,
+    endTime: alert.expires,
+  })) || [];
+
+  return {
+    location: `${location.name}, ${location.region}`,
+    temperature: Math.round(current.temp_c),
+    condition: current.condition.text,
+    humidity: current.humidity,
+    windSpeed: Math.round(current.wind_kph),
+    precipitation: current.precip_mm,
+    uvIndex: current.uv,
+    visibility: current.vis_km,
+    pressure: current.pressure_mb,
+    dewPoint: Math.round(current.dewpoint_c || (current.temp_c - ((100 - current.humidity) / 5))), // Calculate if not provided
+    feelsLike: Math.round(current.feelslike_c),
+    icon: current.condition.icon,
+    forecast: dailyForecasts,
+    alerts: alerts,
+  };
+};
+
+// Fetch current weather data (actually fetches forecast which includes current)
 export const getCurrentWeather = async (lat: number, lon: number): Promise<WeatherData> => {
   try {
-    const [currentResponse, forecastResponse, alertsResponse] = await Promise.all([
-      axios.get(`${BASE_URL}/weather`, {
-        params: {
-          lat,
-          lon,
-          appid: OPENWEATHER_API_KEY,
-          units: 'metric',
-        },
-      }),
-      axios.get(`${BASE_URL}/forecast`, {
-        params: {
-          lat,
-          lon,
-          appid: OPENWEATHER_API_KEY,
-          units: 'metric',
-          cnt: 40, // 5 days forecast
-        },
-      }),
-      // Weather alerts are not available in free tier, so we'll simulate or skip
-      Promise.resolve({ data: { alerts: [] } }),
-    ]);
-
-    const current = currentResponse.data;
-    const forecast = forecastResponse.data;
-
-    // Process forecast data to get daily forecasts
-    const dailyForecasts: DailyForecast[] = [];
-    const dailyData: { [key: string]: any[] } = {};
-
-    // Group forecast by date
-    forecast.list.forEach((item: any) => {
-      const date = new Date(item.dt * 1000).toDateString();
-      if (!dailyData[date]) {
-        dailyData[date] = [];
-      }
-      dailyData[date].push(item);
+    const response = await axios.get(`${API_BASE_URL}/forecast`, {
+      params: {
+        q: `${lat},${lon}`,
+        days: 5,
+      },
     });
 
-    // Create daily forecasts
-    Object.keys(dailyData).slice(0, 5).forEach((date) => {
-      const dayData = dailyData[date];
-      const temps = dayData.map(d => d.main.temp);
-      const conditions = dayData.map(d => d.weather[0]);
-      const humidity = dayData.reduce((sum, d) => sum + d.main.humidity, 0) / dayData.length;
-      const precipitation = dayData.reduce((sum, d) => sum + (d.rain?.['3h'] || 0), 0);
-
-      dailyForecasts.push({
-        date: new Date(date).toISOString().split('T')[0],
-        high: Math.max(...temps),
-        low: Math.min(...temps),
-        condition: conditions[0].main,
-        icon: conditions[0].icon,
-        precipitation,
-        humidity: Math.round(humidity),
-      });
-    });
-
-    return {
-      location: `${current.name}, ${current.sys.country}`,
-      temperature: Math.round(current.main.temp),
-      condition: current.weather[0].main,
-      humidity: current.main.humidity,
-      windSpeed: Math.round(current.wind.speed * 3.6), // Convert m/s to km/h
-      precipitation: current.rain?.['1h'] || 0,
-      uvIndex: 0, // Not available in free tier
-      visibility: Math.round(current.visibility / 1000), // Convert to km
-      pressure: current.main.pressure,
-      dewPoint: Math.round(current.main.temp - ((100 - current.main.humidity) / 5)),
-      feelsLike: Math.round(current.main.feels_like),
-      icon: current.weather[0].icon,
-      forecast: dailyForecasts,
-      alerts: [], // Weather alerts not available in free tier
-    };
+    if (response.data.success) {
+      return mapWeatherResponse(response.data.data);
+    } else {
+      throw new Error(response.data.error || 'Failed to fetch weather data');
+    }
   } catch (error) {
     console.error('Error fetching weather data:', error);
     throw new Error('Failed to fetch weather data');
@@ -155,16 +138,18 @@ export const getCurrentWeather = async (lat: number, lon: number): Promise<Weath
 // Fetch weather by city name
 export const getWeatherByCity = async (city: string): Promise<WeatherData> => {
   try {
-    const geocodeResponse = await axios.get(`${BASE_URL}/weather`, {
+    const response = await axios.get(`${API_BASE_URL}/forecast`, {
       params: {
         q: city,
-        appid: OPENWEATHER_API_KEY,
-        units: 'metric',
+        days: 5,
       },
     });
 
-    const { coord } = geocodeResponse.data;
-    return getCurrentWeather(coord.lat, coord.lon);
+    if (response.data.success) {
+      return mapWeatherResponse(response.data.data);
+    } else {
+      throw new Error(response.data.error || 'Failed to fetch weather data');
+    }
   } catch (error) {
     console.error('Error fetching weather by city:', error);
     throw new Error('Failed to fetch weather data for the specified city');
@@ -209,19 +194,15 @@ export const getAgriculturalInsights = (weather: WeatherData): string[] => {
   }
 
   // Condition-specific insights
-  switch (condition.toLowerCase()) {
-    case 'clear':
-      insights.push('☀️ Clear skies: Perfect conditions for field work and harvesting');
-      break;
-    case 'clouds':
-      insights.push('☁️ Cloudy conditions: Good for transplanting and reducing plant stress');
-      break;
-    case 'rain':
-      insights.push('🌧️ Rainy conditions: Avoid field operations and focus on indoor tasks');
-      break;
-    case 'thunderstorm':
-      insights.push('⛈️ Thunderstorm warning: Avoid all outdoor farm activities for safety');
-      break;
+  const conditionLower = condition.toLowerCase();
+  if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
+    insights.push('☀️ Clear skies: Perfect conditions for field work and harvesting');
+  } else if (conditionLower.includes('cloud')) {
+    insights.push('☁️ Cloudy conditions: Good for transplanting and reducing plant stress');
+  } else if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
+    insights.push('🌧️ Rainy conditions: Avoid field operations and focus on indoor tasks');
+  } else if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
+    insights.push('⛈️ Thunderstorm warning: Avoid all outdoor farm activities for safety');
   }
 
   return insights.length > 0 ? insights : ['🌾 Weather conditions are suitable for normal farming activities'];
@@ -241,14 +222,14 @@ export const getMockWeatherData = (): WeatherData => {
     pressure: 1013,
     dewPoint: 21,
     feelsLike: 31,
-    icon: '02d',
+    icon: '//cdn.weatherapi.com/weather/64x64/day/116.png',
     forecast: [
       {
         date: '2025-01-15',
         high: 30,
         low: 22,
         condition: 'Sunny',
-        icon: '01d',
+        icon: '//cdn.weatherapi.com/weather/64x64/day/113.png',
         precipitation: 0,
         humidity: 60,
       },
@@ -257,7 +238,7 @@ export const getMockWeatherData = (): WeatherData => {
         high: 28,
         low: 20,
         condition: 'Cloudy',
-        icon: '03d',
+        icon: '//cdn.weatherapi.com/weather/64x64/day/119.png',
         precipitation: 5,
         humidity: 70,
       },
@@ -266,7 +247,7 @@ export const getMockWeatherData = (): WeatherData => {
         high: 26,
         low: 18,
         condition: 'Rain',
-        icon: '10d',
+        icon: '//cdn.weatherapi.com/weather/64x64/day/296.png',
         precipitation: 15,
         humidity: 85,
       },
@@ -275,7 +256,7 @@ export const getMockWeatherData = (): WeatherData => {
         high: 29,
         low: 21,
         condition: 'Partly Cloudy',
-        icon: '02d',
+        icon: '//cdn.weatherapi.com/weather/64x64/day/116.png',
         precipitation: 2,
         humidity: 65,
       },
@@ -284,7 +265,7 @@ export const getMockWeatherData = (): WeatherData => {
         high: 31,
         low: 23,
         condition: 'Sunny',
-        icon: '01d',
+        icon: '//cdn.weatherapi.com/weather/64x64/day/113.png',
         precipitation: 0,
         humidity: 55,
       },

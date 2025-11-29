@@ -1,7 +1,17 @@
 import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import cors from 'cors';
+
+// Import API routes
+import machineryRoutes from './api/machinery.js';
+import bookingsRoutes from './api/bookings.js';
+import reviewsRoutes from './api/reviews.js';
+import messagesRoutes from './api/messages.js';
+import usersRoutes from './api/users.js';
+import weatherRoutes from './api/weather.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,21 +30,37 @@ const serverHealth = {
 };
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // CORS middleware - MUST be before routes
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    
+
     // Handle preflight requests
     if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
     }
-    
+
     next();
 });
+
+// Request logging middleware
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    next();
+});
+
+// API Routes
+app.use('/api/auth', usersRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/machinery', machineryRoutes);
+app.use('/api/bookings', bookingsRoutes);
+app.use('/api/reviews', reviewsRoutes);
+app.use('/api/messages', messagesRoutes);
+app.use('/api/weather', weatherRoutes);
 
 // Serve static files from dist directory
 app.use(express.static(join(__dirname, 'dist')));
@@ -45,7 +71,7 @@ function formatDuration(ms) {
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-    
+
     if (days > 0) {
         return `${days}d ${hours % 24}h ${minutes % 60}m`;
     } else if (hours > 0) {
@@ -63,9 +89,9 @@ app.post("/api/ping", (req, res) => {
     serverHealth.nextPing = Date.now() + serverHealth.pingInterval;
     serverHealth.pingCount++;
     serverHealth.status = 'active';
-    
+
     console.log(`Keep-alive ping received (#${serverHealth.pingCount})`);
-    
+
     res.status(200).json({
         message: "Pong",
         timestamp: serverHealth.lastPing,
@@ -79,14 +105,14 @@ app.get("/api/health", (req, res) => {
     const uptime = now - serverHealth.startTime;
     const timeSinceLastPing = now - serverHealth.lastPing;
     const timeUntilNextPing = serverHealth.nextPing - now;
-    
+
     // Calculate uptime in a human-readable format
     const uptimeSeconds = Math.floor(uptime / 1000);
     const uptimeDays = Math.floor(uptimeSeconds / 86400);
     const uptimeHours = Math.floor((uptimeSeconds % 86400) / 3600);
     const uptimeMinutes = Math.floor((uptimeSeconds % 3600) / 60);
     const uptimeSecsRemaining = uptimeSeconds % 60;
-    
+
     res.status(200).json({
         status: serverHealth.status,
         uptime: {
@@ -108,7 +134,22 @@ app.get("/api/health", (req, res) => {
             milliseconds: serverHealth.pingInterval,
             formatted: formatDuration(serverHealth.pingInterval)
         },
-        startTime: serverHealth.startTime
+        startTime: serverHealth.startTime,
+        apiEndpoints: {
+            machinery: '/api/machinery',
+            bookings: '/api/bookings',
+            reviews: '/api/reviews',
+            messages: '/api/messages'
+        }
+    });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(500).json({
+        success: false,
+        error: err.message || 'Internal server error'
     });
 });
 
@@ -117,8 +158,13 @@ app.get('*', (req, res) => {
     res.sendFile(join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, () => {
-    console.log(`✅ Server running on port ${PORT}`);
-    console.log(`📊 Health endpoint: http://localhost:${PORT}/api/health`);
-    console.log(`💓 Ping endpoint: http://localhost:${PORT}/api/ping`);
+app.listen(PORT + 1, () => {
+    console.log(`✅ Server running on port ${PORT + 1}`);
+    console.log(`📊 Health endpoint: http://localhost:${PORT + 1}/api/health`);
+    console.log(`💓 Ping endpoint: http://localhost:${PORT + 1}/api/ping`);
+    console.log(`🚜 Machinery API: http://localhost:${PORT + 1}/api/machinery`);
+    console.log(`📅 Bookings API: http://localhost:${PORT + 1}/api/bookings`);
+    console.log(`⭐ Reviews API: http://localhost:${PORT + 1}/api/reviews`);
+    console.log(`💬 Messages API: http://localhost:${PORT + 1}/api/messages`);
 });
+

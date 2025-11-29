@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
   id: string;
+  _id?: string;
   name: string;
   email: string;
   phone: string;
@@ -22,132 +23,108 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Dummy users for demo
-const dummyUsers: (User & { password: string })[] = [
-  {
-    id: '1',
-    name: 'राम शर्मा',
-    email: 'ram@farmer.com',
-    password: 'farmer123',
-    phone: '+91-9876543210',
-    location: 'Maharashtra, India',
-    language: 'hindi',
-    farmSize: 5.5,
-    crops: ['rice', 'wheat', 'sugarcane']
-  },
-  {
-    id: '2',
-    name: 'Priya Nair',
-    email: 'priya@farmer.com',
-    password: 'farmer123',
-    phone: '+91-9876543211',
-    location: 'Kerala, India',
-    language: 'malayalam',
-    farmSize: 3.2,
-    crops: ['coconut', 'pepper', 'cardamom']
-  },
-  {
-    id: '3',
-    name: 'Harpreet Singh',
-    email: 'harpreet@farmer.com',
-    password: 'farmer123',
-    phone: '+91-9876543212',
-    location: 'Punjab, India',
-    language: 'punjabi',
-    farmSize: 12.8,
-    crops: ['wheat', 'rice', 'cotton']
-  }
-];
+const API_BASE_URL = '/api';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
-    const savedUser = localStorage.getItem('FarmConnect_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    // Check if user is logged in by verifying token
+    const token = localStorage.getItem('FarmConnect_token');
+    if (token) {
+      fetchCurrentUser(token);
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
+
+  const fetchCurrentUser = async (token: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.data);
+      } else {
+        // Token invalid, clear it
+        localStorage.removeItem('FarmConnect_token');
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      localStorage.removeItem('FarmConnect_token');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (identifier: string, password: string): Promise<boolean> => {
     setLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // For OTP-based login, password will be 'otp_verified'
-    if (password === 'otp_verified') {
-      // Find user by email or phone
-      const foundUser = dummyUsers.find(u => u.email === identifier || u.phone === identifier);
-      
-      if (foundUser) {
-        const { password: _, ...userWithoutPassword } = foundUser;
-        setUser(userWithoutPassword);
-        localStorage.setItem('FarmConnect_user', JSON.stringify(userWithoutPassword));
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ identifier, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setUser(data.data.user);
+        localStorage.setItem('FarmConnect_token', data.data.token);
         setLoading(false);
         return true;
-      }
-    } else {
-      // Legacy password-based login for demo accounts
-      const foundUser = dummyUsers.find(u => u.email === identifier && u.password === password);
-      
-      if (foundUser) {
-        const { password: _, ...userWithoutPassword } = foundUser;
-        setUser(userWithoutPassword);
-        localStorage.setItem('FarmConnect_user', JSON.stringify(userWithoutPassword));
+      } else {
         setLoading(false);
-        return true;
+        return false;
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      setLoading(false);
+      return false;
     }
-    
-    setLoading(false);
-    return false;
   };
 
   const register = async (userData: Partial<User> & { email: string; password: string }): Promise<boolean> => {
     setLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Check if user already exists (by email or phone)
-    const existingUser = dummyUsers.find(u => 
-      u.email === userData.email || 
-      (userData.phone && u.phone === userData.phone)
-    );
-    
-    if (existingUser) {
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setUser(data.data.user);
+        localStorage.setItem('FarmConnect_token', data.data.token);
+        setLoading(false);
+        return true;
+      } else {
+        setLoading(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
       setLoading(false);
       return false;
     }
-    
-    // Create new user
-    const newUser: User = {
-      id: Date.now().toString(),
-      name: userData.name || 'New Farmer',
-      email: userData.email,
-      phone: userData.phone || '',
-      location: userData.location || 'India',
-      language: userData.language || 'hindi',
-      farmSize: userData.farmSize || 0,
-      crops: userData.crops || []
-    };
-    
-    // Add to dummy users for future logins
-    dummyUsers.push({...newUser, password: userData.password});
-    
-    setUser(newUser);
-    localStorage.setItem('FarmConnect_user', JSON.stringify(newUser));
-    setLoading(false);
-    return true;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('FarmConnect_user');
+    localStorage.removeItem('FarmConnect_token');
   };
 
   const value = {

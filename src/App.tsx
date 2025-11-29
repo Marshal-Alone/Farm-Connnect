@@ -10,6 +10,10 @@ import OfflineIndicator from "@/components/OfflineIndicator";
 import { useEffect } from "react";
 import HomePage from "./pages/HomePage";
 import DiseaseDetection from "./pages/DiseaseDetection";
+import MachineryDetail from "./pages/MachineryDetail";
+import BookingHistory from "./pages/BookingHistory";
+import OwnerDashboard from "./pages/OwnerDashboard";
+import MachineryForm from "./pages/MachineryForm";
 
 import Weather from "./pages/Weather";
 import MachineryMarketplace from "./pages/MachineryMarketplace";
@@ -21,7 +25,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Register service worker for PWA functionality
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -47,16 +50,19 @@ const App = () => {
           <BrowserRouter>
             <Layout>
               <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/disease-detection" element={<DiseaseDetection />} />
-              
-              <Route path="/weather" element={<Weather />} />
-              <Route path="/machinery" element={<MachineryMarketplace />} />
-              <Route path="/schemes" element={<GovernmentSchemes />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/bazaar" element={<KisanBazaar />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/disease-detection" element={<DiseaseDetection />} />
+
+                <Route path="/weather" element={<Weather />} />
+                <Route path="/machinery" element={<MachineryMarketplace />} />
+                <Route path="/machinery/:id" element={<MachineryDetail />} />
+                <Route path="/machinery/add" element={<MachineryForm />} />
+                <Route path="/bookings" element={<BookingHistory />} />
+                <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+                <Route path="/schemes" element={<GovernmentSchemes />} />
+                <Route path="/profile" element={<UserProfile />} />
+                <Route path="/bazaar" element={<KisanBazaar />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
             <PWAInstallPrompt />

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Groq API Key Tester (v2 - Native Fetch)</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f4f6f9;
+            color: #1a1a1a;
+        }
+
+        h1 {
+            text-align: center;
+            color: #10a37f;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #10a37f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #0e8a6d;
+        }
+
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .result,
+        .sucessDiv {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        small {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Groq API Key Tester (v2)</h1>
+    <p style="text-align:center">Test your Groq API key instantly (uses native fetch – no external libraries needed)</p>
+
+    <label for="apiKey">Groq API Key (starts with gsk_)</label>
+    <input type="password" id="apiKey" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+
+    <label for="prompt">Prompt</label>
+    <input type="text" id="prompt" placeholder="Enter your prompt here" />
+
+    <label for="model">Model</label>
+    <select id="model" disabled>
+        <option>Enter a key first</option>
+    </select>
+
+    <button id="testBtn" disabled>Test API Key</button>
+
+    <br><br>
+    <div id="sucess" class="sucess successDiv"></div>
+    <div id="result" class="result"></div>
+
+
+    <script>
+        const API_BASE = 'https://api.groq.com/openai/v1';
+        const apiKeyInput = document.getElementById('apiKey');
+        const promptInput = document.getElementById('prompt');
+        const modelSelect = document.getElementById('model');
+        const testBtn = document.getElementById('testBtn');
+        const resultDiv = document.getElementById('result');
+        const sucessDiv = document.getElementById('sucess');
+
+        // Load saved key on start
+        const savedKey = localStorage.getItem('groq_test_key');
+        if (savedKey) {
+            apiKeyInput.value = savedKey;
+            loadModels();
+        }
+
+        // Save key whenever user types
+        apiKeyInput.addEventListener('input', () => {
+            const val = apiKeyInput.value.trim();
+            if (val) {
+                localStorage.setItem('groq_test_key', val);
+                loadModels();
+            } else {
+                localStorage.removeItem('groq_test_key');
+            }
+            updateTestButton();
+        });
+
+        // Fetch available models
+        async function loadModels() {
+            const key = apiKeyInput.value.trim();
+            if (!key || !key.startsWith('gsk_')) {
+                modelSelect.disabled = true;
+                modelSelect.innerHTML = '<option>Enter a valid key first</option>';
+                return;
+            }
+
+            modelSelect.disabled = true;
+            modelSelect.innerHTML = '<option>Loading models...</option>';
+
+            try {
+                const response = await fetch(`${API_BASE}/models`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${key}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                modelSelect.innerHTML = '';
+                data.data.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    opt.textContent = m.id + (m.id.includes('vision') ? ' (vision)' : '');
+                    modelSelect.appendChild(opt);
+                });
+                modelSelect.disabled = false;
+                showResult('Models loaded successfully! Pick one and test.', 'success');
+            } catch (err) {
+                console.error(err);
+                modelSelect.innerHTML = '<option>Failed to load models (invalid key?)</option>';
+                modelSelect.disabled = true;
+                if (err.message.includes('401')) {
+                    showResult('Invalid API key – double-check it starts with gsk_ and is copied correctly.', 'error');
+                } else {
+                    showResult(`Error loading models: ${err.message}`, 'error');
+                }
+            }
+        }
+
+        function updateTestButton() {
+            const key = apiKeyInput.value.trim();
+            testBtn.disabled = !key || !key.startsWith('gsk_');
+            testBtn.textContent = key ? 'Test API Key' : 'Enter a valid key first';
+        }
+
+        testBtn.addEventListener('click', async () => {
+            const key = apiKeyInput.value.trim();
+            const model = modelSelect.value || 'llama3-8b-8192'; // Fallback model
+
+            if (!key || !key.startsWith('gsk_')) {
+                showResult('Please enter a valid Groq key starting with gsk_', 'error');
+                return;
+            }
+
+            showResult('Testing your key...', 'loading');
+            testBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${key}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: [{ role: 'user', content: promptInput.value }],
+                        model: model,
+                        max_tokens: 50,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`HTTP ${response.status}: ${errorData.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                const responseText = data.choices[0]?.message?.content?.trim() || 'No response received';
+                showSuccess(`Success! Key is valid for model "${model}"<br>`, 'success');
+                showResult(`Response: "${responseText}"`, 'success');
+            } catch (error) {
+                console.error(error);
+                let errorMsg = error.message;
+                if (errorMsg.includes('401')) {
+                    errorMsg = 'Invalid or revoked API key (401 Unauthorized)';
+                } else if (errorMsg.includes('429')) {
+                    errorMsg = 'Rate limited – your key works but you hit the usage limit';
+                } else if (errorMsg.includes('404')) {
+                    errorMsg = 'Model not found – try a different model from the dropdown';
+                }
+                showResult(`Test failed: ${errorMsg}`, 'error');
+            } finally {
+                testBtn.disabled = false;
+            }
+        });
+
+        function showSuccess(html, type) {
+            sucessDiv.className = `sucess ${type}`;
+            sucessDiv.innerHTML = html;
+        }
+        function showResult(html, type) {
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = html;
+        }
+
+        // Initial setup
+        updateTestButton();
+    </script>
+
+</body>
+
+</html>

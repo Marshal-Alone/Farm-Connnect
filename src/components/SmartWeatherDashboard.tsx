@@ -70,14 +70,14 @@ export default function SmartWeatherDashboard() {
   const loadWeatherData = async () => {
     setWeatherLoading(true);
     setError(null);
-    
+
     try {
       // Try to get user's location first
       const coords = await getCurrentLocation();
       const data = await getCurrentWeather(coords.lat, coords.lon);
       setWeatherData(data);
       setLocation(data.location);
-      
+
       toast({
         title: "Weather Updated",
         description: `Weather data loaded for ${data.location}`,
@@ -100,16 +100,16 @@ export default function SmartWeatherDashboard() {
 
   const searchLocation = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setWeatherLoading(true);
     setError(null);
-    
+
     try {
       const data = await getWeatherByCity(searchQuery);
       setWeatherData(data);
       setLocation(data.location);
       setSearchQuery('');
-      
+
       toast({
         title: "Location Updated",
         description: `Weather data loaded for ${data.location}`,
@@ -128,7 +128,7 @@ export default function SmartWeatherDashboard() {
 
   const generateFarmingAlerts = () => {
     if (!weatherData) return;
-    
+
     const newAlerts: FarmingAlert[] = [];
 
     // High rainfall alert
@@ -176,7 +176,7 @@ export default function SmartWeatherDashboard() {
 
   const getAIWeatherInsights = async () => {
     if (!weatherData) return;
-    
+
     setLoading(true);
     try {
       const prompt = `As an agricultural expert, analyze this weather data and provide 3-4 specific, actionable farming recommendations:
@@ -200,7 +200,7 @@ export default function SmartWeatherDashboard() {
 
       const insights = await getAIInsights(prompt);
       setAiInsights(insights);
-      
+
       toast({
         title: "AI Analysis Complete",
         description: "Agricultural insights generated based on current weather conditions.",
@@ -216,7 +216,18 @@ export default function SmartWeatherDashboard() {
     }
   };
 
-  const getWeatherIcon = (condition: string) => {
+  const getRainIntensity = (precipitation: number) => {
+    if (precipitation >= 10) return 'Heavy';
+    if (precipitation >= 5) return 'Moderate';
+    if (precipitation >= 1) return 'Light';
+    return 'None';
+  };
+
+  const getWeatherIcon = (condition: string, iconUrl?: string) => {
+    if (iconUrl) {
+      return <img src={iconUrl.startsWith('//') ? `https:${iconUrl}` : iconUrl} alt={condition} className="w-12 h-12" />;
+    }
+
     const iconClass = "w-6 h-6";
     switch (condition.toLowerCase()) {
       case 'clear':
@@ -229,6 +240,7 @@ export default function SmartWeatherDashboard() {
       case 'rain':
       case 'light rain':
       case 'heavy rain':
+      case 'patchy rain possible':
         return <CloudRain className={`${iconClass} text-blue-500`} />;
       default:
         return <Sun className={`${iconClass} text-yellow-500`} />;
@@ -244,13 +256,6 @@ export default function SmartWeatherDashboard() {
       default:
         return <Zap className="w-5 h-5 text-primary" />;
     }
-  };
-
-  const getRainIntensity = (precipitation: number) => {
-    if (precipitation >= 10) return 'Heavy';
-    if (precipitation >= 5) return 'Moderate';
-    if (precipitation >= 1) return 'Light';
-    return 'None';
   };
 
   if (weatherLoading) {
@@ -330,15 +335,17 @@ export default function SmartWeatherDashboard() {
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="md:col-span-2">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-2xl font-bold">{weatherData.temperature}°C</h3>
-                <p className="text-muted-foreground">{weatherData.condition}</p>
+                <div className="text-4xl font-bold mb-2">{weatherData.temperature}°C</div>
+                <div className="text-muted-foreground capitalize">{weatherData.condition}</div>
+                <div className="text-sm text-muted-foreground mt-1">
+                  Feels like {weatherData.feelsLike}°C
+                </div>
               </div>
-              {getWeatherIcon(weatherData.condition)}
+              {getWeatherIcon(weatherData.condition, weatherData.icon)}
             </div>
-            
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-4 mt-6">
               <div className="flex items-center">
                 <Droplets className="w-4 h-4 mr-2 text-blue-500" />
                 <span>Humidity: {weatherData.humidity}%</span>
@@ -390,19 +397,13 @@ export default function SmartWeatherDashboard() {
         <CardContent>
           <div className="grid grid-cols-5 gap-4">
             {weatherData.forecast.map((day, index) => (
-              <div key={index} className="text-center p-3 border rounded-lg">
-                <div className="font-semibold text-sm mb-2">
-                  {index === 0 ? 'Today' : new Date(day.date).toLocaleDateString('en', { weekday: 'short' })}
-                </div>
+              <div key={index} className="text-center p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="text-sm font-medium mb-2">{day.date}</div>
                 <div className="flex justify-center mb-2">
-                  {getWeatherIcon(day.condition)}
+                  {getWeatherIcon(day.condition, day.icon)}
                 </div>
-                <div className="text-xs text-muted-foreground mb-1">{day.condition}</div>
-                <div className="font-bold text-sm">{Math.round(day.high)}°/{Math.round(day.low)}°</div>
-                <div className="flex items-center justify-center mt-1">
-                  <Droplets className="w-3 h-3 text-blue-500 mr-1" />
-                  <span className="text-xs">{day.precipitation}mm</span>
-                </div>
+                <div className="text-sm font-bold mb-1">{day.maxTemp}°C</div>
+                <div className="text-xs text-muted-foreground">{day.minTemp}°C</div>
                 <Badge variant="outline" className="mt-1 text-xs">
                   {getRainIntensity(day.precipitation)}
                 </Badge>
@@ -439,9 +440,9 @@ export default function SmartWeatherDashboard() {
                 <Brain className="w-5 h-5 mr-2" />
                 AI Weather Analysis
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={getAIWeatherInsights}
                 disabled={loading}
               >
@@ -528,7 +529,7 @@ export default function SmartWeatherDashboard() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Seasonal Pattern</h4>
               <div className="space-y-2">
@@ -548,7 +549,7 @@ export default function SmartWeatherDashboard() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Compared to Last Year</h4>
               <div className="space-y-2">
