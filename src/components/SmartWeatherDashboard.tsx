@@ -402,8 +402,8 @@ export default function SmartWeatherDashboard() {
                 <div className="flex justify-center mb-2">
                   {getWeatherIcon(day.condition, day.icon)}
                 </div>
-                <div className="text-sm font-bold mb-1">{day.maxTemp}°C</div>
-                <div className="text-xs text-muted-foreground">{day.minTemp}°C</div>
+                <div className="text-sm font-bold mb-1">{day.high}°C</div>
+                <div className="text-xs text-muted-foreground">{day.low}°C</div>
                 <Badge variant="outline" className="mt-1 text-xs">
                   {getRainIntensity(day.precipitation)}
                 </Badge>
