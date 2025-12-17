@@ -4,13 +4,30 @@
 FarmConnect is a comprehensive agricultural technology platform designed for the Smart India Hackathon. The platform empowers farmers with AI-driven insights, disease detection, weather monitoring, machinery rental, and government scheme access.
 
 ## Technology Stack
-- **Frontend**: React 18, TypeScript, Vite
-- **Styling**: Tailwind CSS, shadcn/ui components
-- **Routing**: React Router DOM
-- **State Management**: React Context API
-- **AI Integration**: Google Gemini API
-- **Voice Interface**: Web Speech API
-- **Charts**: Recharts
+### Charts — Developer note 🔧
+
+- The project uses a small Recharts wrapper at `src/components/ui/chart.tsx` which exports `ChartContainer`, `ChartTooltipContent`, `ChartLegend`, and helpers for consistent styling and color tokens.
+- Example (minimal usage):
+
+```tsx
+import {
+  ChartContainer,
+  ChartTooltipContent,
+  ChartLegend,
+} from "@/components/ui/chart"
+import { LineChart, Line, XAxis } from "recharts"
+
+<ChartContainer config={{ revenue: { label: "Revenue", color: "#10b981" } }}>
+  <LineChart data={data}>
+    <XAxis dataKey="name" />
+    <Line dataKey="revenue" stroke="var(--color-revenue)" />
+    <ChartTooltipContent />
+    <ChartLegend />
+  </LineChart>
+</ChartContainer>
+```
+
+This wrapper is used by `src/components/AIAnalyticsDashboard.tsx` for the analytics charts.
 - **HTTP Client**: Axios
 
 ## Current Features

@@ -7,7 +7,7 @@ const BASE_URL = 'http://api.weatherapi.com/v1';
 // GET /api/weather/forecast - Get forecast (includes current weather)
 router.get('/forecast', async (req, res) => {
     try {
-        const { q, days = 3 } = req.query;
+        const { q, days = 7 } = req.query; // Default to 7 days for 5-day forecast display
         const apiKey = process.env.WEATHER_API;
 
         if (!apiKey) {

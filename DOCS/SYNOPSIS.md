@@ -252,16 +252,17 @@ After studying the course, the students will be able to:
 
 ## ABSTRACT
 
-**Farm Connect: Pathway to Progress** is a comprehensive, multi-functional agricultural support system developed to empower farmers through the integration of technology into rural development. The project addresses critical challenges faced by farming communities, particularly the lack of timely information, limited market access, and difficulties in availing government schemes, loans, and machinery. By offering real-time data, direct market linkages, and early warning alerts, Farm Connect seeks to bridge the information and accessibility gap that often hinders agricultural productivity and farmer welfare.
+**Farm Connect: Pathway to Progress** is a comprehensive, multi-functional agricultural support system developed to empower farmers through the integration of technology into rural development. The project addresses critical challenges faced by farming communities, particularly the lack of timely information, limited market access, and difficulties in availing government schemes, loans, and machinery. By offering real-time data and early warning alerts, Farm Connect seeks to bridge the information and accessibility gap that often hinders agricultural productivity and farmer welfare.
 
 The system has been designed with a strong user-centric approach, incorporating multilingual support and voice input features to ensure inclusivity for farmers with limited literacy or technological skills. Its modular architecture allows each component—such as disease detection, market access, government scheme integration, and weather alert systems—to be developed, tested, and validated individually before being integrated into the full platform.
 
 ### Key Features of Farm Connect:
-- **AI-Powered Disease Detection:** Using Google Gemini Vision AI to analyze crop images and identify diseases with treatment recommendations
+- **AI-Powered Disease Detection:** Image analysis using configurable AI providers (Groq LLM by default; optionally Google Gemini Vision AI) to analyze crop images and provide disease identification, severity assessment, and treatment recommendations
 - **Smart Weather Dashboard:** Real-time weather forecasting with agricultural insights and farming alerts
 - **Machinery Marketplace:** Platform for farmers to rent and share agricultural equipment
 - **Government Schemes Portal:** Consolidated information on subsidies, loans, and support programs
 - **Voice-Enabled Interface:** Multilingual voice assistant for farmers with limited literacy
+- **AI-Powered Chatbot (Voice & Text):** Interactive farming assistant where farmers can ask queries via voice input OR text chat in 5 regional languages (Hindi, Marathi, Malayalam, Punjabi, English). Features include speech recognition and text-to-speech output for accessibility; AI responses use Groq LLM by default (Gemini is also supported).
 - **User Profile:** Personal dashboard for managing bookings and preferences
 
 The platform is built using modern web technologies (React.js, Node.js, MongoDB) ensuring scalability, responsiveness, and cross-platform accessibility. Data collection was carried out through farmer feedback, mock deployments, and agricultural databases, ensuring that the system remained practical, relevant, and adaptable to diverse farming contexts.
@@ -336,13 +337,13 @@ These models collectively guide the design, implementation, and evaluation of Fa
 
 The scope of Farm Connect encompasses:
 
-1. **AI-Powered Disease Detection Module:** Image analysis using Google Gemini Vision AI
+1. **AI-Powered Disease Detection Module:** Image analysis using configurable AI providers (Groq LLM by default; optionally Google Gemini Vision AI)
 2. **Smart Weather Dashboard:** Integration with WeatherAPI for real-time forecasting
 3. **Machinery Marketplace:** Peer-to-peer equipment rental platform
 4. **Government Schemes Portal:** Database of agricultural subsidies and support programs
 5. **User Profile:** Personal dashboard with booking history and preferences
-6. **Voice Interface:** Multilingual voice assistant supporting Hindi, Marathi, and English
-7. **User Authentication:** Secure login system with OTP verification
+6. **AI Chatbot (Voice & Text):** Multilingual assistant supporting Hindi, Marathi, Malayalam, Punjabi, and English - farmers can ask questions via voice or text input, with AI-powered responses from Groq LLM by default (Google Gemini is also supported) and text-to-speech output
+7. **User Authentication:** Secure login system with JWT token authentication
 
 **Page 1**
 
@@ -422,7 +423,7 @@ A comprehensive review of existing literature was conducted to understand the cu
 
 **Saini et al. (2025)** propose a smart crop disease monitoring system using deep learning in IoT environments, demonstrating high accuracy in disease classification.
 
-**Relevance to Farm Connect:** These studies directly inform Farm Connect's AI Disease Detection module, which uses Google Gemini Vision AI for image-based disease identification and treatment recommendations.
+**Relevance to Farm Connect:** These studies directly inform Farm Connect's AI Disease Detection module, which supports configurable AI providers for image-based disease identification and treatment recommendations (Groq LLM is used by default; Google Gemini Vision AI is available as an alternate provider).
 
 ### 2.7 Digital Literacy and Technology Adoption
 
@@ -455,14 +456,14 @@ A comprehensive review of existing literature was conducted to understand the cu
 
 | Research Area | Key Findings | Application in Farm Connect |
 |---------------|--------------|----------------------------|
-| IoT-Based Agriculture | Real-time monitoring improves crop health | Weather Dashboard, Alerts System |
+| Weather-Based Advisory | Real-time data improves crop health | Weather Dashboard, Alerts System |
 | Digital Marketplaces | Reduces middlemen, improves price discovery | Machinery Marketplace (equipment sharing) |
-| Mobile Extension | Language support crucial for adoption | Multilingual support (Hindi, Marathi, English) |
+| Mobile Extension | Language support crucial for adoption | Multilingual support (Hindi, Marathi, Malayalam, Punjabi, English) |
 | Voice Technology | Reduces barriers for low-literacy users | Voice Interface with speech recognition |
 | Weather Advisory | Timely alerts reduce crop losses | Smart Weather Dashboard with AI insights |
-| AI Disease Detection | Early detection enables preventive action | Gemini Vision AI Disease Detection |
+| AI Disease Detection | Early detection enables preventive action | Groq  or Gemini Vision AI  |
 | Digital Literacy | Simplified UX increases adoption | Icon-based navigation, voice commands |
-| Government Schemes | Awareness gaps limit utilization | Schemes Portal with eligibility checker |
+| Government Schemes | Awareness gaps limit utilization | Schemes Portal with search and filtering |
 
 ### 2.10 Research Gap
 
@@ -470,9 +471,8 @@ Despite significant advancements in agricultural technology, a notable gap exist
 
 1. **AI-powered disease detection** with immediate treatment recommendations
 2. **Real-time weather alerts** with agriculture-specific actionable insights
-3. **Government scheme information** with eligibility verification
+3. **Government scheme information** with simplified access and search
 4. **Voice-enabled interfaces** for low-literacy users
-5. **Direct market access** without intermediary exploitation
 
 Most existing solutions address only one or two of these aspects. Farm Connect aims to bridge this gap by providing a unified platform that addresses all these needs through a single, accessible interface.
 
@@ -497,7 +497,7 @@ The primary objectives of the Farm Connect project are designed to address the c
 
 1. **To develop an integrated digital platform** that connects farmers with essential agricultural resources and services through a single unified interface.
 
-2. **To provide AI-based crop disease detection** for improved decision-making using Google Gemini Vision AI with treatment recommendations and prevention strategies.
+2. **To provide AI-based crop disease detection** for improved decision-making using configurable AI providers (Groq LLM by default; optionally Google Gemini Vision AI) with treatment recommendations and prevention strategies.
 
 3. **To deliver real-time weather updates** with agricultural insights, farming alerts, and actionable recommendations for irrigation, pest control, and crop protection.
 
@@ -509,11 +509,11 @@ The primary objectives of the Farm Connect project are designed to address the c
 
 6. **To include a multilingual, voice-enabled interface** to ensure accessibility for farmers of all literacy levels, supporting Hindi, Marathi, Malayalam, Punjabi, and English.
 
-7. **To offer consolidated information on government schemes**, subsidies, and agricultural support programs with eligibility checking functionality.
+7. **To offer consolidated information on government schemes**, subsidies, and agricultural support programs with search and filtering functionality.
 
-8. **To issue early warning alerts** for adverse weather conditions, pest outbreaks, and crop diseases using AI-powered predictive analytics.
+8. **To issue weather-based farming alerts** for adverse weather conditions based on real-time weather data.
 
-9. **To build a secure authentication system** with OTP verification for user protection.
+9. **To build a secure authentication system** with JWT token-based security for user protection.
 
 10. **To develop a secure, scalable, and user-friendly platform** capable of supporting large numbers of rural users with responsive design for mobile accessibility.
 
@@ -521,7 +521,7 @@ The primary objectives of the Farm Connect project are designed to address the c
 
 11. **To implement a modern tech stack** using React.js for frontend, Node.js/Express for backend, and MongoDB for database management.
 
-12. **To integrate third-party APIs** including WeatherAPI for weather data, Google Gemini AI for disease detection and farming advice.
+12. **To integrate third-party APIs** including WeatherAPI for weather data, Groq LLM  and Google Gemini AI  for disease detection and farming advice.
 
 13. **To ensure PWA (Progressive Web App) capabilities** for offline functionality and mobile installation.
 
@@ -597,7 +597,8 @@ Farm Connect is a responsive web application built using:
 - **Frontend:** React.js with TypeScript, Tailwind CSS, Shadcn/UI components
 - **Backend:** Node.js with Express.js
 - **Database:** MongoDB for flexible data storage
-- **AI Services:** Google Gemini AI for disease detection and farming advice
+ - **Database:** MongoDB for flexible data storage
+ - **AI Services:** Groq LLM  and Google Gemini AI  for disease detection and farming advice
 - **Weather API:** WeatherAPI.com for real-time weather data
 
 #### 4.2.2 Core Modules
@@ -605,27 +606,26 @@ Farm Connect is a responsive web application built using:
 | Module | Description | Key Features |
 |--------|-------------|--------------|
 | **Disease Detection** | AI-powered crop disease identification | Image upload, instant analysis, treatment recommendations |
-| **Weather Dashboard** | Real-time weather with farming insights | 5-day forecast, UV index, farming alerts, AI analysis |
+| **Weather Dashboard** | Real-time weather with farming insights | 7-day forecast, farming alerts, crop advisory |
 | **Machinery Marketplace** | Equipment rental platform | Browse, book, review machinery |
-| **Government Schemes** | Subsidy and scheme information | Search, filter, eligibility check, application guidance |
-
+| **Government Schemes** | Subsidy and scheme information | Search, filter, category browsing, scheme details |
 | **Voice Interface** | Multilingual voice assistant | Speech recognition, voice responses |
 | **User Profile** | Personal dashboard | Booking history, saved schemes, preferences |
 
 #### 4.2.3 Key Innovations
 
 1. **Unified Platform:** Single interface for all agricultural needs
-2. **AI-First Approach:** Gemini Vision AI for accurate disease detection
+2. **AI-First Approach:** AI-based disease detection using Groq  and Gemini Vision AI  for accurate diagnosis and recommendations
 3. **Voice Accessibility:** Natural language interaction for low-literacy users
 4. **Real-time Data:** Live weather updates with agricultural context
-5. **Direct Market Access:** Peer-to-peer machinery sharing and produce sales
+5. **Direct Market Access:** Peer-to-peer machinery sharing
 
 #### 4.2.4 Expected Benefits
 
 - Reduced crop losses through early disease detection (estimated 15-20% improvement)
-- Better market prices through direct buyer connections
+
 - Increased scheme utilization through simplified access
-- Reduced equipment costs through sharing economy
+- Reduced equipment costs through machinery sharing
 - Improved decision-making through weather-based advisory
 
 **Page 7**
@@ -662,13 +662,12 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 
 #### Phase 3: Iterative Development
 - Sprint-based development cycles (2-week sprints)
-- Continuous integration and testing
+- Iterative development with local testing 
 - Regular stakeholder feedback and iteration
 
 #### Phase 4: Testing & Deployment
-- Unit testing and integration testing
-- User acceptance testing with target farmers
-- Cloud deployment and performance optimization
+- Local testing 
+- Cloud deployment and performance optimization via Vercel/Netlify/Render configurations
 
 ### 5.2 Data Collection Methods
 
@@ -696,7 +695,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        CLIENT LAYER                              │
+│                        CLIENT LAYER                             │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
 │  │   React.js  │  │ TypeScript  │  │ Tailwind CSS│              │
 │  │   Frontend  │  │   Logic     │  │   Styling   │              │
@@ -705,7 +704,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                        API LAYER                                 │
+│                        API LAYER                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
 │  │  Express.js │  │  REST APIs  │  │  Auth/JWT   │              │
 │  │   Server    │  │  Endpoints  │  │  Middleware │              │
@@ -714,11 +713,11 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     SERVICE LAYER                                │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐        │
-│  │ Gemini   │  │ Weather  │  │ MongoDB  │  │  OTP     │        │
-│  │ AI API   │  │   API    │  │ Database │  │ Service  │        │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘        │
+│                     SERVICE LAYER                               │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐         │
+│  │ Gemini   │  │ Weather  │  │ MongoDB  │  │   PWA    │         │
+│  │ AI API   │  │   API    │  │ Database │  │ Support  │         │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘         │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -732,18 +731,18 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 | **API Communication** | HTTP Client | Axios, Fetch API |
 | **Backend Services** | REST APIs | Express.js, Node.js |
 | **Database** | Data Persistence | MongoDB |
-| **External APIs** | Third-party Services | WeatherAPI, Gemini AI |
+| **External APIs** | Third-party Services | WeatherAPI, Groq LLM , Google Gemini AI  |
 
 ### 5.4 Module Implementation Details
 
 #### 5.4.1 AI Disease Detection Module
 
-**Technology:** Google Gemini Vision AI (gemini-2.0-flash-exp model)
+**Technology:** Groq LLM and Google Gemini Vision AI (gemini-2.0-flash-exp model)
 
 **Process Flow:**
 1. User uploads crop image via drag-and-drop or file selection
 2. Image is converted to Base64 format
-3. Image sent to Gemini Vision AI with structured prompt
+3. Image sent to the selected AI provider (Groq or Gemini) with a structured prompt
 4. AI analyzes image for diseases and pest infestations
 5. Response includes disease name, confidence, severity, treatment, prevention
 6. Results displayed with visual indicators and actionable recommendations
@@ -751,7 +750,6 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 **Key Features:**
 - Support for JPEG, PNG, WebP image formats
 - Detection of both diseases AND pest infestations
-- India-specific disease and pest database
 - Treatment recommendations with locally available solutions
 - Detection history stored for user reference
 
@@ -772,8 +770,8 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 
 **Features:**
 - Real-time current weather conditions
-- 5-day weather forecast
-- Agricultural-specific metrics (humidity, UV index, wind speed)
+- 7-day weather forecast
+- Agricultural-specific metrics (humidity, temperature, wind speed)
 - AI-generated farming recommendations based on conditions
 - Automatic farming alerts (high rainfall, pest conditions, spraying windows)
 - City search functionality
@@ -782,12 +780,10 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 **Data Points Displayed:**
 | Metric | Description | Agricultural Relevance |
 |--------|-------------|----------------------|
-| Temperature | Current and feels-like | Crop stress indicators |
-| Humidity | Relative humidity % | Disease risk assessment |
+| Temperature | Current temperature | Crop stress indicators |
+| Humidity | Relative humidity level | Disease risk assessment |
 | Wind Speed | km/h | Spraying conditions |
-| UV Index | Solar radiation level | Crop protection needs |
-| Precipitation | Rain amount in mm | Irrigation planning |
-| Visibility | km | Field work conditions |
+| Rain Forecast | Chance of rain | Irrigation planning |
 
 #### 5.4.3 Machinery Marketplace Module
 
@@ -823,9 +819,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 - Comprehensive database of central and state schemes
 - Category filtering (Irrigation, Seeds, Livestock, Credit, etc.)
 - State-wise scheme filtering
-- Eligibility requirement display
-- Document checklist for applications
-- Application deadline tracking
+- Scheme details and benefits display
 - Status indicators (Active, Deadline Soon, Closed)
 
 **Scheme Categories Covered:**
@@ -855,7 +849,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 - Text-to-speech output using Speech Synthesis API
 - Multilingual support for accessibility
 
-**Note:** Utilizes Google Gemini AI for intelligent response generation and farming advice.
+**Note:** Uses Groq LLM by default for intelligent response generation and farming advice; Google Gemini AI is also supported as an alternate provider.
 
 **Page 11**
 
@@ -880,16 +874,9 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
   email: String,
   phone: String,
   passwordHash: String,
-  role: "farmer" | "owner" | "buyer",
-  location: {
-    state: String,
-    district: String,
-    village: String
-  },
-  preferences: {
-    language: String,
-    notifications: Boolean
-  },
+  location: String,
+  farmSize: Number,
+  crops: [String],
   createdAt: Date,
   updatedAt: Date
 }
@@ -948,23 +935,23 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 |----------|--------|-------------|
 | `/api/auth/register` | POST | User registration |
 | `/api/auth/login` | POST | User authentication |
-| `/api/auth/verify-otp` | POST | OTP verification |
-| `/api/users/:id` | GET | Get user profile |
-| `/api/machinery` | GET | List all machinery |
+| `/api/auth/me` | GET | Get current logged-in user |
+| `/api/users/:id` | PUT | Update user profile |
+| `/api/machinery` | GET | List all machinery with filters |
 | `/api/machinery/:id` | GET | Get machinery details |
 | `/api/machinery` | POST | Add new machinery |
-| `/api/bookings` | POST | Create booking |
-| `/api/bookings/:userId` | GET | Get user bookings |
-| `/api/reviews` | POST | Submit review |
-| `/api/messages` | POST | Send message |
-| `/api/weather/forecast` | GET | Get weather data |
+| `/api/machinery/:id` | PUT | Update machinery |
+| `/api/machinery/:id` | DELETE | Delete machinery (soft delete) |
+| `/api/bookings` | GET/POST | Get bookings / Create booking |
+| `/api/reviews` | GET/POST | Get reviews / Submit review |
+| `/api/messages` | GET/POST | Get messages / Send message |
+| `/api/weather/forecast` | GET | Get weather forecast data |
 
 #### 5.6.2 External API Integrations
 
-**Google Gemini AI API:**
-- Model: gemini-2.0-flash-exp
-- Endpoints: generateContent (text and vision)
-- Response Format: JSON with structured schema
+**Supported AI Providers:**
+- **Groq LLM :** Primary provider for chatbot and disease-detection flows using Groq's OpenAI-compatible endpoints.
+- **Google Gemini Vision AI :** Model: gemini-2.0-flash-exp; supports vision and text generation via `generateContent` with structured JSON schema responses when configured.
 
 **WeatherAPI.com:**
 - Endpoint: /v1/forecast.json
@@ -975,12 +962,11 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 
 | Security Measure | Implementation |
 |-----------------|----------------|
-| Password Hashing | bcrypt with salt rounds |
-| API Authentication | JWT tokens |
-| OTP Verification | Phone-based 6-digit OTP |
-| CORS Protection | Whitelist origin domains |
-| Input Validation | Zod schema validation |
-| API Key Protection | Environment variables |
+| Password Hashing | bcrypt with salt rounds (10) |
+| API Authentication | JWT tokens (7-day expiry) |
+| CORS Protection | Open CORS policy (Allow-Origin: *) |
+| Input Validation | TypeScript interface validation |
+| API Key Protection | Environment variables (.env) |
 
 **Page 13**
 
@@ -1016,21 +1002,21 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 
 #### 5.8.3 Color Scheme
 
-| Color | Usage | Hex Code |
+| Color | Usage | CSS Value |
 |-------|-------|----------|
-| Primary Green | Actions, success | #22C55E |
-| Warning Yellow | Alerts, caution | #EAB308 |
-| Danger Red | Errors, high severity | #EF4444 |
-| Info Blue | Information, links | #3B82F6 |
-| Background | Page background | #FAFAFA |
-| Text Primary | Main content | #1F2937 |
+| Primary Green | Actions, success | HSL(120 45% 35%) |
+| Warning Yellow | Alerts, caution | HSL(45 90% 55%) |
+| Danger Red | Errors, high severity | HSL(0 84% 60%) |
+| Accent | Secondary actions | HSL(90 35% 75%) |
+| Background | Page background | HSL(120 25% 97%) |
+| Text Primary | Main content | HSL(120 15% 15%) |
 
 ### 5.9 Testing Strategy
 
 | Testing Type | Tools | Coverage |
 |-------------|-------|----------|
-| Unit Testing | Jest, React Testing Library | Component logic |
-| Integration Testing | Supertest | API endpoints |
+| Manual Testing | Browser DevTools | Component functionality |
+| API Testing | Postman, Thunder Client | API endpoints |
 | E2E Testing | Browser-based manual testing | User flows |
 | Usability Testing | Farmer feedback sessions | UX validation |
 | Performance Testing | Lighthouse | Load times, accessibility |
@@ -1134,7 +1120,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 | react-router-dom | Client-side routing |
 | @tanstack/react-query | Server state management |
 | react-hook-form | Form handling |
-| zod | Schema validation |
+| zod | Schema validation (available) |
 | bcrypt | Password hashing |
 | jsonwebtoken | JWT authentication |
 | lucide-react | Icon library |
@@ -1145,7 +1131,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 
 | Service | Purpose | Provider |
 |---------|---------|----------|
-| AI/Vision API | Disease detection (image analysis) | Google Gemini AI (gemini-2.0-flash-exp) |
+| AI/Vision API | Disease detection (image analysis) | Groq LLM  / Google Gemini AI (gemini-2.0-flash-exp, optional) |
 
 | Weather API | Real-time weather data | WeatherAPI.com |
 | Speech Recognition | Voice input (STT) | Web Speech API (browser native) |
@@ -1179,7 +1165,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 | 5 | SRS Documentation | Finalizing functional/non-functional requirements, completing documentation | 2 weeks | Sep 2025 |
 | 6 | System Design | Designing architecture, DFDs, module interactions, technology selection | 3 weeks | Sep-Oct 2025 |
 | 7 | Dataset Collection | Gathering weather data, market data, crop disease information from APIs | 3 weeks | Oct-Nov 2025 |
-| 8 | AI Integration | Integrating Gemini Vision AI, implementing disease detection logic | 4 weeks | Oct-Dec 2025 |
+| 8 | AI Integration | Integrating AI providers (Groq default, Gemini optional), implementing disease detection logic | 4 weeks | Oct-Dec 2025 |
 | 9 | Prototype Development | Building React frontend, implementing core features (login, dashboard, weather) | 6 weeks | Nov-Dec 2025 |
 | 10 | Testing & Documentation | Preparing reports, testing, creating presentation materials | 4 weeks | Dec 2025-Jan 2026 |
 
@@ -1209,7 +1195,7 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 - Frontend development with React
 - Backend API development with Node.js
 - MongoDB database implementation
-- Gemini AI integration
+ - AI providers integration (Groq LLM by default; Google Gemini AI optional)
 - Weather API integration
 - Voice interface implementation
 - Iterative testing and bug fixes

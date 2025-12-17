@@ -18,6 +18,7 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
   const [selectedLanguage, setSelectedLanguage] = useState('hindi');
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
+  const [chatInput, setChatInput] = useState('');
   const [recognition, setRecognition] = useState<any>(null);
   const { toast } = useToast();
 
@@ -55,10 +56,10 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
-      
+
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
-      
+
       recognitionInstance.onstart = () => {
         setIsListening(true);
         toast({
@@ -100,24 +101,24 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
   const handleVoiceQuery = async (query: string) => {
     const currentLang = languages.find(lang => lang.code === selectedLanguage);
     setIsProcessing(true);
-    
+
     try {
       // Get AI-powered response using Groq
       const aiAdvice = await groqAI.getFarmingAdvice(query, selectedLanguage);
       setResponse(aiAdvice.response);
       speakResponse(aiAdvice.response, currentLang?.locale || 'en-IN');
-      
+
       toast({
         title: "AI Response Generated",
         description: `Advice category: ${aiAdvice.category}`,
       });
     } catch (error) {
       console.error('Error getting AI advice:', error);
-      
+
       // Fallback to sample responses
       let aiResponse = '';
       const queryLower = query.toLowerCase();
-      
+
       if (selectedLanguage === 'hindi') {
         if (queryLower.includes('मौसम') || queryLower.includes('बारिश')) {
           aiResponse = sampleResponses.hindi['मौसम'];
@@ -155,11 +156,18 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
     } finally {
       setIsProcessing(false);
     }
-    
+
     // Call parent component handler if provided
     if (onVoiceQuery) {
       onVoiceQuery(query, selectedLanguage);
     }
+  };
+
+  const handleTextQuery = () => {
+    if (!chatInput.trim()) return;
+    setTranscript(chatInput);
+    handleVoiceQuery(chatInput);
+    setChatInput('');
   };
 
   const speakResponse = (text: string, locale: string) => {
@@ -168,11 +176,11 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
       utterance.lang = locale;
       utterance.rate = 0.8;
       utterance.pitch = 1;
-      
+
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
-      
+
       speechSynthesis.speak(utterance);
     }
   };
@@ -255,7 +263,7 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
           </Button>
 
           <Button
-            onClick={isSpeaking ? stopSpeaking : () => {}}
+            onClick={isSpeaking ? stopSpeaking : () => { }}
             variant={isSpeaking ? "destructive" : "outline"}
             size="lg"
             disabled={!isSpeaking}
@@ -271,6 +279,28 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
                 Audio
               </>
             )}
+          </Button>
+        </div>
+
+        {/* Text Chat Input */}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder={selectedLanguage === 'hindi' ? 'अपना सवाल टाइप करें...' :
+              selectedLanguage === 'marathi' ? 'तुमचा प्रश्न टाइप करा...' :
+                'Type your question...'}
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && chatInput.trim() && handleTextQuery()}
+            className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            disabled={isProcessing}
+          />
+          <Button
+            onClick={handleTextQuery}
+            disabled={!chatInput.trim() || isProcessing}
+            size="default"
+          >
+            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
           </Button>
         </div>
 
