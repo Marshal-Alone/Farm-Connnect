@@ -120,7 +120,7 @@ export const getCurrentWeather = async (lat: number, lon: number): Promise<Weath
     const response = await axios.get(`${API_BASE_URL}/forecast`, {
       params: {
         q: `${lat},${lon}`,
-        days: 5,
+        days: 7,
       },
     });
 
@@ -141,7 +141,7 @@ export const getWeatherByCity = async (city: string): Promise<WeatherData> => {
     const response = await axios.get(`${API_BASE_URL}/forecast`, {
       params: {
         q: city,
-        days: 5,
+        days: 7,
       },
     });
 

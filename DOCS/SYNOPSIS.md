@@ -439,7 +439,7 @@ A comprehensive review of existing literature was conducted to understand the cu
 
 **Coggins et al. (2022)** examine how smallholder farmers in Bihar, India use digital extension tools, identifying key barriers and success factors.
 
-**Relevance to Farm Connect:** The Government Schemes Portal module addresses these findings by providing simplified access to scheme information with eligibility checks.
+**Relevance to Farm Connect:** The Government Schemes Portal module addresses these findings by providing simplified access to scheme information with search and filtering functionality.
 
 **Page 3**
 
@@ -597,8 +597,7 @@ Farm Connect is a responsive web application built using:
 - **Frontend:** React.js with TypeScript, Tailwind CSS, Shadcn/UI components
 - **Backend:** Node.js with Express.js
 - **Database:** MongoDB for flexible data storage
- - **Database:** MongoDB for flexible data storage
- - **AI Services:** Groq LLM  and Google Gemini AI  for disease detection and farming advice
+- **AI Services:** Groq LLM and Google Gemini AI for disease detection and farming advice
 - **Weather API:** WeatherAPI.com for real-time weather data
 
 #### 4.2.2 Core Modules
@@ -610,7 +609,7 @@ Farm Connect is a responsive web application built using:
 | **Machinery Marketplace** | Equipment rental platform | Browse, book, review machinery |
 | **Government Schemes** | Subsidy and scheme information | Search, filter, category browsing, scheme details |
 | **Voice Interface** | Multilingual voice assistant | Speech recognition, voice responses |
-| **User Profile** | Personal dashboard | Booking history, saved schemes, preferences |
+| **User Profile** | Personal dashboard | Booking history, preferences |
 
 #### 4.2.3 Key Innovations
 
@@ -727,12 +726,12 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 | Layer | Components | Technologies |
 |-------|------------|--------------|
 | **Presentation** | Pages, Components, UI Elements | React.js, Shadcn/UI, Lucide Icons |
-| **State Management** | Context API, React Query | React Context, TanStack Query |
+| **State Management** | Context API | React Context |
 | **Routing** | Page Navigation | React Router DOM |
-| **API Communication** | HTTP Client | Axios, Fetch API |
+| **API Communication** | HTTP Client | Fetch API |
 | **Backend Services** | REST APIs | Express.js, Node.js |
 | **Database** | Data Persistence | MongoDB |
-| **External APIs** | Third-party Services | WeatherAPI, Groq LLM , Google Gemini AI  |
+| **External APIs** | Third-party Services | WeatherAPI, Groq LLM, Google Gemini AI |
 
 #### 5.3.3 Layer-wise Code Implementation
 
@@ -749,7 +748,7 @@ The client layer handles user interface, state management, and API communication
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { machineryService } from '@/lib/api/machineryService';
 import { MachinerySchema } from '@/lib/schemas/machinery.schema';
 
@@ -890,31 +889,38 @@ router.get('/', async (req, res) => {
   try {
     const db = await getDatabase();
     const machineryCollection = db.collection(collections.machinery);
-    const { type, location, search, page = 1, limit = 12 } = req.query;
+    const { 
+      type, location, minPrice, maxPrice, minRating, available,
+      search, sortBy = 'createdAt', sortOrder = 'desc',
+      page = 1, limit = 12 
+    } = req.query;
 
     // Build filter query
     const filter = { isActive: true };
     if (type && type !== 'all') filter.type = type;
+    if (location && location !== 'all') {
+      filter['location.state'] = { $regex: location, $options: 'i' };
+    }
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
+        { description: { $regex: search, $options: 'i' } },
+        { brand: { $regex: search, $options: 'i' } }
       ];
     }
 
+    const sort = {};
+    sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    const machinery = await machineryCollection
-      .find(filter)
-      .skip(skip)
-      .limit(parseInt(limit))
-      .toArray();
 
+    const machinery = await machineryCollection
+      .find(filter).sort(sort).skip(skip).limit(parseInt(limit)).toArray();
     const total = await machineryCollection.countDocuments(filter);
 
     res.json({
       success: true,
       data: machinery,
-      pagination: { page: parseInt(page), limit: parseInt(limit), total }
+      pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / parseInt(limit)) }
     });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch machinery' });
@@ -923,15 +929,24 @@ router.get('/', async (req, res) => {
 
 // POST /api/machinery - Create new machinery
 router.post('/', async (req, res) => {
-  const db = await getDatabase();
-  const machineryData = {
-    ...req.body,
-    rating: 0,
-    createdAt: new Date(),
-    isActive: true
-  };
-  const result = await db.collection(collections.machinery).insertOne(machineryData);
-  res.status(201).json({ success: true, data: { _id: result.insertedId } });
+  try {
+    const db = await getDatabase();
+    const machineryData = {
+      ...req.body,
+      rating: 0,
+      totalReviews: 0,
+      bookedDates: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true,
+      views: 0,
+      totalBookings: 0
+    };
+    const result = await db.collection(collections.machinery).insertOne(machineryData);
+    res.status(201).json({ success: true, data: { _id: result.insertedId, ...machineryData } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to create machinery' });
+  }
 });
 
 export default router;
@@ -1007,7 +1022,7 @@ class GeminiAIService {
     const base64Data = imageBase64.replace(/^data:image\/[a-z]+;base64,/, '');
     
     const response = await this.getModel().models.generateContent({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash',
       contents: {
         parts: [
           { text: 'Analyze this crop image for diseases...' },
@@ -1024,7 +1039,7 @@ class GeminiAIService {
 
   async getFarmingAdvice(query: string, language: string): Promise<string> {
     const result = await this.getModel().models.generateContent({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash-lite',
       contents: { parts: [{ text: `Farming advice in ${language}: ${query}` }] },
       config: { temperature: 0.7 }
     });
@@ -1182,10 +1197,15 @@ export async function getDatabase() {
 // Collection names
 export const collections = {
   users: 'users',
+  farms: 'farms',
   machinery: 'machinery',
+  schemes: 'schemes',
   bookings: 'bookings',
+  diseases: 'diseases',
+  predictions: 'predictions',
   reviews: 'reviews',
-  messages: 'messages'
+  messages: 'messages',
+  conversations: 'conversations'
 };
 ```
 
@@ -1230,7 +1250,7 @@ export function isPWAInstalled(): boolean {
 
 #### 5.4.1 AI Disease Detection Module
 
-**Technology:** Groq LLM and Google Gemini Vision AI (gemini-2.0-flash-exp model)
+**Technology:** Groq LLM and Google Gemini Vision AI (gemini-2.5-flash for vision, gemini-2.5-flash-lite for text)
 
 **Process Flow:**
 1. User uploads crop image via drag-and-drop or file selection
@@ -1276,7 +1296,10 @@ export function isPWAInstalled(): boolean {
 | Temperature | Current temperature | Crop stress indicators |
 | Humidity | Relative humidity level | Disease risk assessment |
 | Wind Speed | km/h | Spraying conditions |
-| Rain Forecast | Chance of rain | Irrigation planning |
+| Precipitation | Rainfall amount (mm) | Irrigation planning |
+| Pressure | Atmospheric pressure (hPa) | Weather pattern prediction |
+| Visibility | Distance visibility (km) | Fieldwork conditions |
+| UV Index | Solar radiation level | Crop protection timing |
 
 #### 5.4.3 Machinery Marketplace Module
 
@@ -1366,8 +1389,9 @@ export function isPWAInstalled(): boolean {
   name: String,
   email: String,
   phone: String,
-  passwordHash: String,
+  password: String (hashed),
   location: String,
+  language: String,              // Added: hi, mr, en, ml, pa
   farmSize: Number,
   crops: [String],
   createdAt: Date,
@@ -1379,18 +1403,28 @@ export function isPWAInstalled(): boolean {
 ```javascript
 {
   _id: ObjectId,
-  ownerId: ObjectId,
+  ownerId: String,
+  ownerName: String,
   name: String,
-  category: String,
+  type: String,                  // tractor, harvester, rotavator, etc.
   description: String,
-  dailyRate: Number,
-  location: String,
-  specifications: Object,
+  pricePerDay: Number,
+  location: {
+    address: String,
+    city: String,
+    state: String,
+    pincode: String
+  },
   images: [String],
-  availability: Boolean,
+  features: [String],
+  specifications: [{ key: String, value: String }],
+  available: Boolean,
   rating: Number,
-  reviewCount: Number,
-  createdAt: Date
+  totalReviews: Number,
+  bookedDates: [{ startDate: Date, endDate: Date, bookingId: String }],
+  createdAt: Date,
+  updatedAt: Date,
+  isActive: Boolean
 }
 ```
 
@@ -1398,14 +1432,24 @@ export function isPWAInstalled(): boolean {
 ```javascript
 {
   _id: ObjectId,
-  machineryId: ObjectId,
-  farmerId: ObjectId,
-  ownerId: ObjectId,
+  bookingNumber: String,         // Unique reference (e.g., BK-xxx)
+  machineryId: String,
+  machineryName: String,
+  ownerId: String,
+  ownerName: String,
+  renterId: String,              // Previously: farmerId
+  renterName: String,
+  renterPhone: String,
   startDate: Date,
   endDate: Date,
+  totalDays: Number,
+  pricePerDay: Number,
   totalAmount: Number,
-  status: "pending" | "confirmed" | "completed" | "cancelled",
-  createdAt: Date
+  finalAmount: Number,
+  status: "pending" | "confirmed" | "in-progress" | "completed" | "cancelled",
+  paymentStatus: "pending" | "paid" | "refunded",
+  createdAt: Date,
+  updatedAt: Date
 }
 ```
 
@@ -1428,23 +1472,18 @@ export function isPWAInstalled(): boolean {
 |----------|--------|-------------|
 | `/api/auth/register` | POST | User registration |
 | `/api/auth/login` | POST | User authentication |
-| `/api/auth/me` | GET | Get current logged-in user |
-| `/api/users/:id` | PUT | Update user profile |
-| `/api/machinery` | GET | List all machinery with filters |
-| `/api/machinery/:id` | GET | Get machinery details |
-| `/api/machinery` | POST | Add new machinery |
-| `/api/machinery/:id` | PUT | Update machinery |
-| `/api/machinery/:id` | DELETE | Delete machinery (soft delete) |
-| `/api/bookings` | GET/POST | Get bookings / Create booking |
-| `/api/reviews` | GET/POST | Get reviews / Submit review |
-| `/api/messages` | GET/POST | Get messages / Send message |
-| `/api/weather/forecast` | GET | Get weather forecast data |
+| `/api/machinery` | GET/POST | List / Add machinery |
+| `/api/machinery/:id` | GET/PUT/DELETE | View / Update / Remove machinery |
+| `/api/bookings` | GET/POST | View / Create bookings |
+| `/api/reviews` | GET/POST | View / Submit reviews |
+| `/api/messages` | GET/POST | View / Send messages |
+| `/api/weather/forecast` | GET | Weather forecast data |
 
 #### 5.6.2 External API Integrations
 
 **Supported AI Providers:**
 - **Groq LLM :** Primary provider for chatbot and disease-detection flows using Groq's OpenAI-compatible endpoints.
-- **Google Gemini Vision AI :** Model: gemini-2.0-flash-exp; supports vision and text generation via `generateContent` with structured JSON schema responses when configured.
+- **Google Gemini Vision AI :** Models: gemini-2.5-flash (vision) and gemini-2.5-flash-lite (text); supports vision and text generation via `generateContent` with structured JSON schema responses when configured.
 
 **WeatherAPI.com:**
 - Endpoint: /v1/forecast.json
@@ -1564,9 +1603,11 @@ export function isPWAInstalled(): boolean {
 
 | Component | Specification |
 |-----------|---------------|
-| Hosting | Cloud-based (Render/Vercel/Netlify) |
+| Backend Hosting | Render (Node.js server) |
+| Frontend Hosting | Vercel (Static/SSR) |
+| Runtime | Node.js 18.x+ |
 | Database | MongoDB Atlas (Cloud) |
-| CDN | Cloudflare or similar |
+| CDN | Content Delivery Network for fast global asset delivery |
 | SSL | HTTPS encryption |
 
 **Page 15**
@@ -1613,24 +1654,24 @@ export function isPWAInstalled(): boolean {
 | react-router-dom | Client-side routing |
 | @tanstack/react-query | Server state management |
 | react-hook-form | Form handling |
-| zod | Schema validation (available) |
 | bcrypt | Password hashing |
 | jsonwebtoken | JWT authentication |
 | lucide-react | Icon library |
 | recharts | Data visualization |
+| openai | Groq LLM API integration |
+| @google/genai | Google Gemini AI integration |
 
 
 #### 6.2.4 External APIs & Services
 
 | Service | Purpose | Provider |
 |---------|---------|----------|
-| AI/Vision API | Disease detection (image analysis) | Groq LLM  / Google Gemini AI (gemini-2.0-flash-exp, optional) |
-
+| AI/Vision API | Disease detection (image analysis) | Groq LLM / Google Gemini AI (gemini-2.5-flash, gemini-2.5-flash-lite) |
 | Weather API | Real-time weather data | WeatherAPI.com |
 | Speech Recognition | Voice input (STT) | Web Speech API (browser native) |
 | Speech Synthesis | Voice output (TTS) | Speech Synthesis API (browser native) |
 | Database Hosting | Cloud MongoDB | MongoDB Atlas |
-| Deployment | Web hosting | Render/Netlify/Vercel |
+| Deployment | Web hosting | Render (backend) / Vercel (frontend) |
 
 **Page 16**
 
