@@ -715,8 +715,9 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 ┌─────────────────────────────────────────────────────────────────┐
 │                     SERVICE LAYER                               │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐         │
-│  │ Gemini   │  │ Weather  │  │ MongoDB  │  │   PWA    │         │
-│  │ AI API   │  │   API    │  │ Database │  │ Support  │         │
+│  │  Groq &  │  │  Weather │  │ MongoDB  │  │ Support  │         │
+│  │  Gemini  │  │   API    │  │ Database │  │  PWA     │         │
+│  │  AI API  │  │          │  │          │  │          │         │
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘         │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -732,6 +733,498 @@ Farm Connect was developed using an **Agile Scrum** methodology with the followi
 | **Backend Services** | REST APIs | Express.js, Node.js |
 | **Database** | Data Persistence | MongoDB |
 | **External APIs** | Third-party Services | WeatherAPI, Groq LLM , Google Gemini AI  |
+
+#### 5.3.3 Layer-wise Code Implementation
+
+The following code snippets demonstrate how each layer of the 3-tier architecture is implemented in Farm Connect:
+
+---
+
+**1. CLIENT LAYER (React.js Frontend)**
+
+The client layer handles user interface, state management, and API communication. Below is a snippet from the Machinery Marketplace page showing React component structure with hooks and service integration:
+
+```typescript
+// src/pages/MachineryMarketplace.tsx
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { machineryService } from '@/lib/api/machineryService';
+import { MachinerySchema } from '@/lib/schemas/machinery.schema';
+
+export default function MachineryMarketplace() {
+  const [machinery, setMachinery] = useState<MachinerySchema[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const navigate = useNavigate();
+
+  // Fetch machinery from backend API
+  useEffect(() => {
+    fetchMachinery();
+  }, [searchTerm, filterType]);
+
+  const fetchMachinery = async () => {
+    setLoading(true);
+    try {
+      const response = await machineryService.getMachinery({
+        search: searchTerm || undefined,
+        type: filterType !== 'all' ? filterType : undefined,
+        page: 1,
+        limit: 12,
+        sortBy: 'createdAt',
+        sortOrder: 'desc'
+      });
+      if (response.success) {
+        setMachinery(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching machinery:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-4">🚜 Machinery Marketplace</h1>
+      {/* UI components render machinery data */}
+    </div>
+  );
+}
+```
+
+**Client-side API Service Layer:**
+
+```typescript
+// src/lib/api/machineryService.ts
+const API_BASE_URL = '/api';
+
+class MachineryService {
+  // Get all machinery with filters
+  async getMachinery(filters = {}) {
+    const queryParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined) {
+        queryParams.append(key, value.toString());
+      }
+    });
+    const response = await fetch(`${API_BASE_URL}/machinery?${queryParams}`);
+    return await response.json();
+  }
+
+  // Get single machinery by ID
+  async getMachineryById(id: string) {
+    const response = await fetch(`${API_BASE_URL}/machinery/${id}`);
+    return await response.json();
+  }
+
+  // Create new machinery listing
+  async createMachinery(machineryData) {
+    const response = await fetch(`${API_BASE_URL}/machinery`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(machineryData),
+    });
+    return await response.json();
+  }
+}
+
+export const machineryService = new MachineryService();
+```
+
+---
+
+**2. API LAYER (Express.js REST Endpoints)**
+
+The API layer provides RESTful endpoints that handle HTTP requests, apply business logic, and interact with the database. Below is the weather API endpoint implementation:
+
+```javascript
+// api/weather.js
+import express from 'express';
+import axios from 'axios';
+
+const router = express.Router();
+const BASE_URL = 'http://api.weatherapi.com/v1';
+
+// GET /api/weather/forecast - Get weather forecast
+router.get('/forecast', async (req, res) => {
+  try {
+    const { q, days = 7 } = req.query;
+    const apiKey = process.env.WEATHER_API;
+
+    if (!apiKey) {
+      return res.status(500).json({
+        success: false,
+        error: 'Weather API key not configured'
+      });
+    }
+
+    const response = await axios.get(`${BASE_URL}/forecast.json`, {
+      params: { key: apiKey, q, days, aqi: 'yes', alerts: 'yes' }
+    });
+
+    res.json({ success: true, data: response.data });
+  } catch (error) {
+    console.error('Error fetching weather:', error.message);
+    res.status(500).json({ success: false, error: 'Failed to fetch weather' });
+  }
+});
+
+export default router;
+```
+
+**Machinery API with Database Operations:**
+
+```javascript
+// api/machinery.js
+import express from 'express';
+import { getDatabase, collections } from '../database.js';
+import { ObjectId } from 'mongodb';
+
+const router = express.Router();
+
+// GET /api/machinery - Get all machinery with filters
+router.get('/', async (req, res) => {
+  try {
+    const db = await getDatabase();
+    const machineryCollection = db.collection(collections.machinery);
+    const { type, location, search, page = 1, limit = 12 } = req.query;
+
+    // Build filter query
+    const filter = { isActive: true };
+    if (type && type !== 'all') filter.type = type;
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const machinery = await machineryCollection
+      .find(filter)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .toArray();
+
+    const total = await machineryCollection.countDocuments(filter);
+
+    res.json({
+      success: true,
+      data: machinery,
+      pagination: { page: parseInt(page), limit: parseInt(limit), total }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch machinery' });
+  }
+});
+
+// POST /api/machinery - Create new machinery
+router.post('/', async (req, res) => {
+  const db = await getDatabase();
+  const machineryData = {
+    ...req.body,
+    rating: 0,
+    createdAt: new Date(),
+    isActive: true
+  };
+  const result = await db.collection(collections.machinery).insertOne(machineryData);
+  res.status(201).json({ success: true, data: { _id: result.insertedId } });
+});
+
+export default router;
+```
+
+---
+
+**3. SERVICE LAYER (External Services & Database)**
+
+The service layer integrates external APIs (AI, Weather) and database connections that power the application's core features. Farm Connect supports **two AI providers**: Groq LLM (primary) and Google Gemini (alternate).
+
+**Groq LLM AI Service (Primary Provider):**
+
+```typescript
+// src/lib/groq.ts
+import OpenAI from 'openai';
+
+class GroqAIService {
+  private getClient() {
+    const apiKey = localStorage.getItem('groq_api_key') || '';
+    return new OpenAI({
+      baseURL: "https://api.groq.com/openai/v1",
+      apiKey: apiKey,
+      dangerouslyAllowBrowser: true,
+    });
+  }
+
+  async analyzeCropImage(imageBase64: string): Promise<AICropAnalysis> {
+    const response = await this.getClient().chat.completions.create({
+      model: "meta-llama/llama-4-scout-17b-16e-instruct",
+      messages: [{
+        role: "user",
+        content: [
+          { type: "text", text: "Analyze this crop for diseases..." },
+          { type: "image_url", image_url: { url: imageBase64 } }
+        ]
+      }],
+      max_tokens: 1500,
+      temperature: 0.2,
+    });
+    return JSON.parse(response.choices[0]?.message?.content || '');
+  }
+
+  async getFarmingAdvice(query: string, language: string): Promise<{ response: string }> {
+    const completion = await this.getClient().chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: "You are a farming assistant for Indian farmers." },
+        { role: "user", content: query }
+      ],
+      temperature: 0.7,
+    });
+    return { response: completion.choices[0]?.message?.content?.trim() || '' };
+  }
+}
+
+export const groqAI = new GroqAIService();
+```
+
+**Google Gemini AI Service (Alternate Provider):**
+
+```typescript
+// src/lib/gemini.ts
+import { GoogleGenAI, Type } from '@google/genai';
+
+class GeminiAIService {
+  private getModel() {
+    const apiKey = localStorage.getItem('gemini_api_key') || '';
+    return new GoogleGenAI({ apiKey });
+  }
+
+  async analyzeCropImage(imageBase64: string): Promise<AICropAnalysis> {
+    const base64Data = imageBase64.replace(/^data:image\/[a-z]+;base64,/, '');
+    
+    const response = await this.getModel().models.generateContent({
+      model: 'gemini-2.0-flash-exp',
+      contents: {
+        parts: [
+          { text: 'Analyze this crop image for diseases...' },
+          { inlineData: { data: base64Data, mimeType: 'image/jpeg' } }
+        ]
+      },
+      config: {
+        responseMimeType: "application/json",
+        temperature: 0.2
+      }
+    });
+    return JSON.parse(response.text.trim());
+  }
+
+  async getFarmingAdvice(query: string, language: string): Promise<string> {
+    const result = await this.getModel().models.generateContent({
+      model: 'gemini-2.0-flash-exp',
+      contents: { parts: [{ text: `Farming advice in ${language}: ${query}` }] },
+      config: { temperature: 0.7 }
+    });
+    return result.text.trim();
+  }
+}
+
+export const geminiAI = new GeminiAIService();
+```
+
+**AI Provider Configuration (Supports Both Groq & Gemini):**
+
+```typescript
+// src/lib/ai.ts - Centralized AI provider management
+import { geminiAI, AICropAnalysis } from './gemini';
+import { groqAI } from './groq';
+
+export type ModelProvider = 'gemini' | 'groq';
+
+export interface ModelConfig {
+    diseaseDetection: ModelProvider;
+    chatbot: ModelProvider;
+}
+
+const SETTINGS_KEY = 'farm-connect-model-settings';
+
+// Get user's configured AI provider from settings
+export const getModelConfig = (): ModelConfig => {
+    const stored = localStorage.getItem(SETTINGS_KEY);
+    return stored ? JSON.parse(stored) : { diseaseDetection: 'groq', chatbot: 'groq' };
+};
+
+// Save user's AI provider preference
+export const saveModelConfig = (config: ModelConfig): void => {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(config));
+};
+
+// Centralized crop disease analysis - uses configured provider
+export const analyzeCropImage = async (imageBase64: string): Promise<AICropAnalysis> => {
+    const provider = getModelConfig().diseaseDetection;
+    return provider === 'groq' 
+        ? groqAI.analyzeCropImage(imageBase64)
+        : geminiAI.analyzeCropImage(imageBase64);
+};
+
+// Centralized farming advice - uses configured provider
+export const getFarmingAdvice = async (query: string, language: string): Promise<{ response: string }> => {
+    const provider = getModelConfig().chatbot;
+    if (provider === 'groq') {
+        return groqAI.getFarmingAdvice(query, language);
+    } else {
+        const result = await geminiAI.getFarmingAdvice(query, language);
+        return { response: result.response };
+    }
+};
+
+// Centralized AI insights - uses configured provider
+export const getAIInsights = async (prompt: string): Promise<string[]> => {
+    const provider = getModelConfig().chatbot;
+    if (provider === 'groq') {
+        const groqApiKey = localStorage.getItem('groq_api_key');
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${groqApiKey}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    { role: 'system', content: 'You are an agricultural expert.' },
+                    { role: 'user', content: prompt }
+                ],
+                temperature: 0.7,
+            }),
+        });
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content || '';
+        return content.split('\n').filter((line: string) => line.trim().length > 10);
+    } else {
+        const { getAIInsights: geminiInsights } = await import('./gemini');
+        return geminiInsights(prompt);
+    }
+};
+```
+
+**Weather Service Using Configurable AI:**
+
+```typescript
+// src/lib/weather.ts
+import { getAgriculturalInsightsAI } from './ai';
+
+// AI-powered agricultural insights using configured provider (Groq or Gemini)
+export const getAgriculturalInsights = async (weather: WeatherData): Promise<string[]> => {
+  const weatherContext = `
+    Location: ${weather.location}
+    Temperature: ${weather.temperature}°C
+    Humidity: ${weather.humidity}%
+    Wind Speed: ${weather.windSpeed} km/h
+    Precipitation: ${weather.precipitation} mm
+    Condition: ${weather.condition}
+  `;
+
+  try {
+    const insights = await getAgriculturalInsightsAI(weatherContext);
+    return Array.isArray(insights) && insights.length > 0 
+      ? insights 
+      : getBasicInsights(weather);
+  } catch (error) {
+    return getBasicInsights(weather); // Fallback on error
+  }
+};
+
+// Fallback basic insights when AI is unavailable
+const getBasicInsights = (weather: WeatherData): string[] => {
+  const insights: string[] = [];
+  
+  if (weather.temperature > 35) insights.push('🌡️ High temperature - increase irrigation');
+  if (weather.humidity > 80) insights.push('💧 High humidity - monitor for diseases');
+  if (weather.precipitation > 10) insights.push('🌧️ Heavy rain - ensure proper drainage');
+  
+  return insights.length > 0 ? insights : ['🌾 Normal farming conditions'];
+};
+```
+
+**MongoDB Database Connection:**
+
+```javascript
+// database.js
+import { MongoClient, ServerApiVersion } from 'mongodb';
+import dotenv from 'dotenv';
+
+dotenv.config();
+const uri = process.env.MONGO_URI;
+
+const client = new MongoClient(uri, {
+  serverApi: { version: ServerApiVersion.v1, strict: true }
+});
+
+let db = null;
+
+export async function connectToDatabase() {
+  if (db) return db;
+  await client.connect();
+  db = client.db("FarmConnect");
+  console.log("Successfully connected to MongoDB!");
+  return db;
+}
+
+export async function getDatabase() {
+  if (!db) await connectToDatabase();
+  return db;
+}
+
+// Collection names
+export const collections = {
+  users: 'users',
+  machinery: 'machinery',
+  bookings: 'bookings',
+  reviews: 'reviews',
+  messages: 'messages'
+};
+```
+
+**PWA Service Worker Registration:**
+
+```typescript
+// src/registerSW.ts
+export function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('SW registered:', registration);
+        
+        // Handle updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker?.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New content is available, prompt user to refresh
+              console.log('New content available, please refresh.');
+            }
+          });
+        });
+      } catch (error) {
+        console.error('SW registration failed:', error);
+      }
+    });
+  }
+}
+
+// Check if app is installed as PWA
+export function isPWAInstalled(): boolean {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         (window.navigator as any).standalone === true;
+}
+```
+
+---
 
 ### 5.4 Module Implementation Details
 
@@ -1323,24 +1816,3 @@ Finally, we thank our families and friends for their moral support and encourage
 **Department of Computer Science & Engineering**
 **Nagpur Institute of Technology**
 **2025-2026**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

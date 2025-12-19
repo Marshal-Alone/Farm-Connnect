@@ -156,56 +156,63 @@ export const getWeatherByCity = async (city: string): Promise<WeatherData> => {
   }
 };
 
-// Agricultural weather insights based on current conditions
-export const getAgriculturalInsights = (weather: WeatherData): string[] => {
+// AI-powered agricultural weather insights using configured AI provider (Groq or Gemini)
+export const getAgriculturalInsights = async (weather: WeatherData): Promise<string[]> => {
+  const { temperature, humidity, windSpeed, precipitation, condition, location } = weather;
+
+  // Build weather context for AI
+  const weatherContext = `
+    Location: ${location}
+    Temperature: ${temperature}°C
+    Humidity: ${humidity}%
+    Wind Speed: ${windSpeed} km/h
+    Precipitation: ${precipitation} mm
+    Condition: ${condition}
+  `;
+
+  try {
+    // Import dynamically to avoid circular dependency
+    const { getAgriculturalInsightsAI } = await import('./ai');
+    const insights = await getAgriculturalInsightsAI(weatherContext);
+
+    if (Array.isArray(insights) && insights.length > 0) {
+      return insights;
+    }
+
+    return getBasicInsights(weather);
+  } catch (error) {
+    console.error('Error generating AI insights:', error);
+    return getBasicInsights(weather);
+  }
+};
+
+// Fallback basic insights when AI is unavailable
+const getBasicInsights = (weather: WeatherData): string[] => {
   const insights: string[] = [];
-  const { temperature, humidity, windSpeed, precipitation, condition } = weather;
+  const { temperature, humidity, precipitation, condition } = weather;
 
-  // Temperature-based insights
   if (temperature > 35) {
-    insights.push('🌡️ High temperature alert: Consider additional irrigation and shade for crops');
-    insights.push('🚰 Increase watering frequency during early morning or evening hours');
+    insights.push('🌡️ High temperature - increase irrigation frequency');
   } else if (temperature < 10) {
-    insights.push('❄️ Low temperature warning: Protect sensitive crops from frost damage');
-    insights.push('🏠 Consider using row covers or greenhouse protection');
-  } else if (temperature >= 20 && temperature <= 30) {
-    insights.push('🌱 Optimal temperature range for most crop growth');
+    insights.push('❄️ Low temperature - protect crops from frost');
   }
 
-  // Humidity-based insights
   if (humidity > 80) {
-    insights.push('💧 High humidity detected: Monitor for fungal diseases and improve ventilation');
-    insights.push('🍄 Consider preventive fungicide applications if needed');
+    insights.push('💧 High humidity - monitor for fungal diseases');
   } else if (humidity < 40) {
-    insights.push('🏜️ Low humidity alert: Increase irrigation and consider mulching');
+    insights.push('🏜️ Low humidity - consider mulching');
   }
 
-  // Wind-based insights
-  if (windSpeed > 25) {
-    insights.push('💨 Strong winds detected: Secure young plants and check irrigation systems');
-  }
-
-  // Precipitation insights
   if (precipitation > 10) {
-    insights.push('🌧️ Heavy rainfall expected: Ensure proper drainage to prevent waterlogging');
-    insights.push('⚠️ Delay fertilizer and pesticide applications');
-  } else if (precipitation > 0) {
-    insights.push('🌦️ Light rainfall expected: Good for natural irrigation');
+    insights.push('🌧️ Heavy rain expected - ensure proper drainage');
   }
 
-  // Condition-specific insights
   const conditionLower = condition.toLowerCase();
-  if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
-    insights.push('☀️ Clear skies: Perfect conditions for field work and harvesting');
-  } else if (conditionLower.includes('cloud')) {
-    insights.push('☁️ Cloudy conditions: Good for transplanting and reducing plant stress');
-  } else if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
-    insights.push('🌧️ Rainy conditions: Avoid field operations and focus on indoor tasks');
-  } else if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
-    insights.push('⛈️ Thunderstorm warning: Avoid all outdoor farm activities for safety');
+  if (conditionLower.includes('sunny') || conditionLower.includes('clear')) {
+    insights.push('☀️ Good conditions for field work');
   }
 
-  return insights.length > 0 ? insights : ['🌾 Weather conditions are suitable for normal farming activities'];
+  return insights.length > 0 ? insights : ['🌾 Normal farming conditions'];
 };
 
 // Mock data fallback for development/testing

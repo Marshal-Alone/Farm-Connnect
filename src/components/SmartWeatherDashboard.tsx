@@ -26,7 +26,7 @@ import {
   Search,
   Leaf
 } from 'lucide-react';
-import { getAIInsights } from '@/lib/gemini';
+import { getAIInsights } from '@/lib/ai';
 import { useToast } from '@/hooks/use-toast';
 import {
   getCurrentWeather,
@@ -50,6 +50,8 @@ export default function SmartWeatherDashboard() {
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [aiInsights, setAiInsights] = useState<string[]>([]);
+  const [agricultureInsights, setAgricultureInsights] = useState<string[]>([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
   const [alerts, setAlerts] = useState<FarmingAlert[]>([]);
   const [location, setLocation] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -60,12 +62,28 @@ export default function SmartWeatherDashboard() {
     loadWeatherData();
   }, []);
 
-  // Update alerts when weather data changes
+  // Update alerts and load AI insights when weather data changes
   useEffect(() => {
     if (weatherData) {
       generateFarmingAlerts();
+      loadAgricultureInsights();
     }
   }, [weatherData]);
+
+  // Load AI-powered agricultural insights
+  const loadAgricultureInsights = async () => {
+    if (!weatherData) return;
+    setInsightsLoading(true);
+    try {
+      const insights = await getAgriculturalInsights(weatherData);
+      setAgricultureInsights(insights);
+    } catch (error) {
+      console.error('Error loading agricultural insights:', error);
+      setAgricultureInsights(['🌾 Normal farming conditions']);
+    } finally {
+      setInsightsLoading(false);
+    }
+  };
 
   const loadWeatherData = async () => {
     setWeatherLoading(true);
@@ -424,11 +442,18 @@ export default function SmartWeatherDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {getAgriculturalInsights(weatherData).map((insight, index) => (
-              <Alert key={index}>
-                <AlertDescription>{insight}</AlertDescription>
-              </Alert>
-            ))}
+            {insightsLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-primary mr-2" />
+                <span className="text-sm text-muted-foreground">Generating AI insights...</span>
+              </div>
+            ) : (
+              agricultureInsights.map((insight, index) => (
+                <Alert key={index}>
+                  <AlertDescription>{insight}</AlertDescription>
+                </Alert>
+              ))
+            )}
           </CardContent>
         </Card>
 
