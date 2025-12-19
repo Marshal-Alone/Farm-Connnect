@@ -153,8 +153,10 @@ class GeminiAIService {
         Respond with the JSON schema provided.`,
       };
 
+      console.log(`🔬 [Gemini] Disease Detection using model: gemini-2.5-flash`);
+
       const response = await this.getModel().models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: 'gemini-2.5-flash', // Vision-capable model with higher free tier limits
         contents: { parts: [textPart, imagePart] },
         config: {
           responseMimeType: "application/json",
@@ -229,8 +231,10 @@ class GeminiAIService {
         Focus on immediate actionable steps.
       `;
 
+      console.log(`💬 [Gemini] Farming Advice using model: gemini-2.5-flash-lite`);
+
       const result = await this.getModel().models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: 'gemini-2.5-flash-lite', // Text-only model with 10x higher free tier limits
         contents: { parts: [{ text: prompt }] },
         config: {
           temperature: 0.7,
@@ -292,7 +296,7 @@ class GeminiAIService {
       `;
 
       const result = await this.getModel().models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: 'gemini-2.5-flash-lite', // Text-only model with higher free tier limits
         contents: { parts: [{ text: prompt }] },
         config: {
           temperature: 0.7,
@@ -317,7 +321,7 @@ class GeminiAIService {
       `;
 
       const result = await this.getModel().models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: 'gemini-2.5-flash-lite', // Text-only model with higher free tier limits
         contents: { parts: [{ text: prompt }] },
         config: {
           temperature: 0.7,
@@ -340,7 +344,7 @@ export const getAIInsights = async (prompt: string): Promise<string[]> => {
   try {
     const ai = new GoogleGenAI({ apiKey: getAPIKey() });
     const result = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash-lite', // Text-only model with higher free tier limits
       contents: { parts: [{ text: prompt }] },
       config: {
         temperature: 0.7,

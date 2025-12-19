@@ -4,48 +4,71 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI API Key Tester (Groq & Gemini)</title>
+    <title>AI API Key Tester (Updated Dec 2025)</title>
     <style>
         body {
-            font-family: system-ui, sans-serif;
-            max-width: 600px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
             margin: 40px auto;
             padding: 20px;
-            background: #f4f6f9;
+            background: #f0f2f5;
             color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
         }
 
         h1 {
             text-align: center;
-            color: #10a37f;
+            color: #1a73e8;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
         }
 
         label {
             display: block;
-            margin-top: 20px;
-            font-weight: bold;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #444;
         }
 
         .provider-group {
             display: flex;
-            gap: 20px;
-            margin-top: 10px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
+            gap: 10px;
+            margin-top: 5px;
         }
 
         .provider-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             cursor: pointer;
+            transition: 0.2s;
         }
 
-        input[type="radio"] {
-            width: auto;
-            margin: 0;
+        .provider-option:has(input:checked) {
+            border-color: #1a73e8;
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+
+        .provider-option input {
+            display: none;
         }
 
         input[type="text"],
@@ -56,319 +79,322 @@
             padding: 12px;
             margin-top: 8px;
             border-radius: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             font-size: 16px;
             box-sizing: border-box;
         }
 
         button {
-            background: #10a37f;
+            background: #1a73e8;
             color: white;
             border: none;
             cursor: pointer;
-            margin-top: 20px;
             font-weight: bold;
+            margin-top: 20px;
+            transition: 0.3s;
         }
 
         button:hover {
-            background: #0e8a6d;
+            background: #1557b0;
         }
 
         button:disabled {
-            background: #999;
+            background: #ccc;
             cursor: not-allowed;
         }
 
-        .result,
-        .sucessDiv {
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 5px;
+            text-transform: uppercase;
+        }
+
+        .badge-vision {
+            background: #e1f5fe;
+            color: #01579b;
+        }
+
+        .badge-new {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-lite {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .image-section {
+            display: none;
+            background: #f8f9fa;
+            border: 2px dashed #cbd5e0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
             text-align: center;
-            word-break: break-word;
+        }
+
+        .image-section.active {
+            display: block;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            max-height: 250px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+            border: 1px solid #ddd;
+        }
+
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.95rem;
         }
 
         .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            display: block;
+            background: #e6fffa;
+            border: 1px solid #b2f5ea;
+            color: #234e52;
         }
 
         .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            display: block;
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            color: #822727;
         }
 
         .loading {
-            background: #fff3cd;
-            color: #856404;
+            display: block;
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+            color: #2a4365;
+        }
+
+        .debug-panel {
+            font-family: monospace;
+            font-size: 12px;
+            background: #2d3748;
+            color: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            display: none;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>AI API Key Tester</h1>
-    <p style="text-align:center">Test your Groq or Gemini API key instantly (native fetch)</p>
+    <h1>AI Model Doctor</h1>
+    <p class="subtitle">Check which Gemini/Groq models are working for your region & key</p>
 
-    <label>Select Provider</label>
-    <div class="provider-group">
-        <label class="provider-option">
-            <input type="radio" name="provider" value="groq" checked> Groq
-        </label>
-        <label class="provider-option">
-            <input type="radio" name="provider" value="gemini"> Gemini
-        </label>
+    <div class="card">
+        <label>1. Select Provider</label>
+        <div class="provider-group">
+            <label class="provider-option"><input type="radio" name="provider" value="groq" checked> Groq</label>
+            <label class="provider-option"><input type="radio" name="provider" value="gemini"> Gemini</label>
+        </div>
+
+        <label for="apiKey">2. API Key</label>
+        <input type="password" id="apiKey" placeholder="Enter key..." />
+
+        <div id="geminiConfig" style="display:none;">
+            <label for="apiVersion">API Version</label>
+            <select id="apiVersion">
+                <option value="v1beta">v1beta (Newest/Preview Models)</option>
+                <option value="v1">v1 (Stable/Legacy Models)</option>
+            </select>
+        </div>
+
+        <button id="loadModelsBtn">🔄 Fetch Available Models</button>
+
+        <label for="model">3. Working Models</label>
+        <select id="model" disabled>
+            <option>Fetch models first...</option>
+        </select>
+
+        <div id="imageSection" class="image-section">
+            <p><strong>Vision Test:</strong> Upload crop/leaf image</p>
+            <input type="file" id="imageInput" accept="image/*" />
+            <img id="imagePreview" alt="Preview" />
+        </div>
+
+        <label for="prompt">4. Test Prompt</label>
+        <input type="text" id="prompt" value="Identify this plant and check for disease." />
+
+        <button id="testBtn" disabled>🚀 Run Capability Test</button>
     </div>
 
-    <label for="apiKey" id="apiKeyLabel">Groq API Key (starts with gsk_)</label>
-    <input type="password" id="apiKey" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
-
-    <label for="prompt">Prompt</label>
-    <input type="text" id="prompt" placeholder="Enter your prompt here" />
-
-    <label for="model">Model</label>
-    <select id="model" disabled>
-        <option>Enter a key first</option>
-    </select>
-
-    <button id="testBtn" disabled>Test API Key</button>
-
-    <br><br>
-    <div id="sucess" class="sucess successDiv"></div>
-    <div id="result" class="result"></div>
-
+    <div id="statusBox" class="status-box"></div>
+    <div id="debugPanel" class="debug-panel"></div>
 
     <script>
-        const GROQ_API_BASE = 'https://api.groq.com/openai/v1';
-        const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+        const state = {
+            provider: 'groq',
+            models: [],
+            imageData: null,
+            imageMime: null
+        };
 
-        const apiKeyInput = document.getElementById('apiKey');
-        const apiKeyLabel = document.getElementById('apiKeyLabel');
-        const promptInput = document.getElementById('prompt');
-        const modelSelect = document.getElementById('model');
-        const testBtn = document.getElementById('testBtn');
-        const resultDiv = document.getElementById('result');
-        const sucessDiv = document.getElementById('sucess');
-        const providerRadios = document.getElementsByName('provider');
+        const els = {
+            apiKey: document.getElementById('apiKey'),
+            provider: document.getElementsByName('provider'),
+            loadModelsBtn: document.getElementById('loadModelsBtn'),
+            modelSelect: document.getElementById('model'),
+            testBtn: document.getElementById('testBtn'),
+            status: document.getElementById('statusBox'),
+            debug: document.getElementById('debugPanel'),
+            imgSection: document.getElementById('imageSection'),
+            imgInput: document.getElementById('imageInput'),
+            imgPreview: document.getElementById('imagePreview'),
+            apiVersion: document.getElementById('apiVersion'),
+            geminiConfig: document.getElementById('geminiConfig')
+        };
 
-        let currentProvider = 'groq';
+        // UI Logic
+        els.provider.forEach(r => r.addEventListener('change', (e) => {
+            state.provider = e.target.value;
+            els.geminiConfig.style.display = state.provider === 'gemini' ? 'block' : 'none';
+            els.imgSection.style.display = state.provider === 'gemini' ? 'block' : 'none';
+            els.apiKey.placeholder = state.provider === 'groq' ? 'gsk_...' : 'AIza...';
+            resetUI();
+        }));
 
-        // Initialize
-        function init() {
-            // Restore provider selection
-            const savedProvider = localStorage.getItem('ai_test_provider');
-            if (savedProvider && ['groq', 'gemini'].includes(savedProvider)) {
-                currentProvider = savedProvider;
-                document.querySelector(`input[name="provider"][value="${currentProvider}"]`).checked = true;
-            }
+        els.imgInput.onchange = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (f) => {
+                state.imageData = f.target.result.split(',')[1];
+                state.imageMime = file.type;
+                els.imgPreview.src = f.target.result;
+                els.imgPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        };
 
-            updateUIForProvider();
-            loadSavedKey();
-
-            // Event Listeners
-            providerRadios.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    currentProvider = e.target.value;
-                    localStorage.setItem('ai_test_provider', currentProvider);
-                    updateUIForProvider();
-                    loadSavedKey();
-                    updateTestButton();
-                    clearResults();
-                });
-            });
-
-            apiKeyInput.addEventListener('input', () => {
-                const val = apiKeyInput.value.trim();
-                if (val) {
-                    localStorage.setItem(`${currentProvider}_test_key`, val);
-                    loadModels();
-                } else {
-                    localStorage.removeItem(`${currentProvider}_test_key`);
-                }
-                updateTestButton();
-            });
-
-            testBtn.addEventListener('click', runTest);
+        function showStatus(msg, type) {
+            els.status.innerHTML = msg;
+            els.status.className = `status-box ${type}`;
+            els.status.style.display = 'block';
         }
 
-        function updateUIForProvider() {
-            if (currentProvider === 'groq') {
-                apiKeyLabel.textContent = 'Groq API Key (starts with gsk_)';
-                apiKeyInput.placeholder = 'gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-            } else {
-                apiKeyLabel.textContent = 'Gemini API Key (starts with AIza...)';
-                apiKeyInput.placeholder = 'AIzaSy...';
-            }
+        function resetUI() {
+            els.modelSelect.disabled = true;
+            els.modelSelect.innerHTML = '<option>Fetch models first...</option>';
+            els.testBtn.disabled = true;
+            els.status.style.display = 'none';
+            els.debug.style.display = 'none';
         }
 
-        function loadSavedKey() {
-            const savedKey = localStorage.getItem(`${currentProvider}_test_key`);
-            apiKeyInput.value = savedKey || '';
-            if (savedKey) {
-                loadModels();
-            } else {
-                modelSelect.innerHTML = '<option>Enter a key first</option>';
-                modelSelect.disabled = true;
-            }
-            updateTestButton();
-        }
+        // Fetch Logic
+        els.loadModelsBtn.onclick = async () => {
+            const key = els.apiKey.value.trim();
+            if (!key) return showStatus("Please enter an API Key", "error");
 
-        function clearResults() {
-            sucessDiv.innerHTML = '';
-            sucessDiv.className = 'sucess successDiv';
-            resultDiv.innerHTML = '';
-            resultDiv.className = 'result';
-        }
-
-        function updateTestButton() {
-            const key = apiKeyInput.value.trim();
-            let isValid = false;
-            if (currentProvider === 'groq') {
-                isValid = key.startsWith('gsk_');
-            } else {
-                isValid = key.length > 10; // Basic check for Gemini
-            }
-            testBtn.disabled = !isValid;
-            testBtn.textContent = isValid ? 'Test API Key' : 'Enter a valid key first';
-        }
-
-        async function loadModels() {
-            const key = apiKeyInput.value.trim();
-            if (!key) return;
-
-            modelSelect.disabled = true;
-            modelSelect.innerHTML = '<option>Loading models...</option>';
+            showStatus("Fetching models list...", "loading");
+            resetUI();
 
             try {
                 let models = [];
-                if (currentProvider === 'groq') {
-                    const response = await fetch(`${GROQ_API_BASE}/models`, {
+                if (state.provider === 'groq') {
+                    const res = await fetch('https://api.groq.com/openai/v1/models', {
                         headers: { 'Authorization': `Bearer ${key}` }
                     });
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const data = await response.json();
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error?.message || "Failed to fetch");
                     models = data.data.map(m => ({ id: m.id, name: m.id }));
                 } else {
-                    const response = await fetch(`${GEMINI_API_BASE}/models?key=${key}`);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const data = await response.json();
-                    // Filter for generateContent supported models
-                    models = (data.models || [])
-                        .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+                    const version = els.apiVersion.value;
+                    const res = await fetch(`https://generativelanguage.googleapis.com/${version}/models?key=${key}`);
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error?.message || "Check your Gemini Key");
+
+                    models = data.models
+                        .filter(m => m.supportedGenerationMethods.includes('generateContent'))
                         .map(m => {
-                            const id = m.name.replace('models/', '');
-                            return { id: id, name: m.displayName || id };
+                            const id = m.name.split('/')[1];
+                            let tags = '';
+                            if (id.includes('vision') || id.includes('flash') || id.includes('pro')) tags += '<span class="badge badge-vision">Vision</span>';
+                            if (id.includes('3-') || id.includes('2.5')) tags += '<span class="badge badge-new">Newest</span>';
+                            if (id.includes('lite')) tags += '<span class="badge badge-lite">Lite</span>';
+                            return { id, name: id, tags };
                         });
                 }
 
-                modelSelect.innerHTML = '';
-                if (models.length === 0) {
-                    modelSelect.innerHTML = '<option>No compatible models found</option>';
-                } else {
-                    models.forEach(m => {
-                        const opt = document.createElement('option');
-                        opt.value = m.id;
-                        opt.textContent = m.name;
-                        modelSelect.appendChild(opt);
-                    });
-                    modelSelect.disabled = false;
-                    showResult('Models loaded successfully!', 'success');
-                }
+                els.modelSelect.innerHTML = models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+                // Note: displaying tags in HTML select options is limited, we show them in the status instead
+                els.modelSelect.disabled = false;
+                els.testBtn.disabled = false;
+                showStatus(`Successfully loaded ${models.length} models. Select one to test.`, "success");
             } catch (err) {
-                console.error(err);
-                modelSelect.innerHTML = '<option>Failed to load models</option>';
-                showResult(`Error loading models: ${err.message}`, 'error');
+                showStatus(err.message, "error");
             }
-        }
+        };
 
-        async function runTest() {
-            const key = apiKeyInput.value.trim();
-            const model = modelSelect.value;
-            const prompt = promptInput.value || 'Hello, are you working?';
+        // Test Logic
+        els.testBtn.onclick = async () => {
+            const key = els.apiKey.value.trim();
+            const model = els.modelSelect.value;
+            const prompt = document.getElementById('prompt').value;
+            const version = els.apiVersion.value;
 
-            if (!model || model.includes('Enter a key')) {
-                showResult('Please wait for models to load or enter a valid key.', 'error');
-                return;
-            }
-
-            showResult('Testing your key...', 'loading');
-            testBtn.disabled = true;
+            showStatus(`Testing ${model}...`, "loading");
+            els.debug.style.display = 'none';
 
             try {
-                let responseText = '';
-
-                if (currentProvider === 'groq') {
-                    const response = await fetch(`${GROQ_API_BASE}/chat/completions`, {
+                let res, data;
+                if (state.provider === 'groq') {
+                    res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${key}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            messages: [{ role: 'user', content: prompt }],
-                            model: model,
-                            max_tokens: 50,
-                        }),
+                        headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 100 })
                     });
-
-                    if (!response.ok) {
-                        const err = await response.json().catch(() => ({}));
-                        throw new Error(err.error?.message || response.statusText);
-                    }
-
-                    const data = await response.json();
-                    responseText = data.choices[0]?.message?.content || 'No response';
-
+                    data = await res.json();
                 } else {
-                    // Gemini
-                    const response = await fetch(`${GEMINI_API_BASE}/models/${model}:generateContent?key=${key}`, {
+                    const body = {
+                        contents: [{
+                            parts: [
+                                ...(state.imageData ? [{ inline_data: { mime_type: state.imageMime, data: state.imageData } }] : []),
+                                { text: prompt }
+                            ]
+                        }]
+                    };
+                    res = await fetch(`https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${key}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
-                        }),
+                        body: JSON.stringify(body)
                     });
-
-                    if (!response.ok) {
-                        const err = await response.json().catch(() => ({}));
-                        throw new Error(err.error?.message || response.statusText);
-                    }
-
-                    const data = await response.json();
-                    responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response';
+                    data = await res.json();
                 }
 
-                showSuccess(`Success! Key is valid for ${currentProvider} model "${model}"`, 'success');
-                showResult(`Response: "${responseText}"`, 'success');
+                if (!res.ok) {
+                    let errorMsg = data.error?.message || "Unknown Error";
+                    if (res.status === 404) errorMsg += " (TIP: Try using 'v1beta' version or adding '-preview' to model name)";
+                    throw new Error(errorMsg);
+                }
 
-            } catch (error) {
-                console.error(error);
-                showResult(`Test failed: ${error.message}`, 'error');
-            } finally {
-                testBtn.disabled = false;
+                const responseText = state.provider === 'groq' ? data.choices[0].message.content : data.candidates[0].content.parts[0].text;
+                showStatus(`<strong>Model Workable!</strong><br><br>${responseText}`, "success");
+                els.debug.innerHTML = JSON.stringify(data, null, 2);
+                els.debug.style.display = 'block';
+
+            } catch (err) {
+                showStatus(`❌ ${err.message}`, "error");
             }
-        }
-
-        function showSuccess(html, type) {
-            sucessDiv.className = `sucess ${type}`;
-            sucessDiv.innerHTML = html;
-        }
-        function showResult(html, type) {
-            resultDiv.className = `result ${type}`;
-            resultDiv.innerHTML = html;
-        }
-
-        // Start
-        init();
+        };
     </script>
-
 </body>
 
 </html>
