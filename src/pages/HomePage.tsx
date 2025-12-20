@@ -11,7 +11,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <HeroSection />
       <QuickActions />
-      
+
       {/* Voice Interface Section */}
       <section className="py-16 bg-muted/30">
         <div className="container">
@@ -28,7 +28,7 @@ export default function HomePage() {
       </section>
 
       <AIInsights />
-      
+
       {/* Advanced Analytics Section */}
       <section className="py-16 bg-background">
         <div className="container">

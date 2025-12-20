@@ -1296,10 +1296,9 @@ export function isPWAInstalled(): boolean {
 | Temperature | Current temperature | Crop stress indicators |
 | Humidity | Relative humidity level | Disease risk assessment |
 | Wind Speed | km/h | Spraying conditions |
-| Precipitation | Rainfall amount (mm) | Irrigation planning |
-| Pressure | Atmospheric pressure (hPa) | Weather pattern prediction |
 | Visibility | Distance visibility (km) | Fieldwork conditions |
 | UV Index | Solar radiation level | Crop protection timing |
+| Sunrise/Sunset | Daily sun times | Field work planning |
 
 #### 5.4.3 Machinery Marketplace Module
 
@@ -1385,71 +1384,83 @@ export function isPWAInstalled(): boolean {
 **Users Collection:**
 ```javascript
 {
-  _id: ObjectId,
-  name: String,
-  email: String,
-  phone: String,
-  password: String (hashed),
-  location: String,
-  language: String,              // Added: hi, mr, en, ml, pa
-  farmSize: Number,
-  crops: [String],
-  createdAt: Date,
-  updatedAt: Date
+  _id: ObjectId,                 // Unique identifier
+  name: String,                  // Full name of user
+  email: String,                 // Email address (unique)
+  phone: String,                 // Phone number
+  password: String,              // Hashed with bcrypt
+  location: String,              // User's location/city
+  language: String,              // Preferred language: hi, mr, en, ml, pa
+  farmSize: Number,              // Farm size in acres
+  crops: [String],               // Crops grown by farmer
+  createdAt: Date,               // Account creation timestamp
+  updatedAt: Date                // Last profile update
 }
 ```
 
 **Machinery Collection:**
 ```javascript
 {
-  _id: ObjectId,
-  ownerId: String,
-  ownerName: String,
-  name: String,
-  type: String,                  // tractor, harvester, rotavator, etc.
-  description: String,
-  pricePerDay: Number,
+  _id: ObjectId,                 // Unique identifier
+  ownerId: String,               // Reference to owner user
+  ownerName: String,             // Owner's display name
+  name: String,                  // Equipment name (e.g., "John Deere 5050D")
+  type: String,                  // Category: tractor, harvester, rotavator, etc.
+  description: String,           // Detailed equipment description
+  pricePerDay: Number,           // Daily rental rate in INR
   location: {
-    address: String,
-    city: String,
-    state: String,
-    pincode: String
+    address: String,             // Street address
+    city: String,                // City name
+    state: String,               // State name
+    pincode: String              // PIN code for location filtering
   },
-  images: [String],
-  features: [String],
-  specifications: [{ key: String, value: String }],
-  available: Boolean,
-  rating: Number,
-  totalReviews: Number,
-  bookedDates: [{ startDate: Date, endDate: Date, bookingId: String }],
-  createdAt: Date,
-  updatedAt: Date,
-  isActive: Boolean
+  images: [String],              // Array of image URLs
+  features: [String],            // Equipment features list
+  specifications: [{ key: String, value: String }],  // Technical specs
+  available: Boolean,            // Current availability status
+  rating: Number,                // Average rating (0-5)
+  totalReviews: Number,          // Count of reviews
+  bookedDates: [{                // Periods when machinery is booked
+    startDate: Date,
+    endDate: Date,
+    bookingId: String
+  }],
+  createdAt: Date,               // Record creation timestamp
+  updatedAt: Date,               // Last modification timestamp
+  isActive: Boolean              // Soft delete flag
 }
 ```
 
 **Bookings Collection:**
 ```javascript
 {
-  _id: ObjectId,
+  _id: ObjectId,                 // Unique identifier
   bookingNumber: String,         // Unique reference (e.g., BK-xxx)
-  machineryId: String,
-  machineryName: String,
-  ownerId: String,
-  ownerName: String,
-  renterId: String,              // Previously: farmerId
-  renterName: String,
-  renterPhone: String,
-  startDate: Date,
-  endDate: Date,
-  totalDays: Number,
-  pricePerDay: Number,
-  totalAmount: Number,
-  finalAmount: Number,
-  status: "pending" | "confirmed" | "in-progress" | "completed" | "cancelled",
-  paymentStatus: "pending" | "paid" | "refunded",
-  createdAt: Date,
-  updatedAt: Date
+  machineryId: String,           // Reference to machinery
+  machineryName: String,         // Machinery name (denormalized)
+  ownerId: String,               // Machinery owner ID
+  ownerName: String,             // Owner name (denormalized)
+  renterId: String,              // Farmer who rents
+  renterName: String,            // Renter name (denormalized)
+  renterPhone: String,           // Contact number for renter
+  startDate: Date,               // Rental start date
+  endDate: Date,                 // Rental end date
+  totalDays: Number,             // Duration in days
+  pricePerDay: Number,           // Daily rate at booking time
+  totalAmount: Number,           // Base amount (days × rate)
+  deliveryRequired: Boolean,     // Whether delivery is requested
+  deliveryAddress: String,       // Delivery location
+  deliveryCharge: Number,        // Calculated delivery cost
+  securityDeposit: Number,       // From machinery record
+  discount: Number,              // Applied discount (if any)
+  finalAmount: Number,           // Total after all charges/discounts
+  purpose: String,               // Booking purpose/notes
+  specialRequirements: String,   // Any special handling requests
+  paymentMode: String,           // Payment method: demo, razorpay, cash
+  status: String,                // pending | confirmed | rejected | in-progress | completed | cancelled | refunded
+  paymentStatus: String,         // pending | paid | failed | refunded | partial
+  createdAt: Date,               // Booking creation timestamp
+  updatedAt: Date                // Last modification timestamp
 }
 ```
 
