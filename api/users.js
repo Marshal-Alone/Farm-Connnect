@@ -23,6 +23,7 @@ function generateToken(user) {
 
 // POST /api/auth/register - Register new user
 router.post('/register', async (req, res) => {
+    console.log('📋 [POST /api/auth/register] Request received', { email: req.body.email, name: req.body.name, timestamp: new Date().toISOString() });
     try {
         const {
             name,
@@ -84,6 +85,7 @@ router.post('/register', async (req, res) => {
         // Remove password from response
         delete user.password;
 
+        console.log('✅ [POST /api/auth/register] Success', { userId: user._id, email: user.email, timestamp: new Date().toISOString() });
         res.status(201).json({
             success: true,
             data: {
@@ -93,6 +95,7 @@ router.post('/register', async (req, res) => {
         });
     } catch (error) {
         console.error('Error registering user:', error);
+        console.error('❌ [POST /api/auth/register] Failed', { error: error.message, timestamp: new Date().toISOString() });
         res.status(500).json({
             success: false,
             error: 'Failed to register user'
@@ -102,6 +105,7 @@ router.post('/register', async (req, res) => {
 
 // POST /api/auth/login - Login user
 router.post('/login', async (req, res) => {
+    console.log('📋 [POST /api/auth/login] Request received', { identifier: req.body.identifier, timestamp: new Date().toISOString() });
     try {
         const { identifier, password } = req.body; // identifier can be email or phone
 
@@ -142,7 +146,7 @@ router.post('/login', async (req, res) => {
 
         // Remove password from response
         delete user.password;
-
+        console.log('✅ [POST /api/auth/login] Success', { userId: user._id, email: user.email, timestamp: new Date().toISOString() });
         res.json({
             success: true,
             data: {
@@ -151,6 +155,8 @@ router.post('/login', async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Error logging in user:', error);
+        console.error('❌ [POST /api/auth/login] Failed', { error: error.message, timestamp: new Date().toISOString() });
         console.error('Error logging in:', error);
         res.status(500).json({
             success: false,

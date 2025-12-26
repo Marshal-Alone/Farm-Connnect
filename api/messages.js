@@ -12,6 +12,7 @@ function generateConversationId(userId1, userId2) {
 
 // POST /api/messages - Send a message
 router.post('/', async (req, res) => {
+    console.log('📋 [POST /api/messages] Request received', { senderId: req.body.senderId, receiverId: req.body.receiverId, messageType: req.body.messageType || 'text', timestamp: new Date().toISOString() });
     try {
         const db = await getDatabase();
         const messagesCollection = db.collection(collections.messages);
@@ -105,6 +106,7 @@ router.post('/', async (req, res) => {
             });
         }
 
+        console.log('✅ [POST /api/messages] Success', { messageId: result.insertedId, conversationId: conversationId, senderId: req.body.senderId, receiverId: req.body.receiverId, timestamp: new Date().toISOString() });
         res.status(201).json({
             success: true,
             data: {
@@ -114,6 +116,7 @@ router.post('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Error sending message:', error);
+        console.error('❌ [POST /api/messages] Failed', { error: error.message, timestamp: new Date().toISOString() });
         res.status(500).json({ success: false, error: 'Failed to send message' });
     }
 });

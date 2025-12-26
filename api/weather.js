@@ -6,6 +6,7 @@ const BASE_URL = 'http://api.weatherapi.com/v1';
 
 // GET /api/weather/forecast - Get forecast (includes current weather)
 router.get('/forecast', async (req, res) => {
+    console.log('📋 [GET /api/weather/forecast] Request received', { location: req.query.q, days: req.query.days || 7, timestamp: new Date().toISOString() });
     try {
         const { q, days = 7 } = req.query; // Default to 7 days for 5-day forecast display
         const apiKey = process.env.WEATHER_API;
@@ -34,12 +35,14 @@ router.get('/forecast', async (req, res) => {
             }
         });
 
+        console.log('✅ [GET /api/weather/forecast] Success', { location: q, days: days || 7, timestamp: new Date().toISOString() });
         res.json({
             success: true,
             data: response.data
         });
     } catch (error) {
         console.error('Error fetching weather data:', error.message);
+        console.error('❌ [GET /api/weather/forecast] Failed', { location: req.query.q, error: error.message, timestamp: new Date().toISOString() });
         if (error.response) {
             res.status(error.response.status).json({
                 success: false,

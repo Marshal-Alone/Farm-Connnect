@@ -6,6 +6,7 @@ const router = express.Router();
 
 // GET /api/machinery - Get all machinery with filters
 router.get('/', async (req, res) => {
+    console.log('📋 [GET /api/machinery] Request received', { filters: req.query, timestamp: new Date().toISOString() });
     try {
         const db = await getDatabase();
         const machineryCollection = db.collection(collections.machinery);
@@ -75,6 +76,7 @@ router.get('/', async (req, res) => {
         // Get total count for pagination
         const total = await machineryCollection.countDocuments(filter);
 
+        console.log('✅ [GET /api/machinery] Success', { returned: machinery.length, total, page: parseInt(page), timestamp: new Date().toISOString() });
         res.json({
             success: true,
             data: machinery,
@@ -87,12 +89,14 @@ router.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching machinery:', error);
+        console.error('❌ [GET /api/machinery] Failed', { error: error.message, timestamp: new Date().toISOString() });
         res.status(500).json({ success: false, error: 'Failed to fetch machinery' });
     }
 });
 
 // GET /api/machinery/nearby - Get nearby machinery based on coordinates
 router.get('/nearby', async (req, res) => {
+    console.log('📋 [GET /api/machinery/nearby] Request received', { latitude: req.query.latitude, longitude: req.query.longitude, radius: req.query.radius, timestamp: new Date().toISOString() });
     try {
         const { latitude, longitude, radius = 50 } = req.query;
 
@@ -156,6 +160,7 @@ router.get('/:id', async (req, res) => {
             { $inc: { views: 1 } }
         );
 
+        console.log('✅ [GET /api/machinery/:id] Success', { machineryId: id, name: machinery.name, timestamp: new Date().toISOString() });
         res.json({
             success: true,
             data: machinery
@@ -168,6 +173,7 @@ router.get('/:id', async (req, res) => {
 
 // POST /api/machinery - Create new machinery (owner only)
 router.post('/', async (req, res) => {
+    console.log('📋 [POST /api/machinery] Request received', { ownerId: req.body.ownerId, name: req.body.name, type: req.body.type, timestamp: new Date().toISOString() });
     try {
         const db = await getDatabase();
         const machineryCollection = db.collection(collections.machinery);
@@ -186,6 +192,7 @@ router.post('/', async (req, res) => {
 
         const result = await machineryCollection.insertOne(machineryData);
 
+        console.log('✅ [POST /api/machinery] Success', { machineryId: result.insertedId, name: machineryData.name, pricePerDay: machineryData.pricePerDay, timestamp: new Date().toISOString() });
         res.status(201).json({
             success: true,
             data: {
@@ -195,12 +202,14 @@ router.post('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating machinery:', error);
+        console.error('❌ [POST /api/machinery] Failed', { error: error.message, timestamp: new Date().toISOString() });
         res.status(500).json({ success: false, error: 'Failed to create machinery' });
     }
 });
 
 // PUT /api/machinery/:id - Update machinery (owner only)
 router.put('/:id', async (req, res) => {
+    console.log('📋 [PUT /api/machinery/:id] Request received', { machineryId: req.params.id, updates: Object.keys(req.body), timestamp: new Date().toISOString() });
     try {
         const { id } = req.params;
         const db = await getDatabase();
@@ -231,18 +240,21 @@ router.put('/:id', async (req, res) => {
             });
         }
 
+        console.log('✅ [PUT /api/machinery/:id] Success', { machineryId: id, modifiedCount: result.modifiedCount, timestamp: new Date().toISOString() });
         res.json({
             success: true,
             message: 'Machinery updated successfully'
         });
     } catch (error) {
         console.error('Error updating machinery:', error);
+        console.error('❌ [PUT /api/machinery/:id] Failed', { machineryId: req.params.id, error: error.message, timestamp: new Date().toISOString() });
         res.status(500).json({ success: false, error: 'Failed to update machinery' });
     }
 });
 
 // DELETE /api/machinery/:id - Delete machinery (soft delete)
 router.delete('/:id', async (req, res) => {
+    console.log('📋 [DELETE /api/machinery/:id] Request received', { machineryId: req.params.id, timestamp: new Date().toISOString() });
     try {
         const { id } = req.params;
         const db = await getDatabase();
@@ -265,12 +277,14 @@ router.delete('/:id', async (req, res) => {
             });
         }
 
+        console.log('✅ [DELETE /api/machinery/:id] Success', { machineryId: id, modifiedCount: result.modifiedCount, timestamp: new Date().toISOString() });
         res.json({
             success: true,
             message: 'Machinery deleted successfully'
         });
     } catch (error) {
         console.error('Error deleting machinery:', error);
+        console.error('❌ [DELETE /api/machinery/:id] Failed', { machineryId: req.params.id, error: error.message, timestamp: new Date().toISOString() });
         res.status(500).json({ success: false, error: 'Failed to delete machinery' });
     }
 });

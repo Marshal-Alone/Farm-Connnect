@@ -6,6 +6,7 @@ const router = express.Router();
 
 // POST /api/reviews - Submit a review
 router.post('/', async (req, res) => {
+    console.log('📋 [POST /api/reviews] Request received', { machineryId: req.body.machineryId, reviewerId: req.body.reviewerId, rating: req.body.overallRating, timestamp: new Date().toISOString() });
     try {
         const db = await getDatabase();
         const reviewsCollection = db.collection(collections.reviews);

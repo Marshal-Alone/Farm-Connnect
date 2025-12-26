@@ -22,6 +22,7 @@ function calculateDays(startDate, endDate) {
 
 // POST /api/bookings - Create new booking
 router.post('/', async (req, res) => {
+    console.log('📋 [POST /api/bookings] Request received', { machineryId: req.body.machineryId, renterId: req.body.renterId, startDate: req.body.startDate, endDate: req.body.endDate, timestamp: new Date().toISOString() });
     try {
         const db = await getDatabase();
         const bookingsCollection = db.collection(collections.bookings);
@@ -151,6 +152,7 @@ router.post('/', async (req, res) => {
             }
         );
 
+        console.log('✅ [POST /api/bookings] Success', { bookingId: result.insertedId, bookingNumber: bookingData.bookingNumber, machineryId: machineryId, finalAmount: bookingData.finalAmount, timestamp: new Date().toISOString() });
         res.status(201).json({
             success: true,
             data: {
@@ -284,6 +286,7 @@ router.get('/:id', async (req, res) => {
 
 // PUT /api/bookings/:id/status - Update booking status
 router.put('/:id/status', async (req, res) => {
+    console.log('📋 [PUT /api/bookings/:id/status] Request received', { bookingId: req.params.id, newStatus: req.body.status, timestamp: new Date().toISOString() });
     try {
         const { id } = req.params;
         const { status, reason } = req.body;
@@ -320,6 +323,7 @@ router.put('/:id/status', async (req, res) => {
             });
         }
 
+        console.log('✅ [PUT /api/bookings/:id/status] Success', { bookingId: id, newStatus: status, modifiedCount: result.modifiedCount, timestamp: new Date().toISOString() });
         res.json({
             success: true,
             message: 'Booking status updated successfully'
