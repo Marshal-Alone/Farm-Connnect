@@ -57,6 +57,7 @@ const App = () => {
                 <Route path="/machinery" element={<MachineryMarketplace />} />
                 <Route path="/machinery/:id" element={<MachineryDetail />} />
                 <Route path="/machinery/add" element={<MachineryForm />} />
+                <Route path="/machinery/edit/:id" element={<MachineryForm />} />
                 <Route path="/bookings" element={<BookingHistory />} />
                 <Route path="/owner/dashboard" element={<OwnerDashboard />} />
                 <Route path="/schemes" element={<GovernmentSchemes />} />

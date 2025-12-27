@@ -1501,6 +1501,186 @@ export function isPWAInstalled(): boolean {
 - Parameters: location, days, aqi, alerts
 - Response: Current conditions + forecast
 
+#### 5.6.3 Verified API Routes (Tested & Working)
+
+The following API routes have been verified and are fully functional. Each route is listed with its implementation status and frontend verification method.
+
+**Authentication & User Routes:**
+
+| Route | Method | Status | Implementation | Frontend Verification |
+|-------|--------|--------|-----------------|----------------------|
+| `/api/auth/login` | POST | ✅ Verified | [users.js](../api/users.js#L1) | Login via email/phone in LoginModal, check JWT token saved in localStorage as `FarmConnect_token` |
+| `/api/auth/me` | GET | ✅ Verified | [users.js](../api/users.js#L40) | After login, user data displays in UserProfile. Check console: `console.log(localStorage.getItem('FarmConnect_token'))` to confirm token present |
+| `/api/auth/register` | POST | ⚠️ Partial | [users.js](../api/users.js#L60) | Register new user via signup flow (not heavily tested) |
+
+**Frontend Verification Steps for Auth Routes:**
+1. Open browser DevTools → Application → LocalStorage
+2. Look for `FarmConnect_token` key
+3. Token should contain JWT (format: `eyJ...`)
+4. In Network tab, verify Authorization header: `Authorization: Bearer <token>` on API calls
+
+---
+
+**Machinery Routes:**
+
+| Route | Method | Status | Implementation | Frontend Verification |
+|-------|--------|--------|-----------------|----------------------|
+| `/api/machinery` | GET | ✅ Verified | [machinery.js](../api/machinery.js#L15) | Navigate to **Machinery Marketplace** page, browse equipment list. Check Network tab for `GET /api/machinery` with 200 response |
+| `/api/machinery/:id` | GET | ✅ Verified | [machinery.js](../api/machinery.js#L50) | Click any machinery card → details page loads with specs, price, ratings |
+| `/api/machinery` | POST | ✅ Verified | [machinery.js](../api/machinery.js#L80) | Go to UserProfile → Dashboard tab → Add Machinery button → Fill form → Submit. New item appears in list |
+| `/api/machinery/:id` | PUT | ❌ Not Working | [machinery.js](../api/machinery.js#L110) | **Known Issue:** Edit button shows "not found" error. Fix pending |
+| `/api/machinery/:id` | DELETE | ✅ Verified | [machinery.js](../api/machinery.js#L140) | UserProfile → Dashboard → My Machinery → Delete button (with confirmation dialog) removes item |
+
+**Frontend Verification Steps for Machinery Routes:**
+1. **GET /api/machinery**: Open Machinery Marketplace, inspect Network tab
+2. **GET /api/machinery/:id**: Click equipment card, verify details load
+3. **POST /api/machinery**: UserProfile → Dashboard → "Add Machinery" button → fill and submit
+4. **DELETE /api/machinery/:id**: UserProfile → Dashboard → My Machinery → Delete button
+
+---
+
+**Booking Routes:**
+
+| Route | Method | Status | Implementation | Frontend Verification |
+|-------|--------|--------|-----------------|----------------------|
+| `/api/bookings` | POST | ✅ Verified | [bookings.js](../api/bookings.js#L1) | Machinery Detail page → Select dates → Click "Book Now" → Modal opens → Confirm. Creates booking with "pending" status |
+| `/api/bookings/user/:userId` | GET | ✅ Verified | [bookings.js](../api/bookings.js#L40) | UserProfile → Activity tab or Dashboard → shows all user's bookings (rentals made) |
+| `/api/bookings/owner/:ownerId` | GET | ✅ Verified | [bookings.js](../api/bookings.js#L60) | UserProfile → Dashboard → Booking Requests tab shows pending/confirmed bookings for owned machinery |
+| `/api/bookings/:id/status` | PUT | ⚠️ Partial | [bookings.js](../api/bookings.js#L75) | Owner can Approve/Reject buttons in Dashboard → changes status. May need testing for all status transitions |
+
+**Frontend Verification Steps for Booking Routes:**
+1. **POST /api/bookings**: 
+   - Navigate to Machinery Detail page
+   - Select rental dates using date picker
+   - Click "Book Now" button
+   - Verify booking confirmation appears
+   - Check Network → POST /api/bookings → status 201 with bookingId in response
+2. **GET /api/bookings/user/:userId**:
+   - Login as farmer
+   - UserProfile page opens automatically
+   - View bookings made by this user
+3. **GET /api/bookings/owner/:ownerId**:
+   - Login as machinery owner
+   - UserProfile → Dashboard tab → "Booking Requests" sub-tab
+   - View all bookings for your machinery
+4. **PUT /api/bookings/:id/status**:
+   - In Dashboard → Booking Requests tab
+   - Click "Approve" or "Reject" button
+   - Verify status badge changes (pending → confirmed/cancelled)
+
+---
+
+**Review Routes:**
+
+| Route | Method | Status | Implementation | Frontend Verification |
+|-------|--------|--------|-----------------|----------------------|
+| `/api/reviews` | GET/POST | ⚠️ Partial | [reviews.js](../api/reviews.js#L1) | Review form exists in Machinery Detail page but submissions may not be fully tested |
+| `/api/reviews/machinery/:machineryId` | GET | ⚠️ Partial | [reviews.js](../api/reviews.js#L40) | Reviews display below machinery details but limited test data |
+
+**Frontend Verification Steps for Review Routes:**
+- Machinery Detail page → scroll to Reviews section
+- Submit review form (stars, comment)
+- Check Network tab for POST request success
+
+---
+
+**Message Routes:**
+
+| Route | Method | Status | Implementation | Frontend Verification |
+|-------|--------|--------|-----------------|----------------------|
+| `/api/messages` | GET/POST | ⚠️ Partial | [messages.js](../api/messages.js#L1) | Message service defined but not fully integrated into booking flow |
+| `/api/messages/conversation/:userId/:otherUserId` | GET | ⚠️ Partial | [messages.js](../api/messages.js#L40) | Messaging UI component exists but may not load conversations on booking details |
+
+**Frontend Verification Steps for Message Routes:**
+- Machinery Detail page (after booking) → Look for "Message Owner" button
+- Booking Details → Messages section (if implemented)
+- Check that conversation thread loads with previous messages
+
+---
+
+**Health & Utility Routes:**
+
+| Route | Method | Status | Implementation | Frontend Verification |
+|-------|--------|--------|-----------------|----------------------|
+| `/api/health` | GET | ✅ Verified | [server.js](../server.js#L30) | Server logs on startup: "Health endpoint: http://localhost:4174/api/health" |
+| `/api/ping` | GET | ✅ Verified | [server.js](../server.js#L35) | Server logs: "Ping endpoint: http://localhost:4174/api/ping" |
+
+**Frontend Verification Steps for Health Routes:**
+1. Server must be running: `npm run server`
+2. Check server console output for endpoint messages
+3. Open browser: `http://localhost:4174/api/ping` → should show response
+4. Network tab shows successful GET request
+
+---
+
+**Summary of Route Status:**
+
+✅ **Fully Working (9 routes):**
+- POST /api/auth/login
+- GET /api/auth/me
+- GET /api/machinery (list)
+- GET /api/machinery/:id (detail)
+- POST /api/machinery (create)
+- DELETE /api/machinery/:id
+- POST /api/bookings (create)
+- GET /api/bookings/user/:userId
+- GET /api/bookings/owner/:ownerId
+- GET /api/health
+- GET /api/ping
+
+⚠️ **Partially Working (5 routes):**
+- PUT /api/machinery/:id (Edit shows "not found" error - needs fix)
+- PUT /api/bookings/:id/status (Status updates may be incomplete)
+- POST /api/reviews (Review submission needs testing)
+- GET /api/reviews/machinery/:machineryId (Limited test data)
+- GET/POST /api/messages (Not fully integrated into UI)
+
+---
+
+**Testing via cURL (Command Line):**
+
+```bash
+# Test login
+curl -X POST http://localhost:4174/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"identifier":"ram@farmer.com","password":"password123"}'
+
+# Get all machinery (returns token needed for some routes)
+curl http://localhost:4174/api/machinery?limit=10
+
+# Get specific machinery
+curl http://localhost:4174/api/machinery/694e2b4eb3b95449844dd3a9
+
+# Get user bookings (requires userId and token)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  http://localhost:4174/api/bookings/user/692aae843671cc02142f93cc
+
+# Create booking (POST)
+curl -X POST http://localhost:4174/api/bookings \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "machineryId": "694e2b4eb3b95449844dd3a9",
+    "renterId": "692aae843671cc02142f93cc",
+    "startDate": "2025-12-29T18:30:00Z",
+    "endDate": "2025-12-31T18:30:00Z"
+  }'
+```
+
+**API Logging Information:**
+
+All endpoints have been enhanced with comprehensive logging:
+- 📋 Request logging: Logs incoming request parameters and timestamp
+- ✅ Success logging: Logs successful response data and processing time
+- ❌ Error logging: Logs detailed error messages for debugging
+
+Check server console during API calls to see:
+```
+2025-12-26T06:51:24.661Z - POST /api/auth/login
+📋 [POST /api/auth/login] Request received { identifier: 'ram@farmer.com', ... }
+✅ [POST /api/auth/login] Success { userId: '...', email: '...', ... }
+```
+
 ### 5.7 Security Implementation
 
 | Security Measure | Implementation |

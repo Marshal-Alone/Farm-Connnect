@@ -2,22 +2,30 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import {
     IndianRupee, TrendingUp, Calendar, Package, Plus,
-    CheckCircle, Clock, XCircle, Loader2
+    CheckCircle, Clock, XCircle, Loader2, MessageSquare
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { machineryService } from '@/lib/api/machineryService';
 import { bookingService } from '@/lib/api/bookingService';
+import { messageService } from '@/lib/api/messageService';
 import { MachinerySchema } from '@/lib/schemas/machinery.schema';
 import { BookingSchema } from '@/lib/schemas/booking.schema';
+import { MessageSchema } from '@/lib/schemas/message.schema';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function OwnerDashboard() {
     const [machinery, setMachinery] = useState<MachinerySchema[]>([]);
     const [bookings, setBookings] = useState<BookingSchema[]>([]);
     const [loading, setLoading] = useState(true);
+    const [conversations, setConversations] = useState<any[]>([]);
+    const [selectedConversation, setSelectedConversation] = useState<any>(null);
+    const [conversationMessages, setConversationMessages] = useState<MessageSchema[]>([]);
+    const [messageText, setMessageText] = useState('');
     const [stats, setStats] = useState({
         totalMachinery: 0,
         activeMachinery: 0,
@@ -27,9 +35,10 @@ export default function OwnerDashboard() {
     });
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { user } = useAuth();
 
-    // Demo owner ID (in real app, get from auth)
-    const ownerId = 'user123';
+    // Get owner ID from auth context
+    const ownerId = user?._id || user?.id || 'user123';
 
     useEffect(() => {
         fetchDashboardData();
@@ -46,6 +55,9 @@ export default function OwnerDashboard() {
 
             // Fetch owner's bookings
             const bookingsResponse = await bookingService.getOwnerBookings(ownerId);
+
+            // Fetch conversations
+            const conversationsResponse = await messageService.getUserConversations(ownerId);
 
             let ownerMachinery: MachinerySchema[] = [];
 
@@ -72,6 +84,10 @@ export default function OwnerDashboard() {
                     totalEarnings,
                     pendingRequests
                 });
+            }
+
+            if (conversationsResponse.success) {
+                setConversations(conversationsResponse.data);
             }
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
@@ -157,6 +173,46 @@ export default function OwnerDashboard() {
         }
     };
 
+    // Message handling functions
+    const handleSelectConversation = async (conversation: any) => {
+        setSelectedConversation(conversation);
+        // Find the other participant (not the owner)
+        const otherParticipant = conversation.participants.find((p: any) => p.userId !== ownerId);
+        if (otherParticipant) {
+            const messagesResponse = await messageService.getConversation(ownerId, otherParticipant.userId);
+            if (messagesResponse.success) {
+                setConversationMessages(messagesResponse.data);
+            }
+        }
+    };
+
+    const handleSendMessage = async () => {
+        if (!messageText.trim() || !selectedConversation) return;
+
+        try {
+            const otherParticipant = selectedConversation.participants.find((p: any) => p.userId !== ownerId);
+            
+            await messageService.sendMessage({
+                senderId: ownerId,
+                senderName: user?.name || 'Owner',
+                receiverId: otherParticipant.userId,
+                receiverName: otherParticipant.userName,
+                content: messageText,
+                messageType: 'text'
+            });
+            
+            setMessageText('');
+            // Refresh conversation messages
+            const messagesResponse = await messageService.getConversation(ownerId, otherParticipant.userId);
+            if (messagesResponse.success) {
+                setConversationMessages(messagesResponse.data);
+            }
+            toast({ title: 'Message sent', description: 'Your message has been sent' });
+        } catch (error) {
+            toast({ title: 'Error', description: 'Failed to send message', variant: 'destructive' });
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -238,6 +294,7 @@ export default function OwnerDashboard() {
                     <TabsList>
                         <TabsTrigger value="machinery">My Machinery</TabsTrigger>
                         <TabsTrigger value="bookings">Booking Requests</TabsTrigger>
+                        <TabsTrigger value="messages">Messages</TabsTrigger>
                         <TabsTrigger value="earnings">Earnings</TabsTrigger>
                     </TabsList>
 
@@ -372,6 +429,133 @@ export default function OwnerDashboard() {
                                 </Card>
                             ))
                         )}
+                    </TabsContent>
+
+                    {/* Messages Tab */}
+                    <TabsContent value="messages" className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Conversations List */}
+                            <div className="lg:col-span-1">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center gap-2">
+                                            <MessageSquare className="h-5 w-5" />
+                                            Conversations
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-0">
+                                        {conversations.length === 0 ? (
+                                            <div className="p-4 text-center text-muted-foreground">
+                                                <p>No conversations yet</p>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-1">
+                                                {conversations.map((conversation: any) => {
+                                                    const otherParticipant = conversation.participants.find(
+                                                        (p: any) => p.userId !== ownerId
+                                                    );
+                                                    return (
+                                                        <button
+                                                            key={conversation.conversationId}
+                                                            onClick={() => handleSelectConversation(conversation)}
+                                                            className={`w-full text-left p-3 hover:bg-secondary transition-colors ${
+                                                                selectedConversation?.conversationId === conversation.conversationId
+                                                                    ? 'bg-secondary'
+                                                                    : ''
+                                                            }`}
+                                                        >
+                                                            <p className="font-semibold text-sm">
+                                                                {otherParticipant?.userName || 'Unknown'}
+                                                            </p>
+                                                            <p className="text-xs text-muted-foreground truncate">
+                                                                {conversation.lastMessage?.content || 'No messages'}
+                                                            </p>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            {/* Chat Window */}
+                            <div className="lg:col-span-2">
+                                {selectedConversation ? (
+                                    <Card className="flex flex-col h-96">
+                                        {/* Chat Header */}
+                                        <CardHeader className="border-b">
+                                            <CardTitle>
+                                                {selectedConversation.participants
+                                                    .find((p: any) => p.userId !== ownerId)
+                                                    ?.userName || 'Renter'}
+                                            </CardTitle>
+                                        </CardHeader>
+
+                                        {/* Messages */}
+                                        <CardContent className="flex-1 overflow-y-auto space-y-3 p-4">
+                                            {conversationMessages.length === 0 ? (
+                                                <p className="text-center text-muted-foreground py-8">
+                                                    No messages yet
+                                                </p>
+                                            ) : (
+                                                conversationMessages.map((message) => (
+                                                    <div
+                                                        key={message._id}
+                                                        className={`flex ${
+                                                            message.senderId === ownerId
+                                                                ? 'justify-end'
+                                                                : 'justify-start'
+                                                        }`}
+                                                    >
+                                                        <div
+                                                            className={`max-w-xs rounded-lg p-3 ${
+                                                                message.senderId === ownerId
+                                                                    ? 'bg-primary text-white'
+                                                                    : 'bg-secondary'
+                                                            }`}
+                                                        >
+                                                            <p className="text-sm">{message.content}</p>
+                                                            <p className="text-xs opacity-70 mt-1">
+                                                                {new Date(message.createdAt).toLocaleTimeString()}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </CardContent>
+
+                                        {/* Input */}
+                                        <div className="p-4 border-t space-y-2">
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    placeholder="Type your message..."
+                                                    value={messageText}
+                                                    onChange={(e) => setMessageText(e.target.value)}
+                                                    onKeyPress={(e) =>
+                                                        e.key === 'Enter' && handleSendMessage()
+                                                    }
+                                                />
+                                                <Button
+                                                    onClick={handleSendMessage}
+                                                    disabled={!messageText.trim()}
+                                                    className="bg-green-600 hover:bg-green-700"
+                                                >
+                                                    Send
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                ) : (
+                                    <Card className="h-96 flex items-center justify-center">
+                                        <div className="text-center text-muted-foreground">
+                                            <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                            <p>Select a conversation to start chatting</p>
+                                        </div>
+                                    </Card>
+                                )}
+                            </div>
+                        </div>
                     </TabsContent>
 
                     {/* Earnings Tab */}

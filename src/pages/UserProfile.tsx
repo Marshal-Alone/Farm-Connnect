@@ -8,157 +8,183 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { machineryService } from '@/lib/api/machineryService';
 import { bookingService } from '@/lib/api/bookingService';
+import { messageService } from '@/lib/api/messageService';
 import { MachinerySchema } from '@/lib/schemas/machinery.schema';
 import { BookingSchema } from '@/lib/schemas/booking.schema';
-import { User, MapPin, Phone, Mail, Globe, Sprout, TrendingUp, Calendar, Bell, Settings, Key, Trash2, IndianRupee, Package, CheckCircle, Clock, XCircle, Loader2, Plus } from 'lucide-react';
+import { MessageSchema } from '@/lib/schemas/message.schema';
+import { User, MapPin, Phone, Mail, Globe, Sprout, Calendar, Settings, Key, Trash2, IndianRupee, Package, CheckCircle, Clock, XCircle, Loader2, Plus, MessageSquare, Edit2, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { geminiAI } from '@/lib/gemini';
 import { groqAI } from '@/lib/groq';
 import { getModelConfig, saveModelConfig, ModelConfig } from '@/lib/ai';
 
-
 export default function UserProfile() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
 
-  // Owner Dashboard state
+  // State Management
   const [machinery, setMachinery] = useState<MachinerySchema[]>([]);
-  const [dashboardBookings, setDashboardBookings] = useState<BookingSchema[]>([]);
-  const [dashboardLoading, setDashboardLoading] = useState(false);
-  const [dashboardStats, setDashboardStats] = useState({
-    totalMachinery: 0,
-    activeMachinery: 0,
-    totalBookings: 0,
-    totalEarnings: 0,
-    pendingRequests: 0
-  });
-  const ownerId = user?._id || user?.id || ''; // Use actual logged-in user ID
+  const [userBookings, setUserBookings] = useState<BookingSchema[]>([]);
+  const [ownerBookings, setOwnerBookings] = useState<BookingSchema[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<BookingSchema | null>(null);
+  const [bookingMessages, setBookingMessages] = useState<MessageSchema[]>([]);
+  const [messageText, setMessageText] = useState('');
 
-  // Delete confirmation dialog state
+  // Profile Editing
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: user?.name || '',
+    phone: user?.phone || '',
+    location: user?.location || '',
+    language: user?.language || 'hindi',
+    farmSize: user?.farmSize || 0,
+    crops: (user?.crops || []).join(', ')
+  });
+
+  // Machinery Management
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string; name: string }>({
     open: false,
     id: '',
     name: ''
   });
 
-  const [isEditing, setIsEditing] = useState(false);
+  // Bookings Filter
+  const [bookingFilter, setBookingFilter] = useState('all');
+
+  // API Key Management
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [groqApiKey, setGroqApiKey] = useState('');
   const [showGroqApiKey, setShowGroqApiKey] = useState(false);
   const [modelConfig, setModelConfig] = useState<ModelConfig>(getModelConfig());
 
-  const [formData, setFormData] = useState({
-    name: user?.name || '',
-    phone: user?.phone || '',
-    location: user?.location || '',
-    language: user?.language || 'hindi',
-    farmSize: user?.farmSize || 0,
-    crops: user?.crops || []
-  });
+  const ownerId = user?._id || user?.id || '';
 
-  const handleSave = () => {
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been updated successfully.",
-    });
-    setIsEditing(false);
-  };
-
-  const handleSaveApiKey = () => {
-    if (apiKey.trim()) {
-      geminiAI.updateAPIKey(apiKey.trim());
-      toast({
-        title: "API Key Saved",
-        description: "Your Gemini API key has been saved and will be used for AI analysis.",
-      });
-      setApiKey('');
-      setShowApiKey(false);
+  // Fetch Data
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
     }
-  };
+  }, [user]);
 
-  const handleRemoveApiKey = () => {
-    geminiAI.removeAPIKey();
-    toast({
-      title: "API Key Removed",
-      description: "Removed your custom API key. Using default key now.",
-    });
-  };
-
-  const getCurrentApiKey = () => {
-    const saved = localStorage.getItem('gemini_api_key');
-    return saved ? `${saved.substring(0, 8)}...${saved.substring(saved.length - 4)}` : 'Using default key';
-  };
-
-
-  // Groq API key handlers
-  const handleSaveGroqApiKey = () => {
-    if (groqApiKey.trim()) {
-      groqAI.updateAPIKey(groqApiKey.trim());
-      toast({
-        title: "API Key Saved",
-        description: "Your Groq API key has been saved and will be used when Groq model is selected.",
-      });
-      setGroqApiKey('');
-      setShowGroqApiKey(false);
-    }
-  };
-
-  const handleRemoveGroqApiKey = () => {
-    groqAI.removeAPIKey();
-    toast({
-      title: "API Key Removed",
-      description: "Removed your Groq API key.",
-    });
-  };
-
-  const getCurrentGroqApiKey = () => {
-    const saved = localStorage.getItem('groq_api_key');
-    return saved ? `${saved.substring(0, 8)}...${saved.substring(saved.length - 4)}` : 'Not configured';
-  };
-
-  // Owner Dashboard functions
-  const fetchDashboardData = async () => {
-    setDashboardLoading(true);
+  const fetchUserData = async () => {
+    setIsLoading(true);
     try {
-      const machineryResponse = await machineryService.getMachinery({ limit: 100 });
-      const bookingsResponse = await bookingService.getOwnerBookings(ownerId);
+      const [bookingsRes, machineryRes, ownerBookingsRes] = await Promise.all([
+        bookingService.getUserBookings(ownerId),
+        machineryService.getMachinery({ limit: 100 }),
+        bookingService.getOwnerBookings(ownerId)
+      ]);
 
-      let ownerMachinery: MachinerySchema[] = [];
-
-      if (machineryResponse.success) {
-        ownerMachinery = machineryResponse.data.filter(m => m.ownerId === ownerId);
-        setMachinery(ownerMachinery);
+      if (bookingsRes.success) setUserBookings(bookingsRes.data);
+      if (machineryRes.success) {
+        const userMachinery = machineryRes.data.filter(m => m.ownerId === ownerId);
+        setMachinery(userMachinery);
       }
+      if (ownerBookingsRes.success) setOwnerBookings(ownerBookingsRes.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      toast({ title: 'Error', description: 'Failed to load data', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      if (bookingsResponse.success) {
-        setDashboardBookings(bookingsResponse.data);
-
-        const totalEarnings = bookingsResponse.data
-          .filter(b => b.paymentStatus === 'paid')
-          .reduce((sum, b) => sum + b.finalAmount, 0);
-
-        const pendingRequests = bookingsResponse.data.filter(b => b.status === 'pending').length;
-
-        setDashboardStats({
-          totalMachinery: ownerMachinery.length,
-          activeMachinery: ownerMachinery.filter(m => m.available).length,
-          totalBookings: bookingsResponse.data.length,
-          totalEarnings,
-          pendingRequests
-        });
+  const fetchBookingMessages = async (bookingId: string) => {
+    try {
+      const response = await messageService.getConversation(ownerId, bookingId);
+      if (response.success) {
+        setBookingMessages(response.data);
       }
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  // Profile Actions
+  const handleProfileUpdate = async () => {
+    try {
+      // TODO: Implement actual profile update API call
+      // For now, just show success toast
       toast({
-        title: "Error",
-        description: "Failed to load dashboard data",
-        variant: "destructive"
+        title: 'Profile Updated',
+        description: 'Your profile has been updated successfully.',
       });
-    } finally {
-      setDashboardLoading(false);
+      setIsEditingProfile(false);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update profile',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // Machinery Actions
+  const handleDeleteMachinery = (id: string, name: string) => {
+    setDeleteDialog({ open: true, id, name });
+  };
+
+  const confirmDeleteMachinery = async () => {
+    try {
+      const response = await machineryService.deleteMachinery(deleteDialog.id);
+      if (response.success) {
+        toast({
+          title: 'Success',
+          description: `${deleteDialog.name} has been deleted`
+        });
+        fetchUserData();
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete machinery',
+        variant: 'destructive'
+      });
+    }
+    setDeleteDialog({ open: false, id: '', name: '' });
+  };
+
+  const handleEditMachinery = (machineryId: string) => {
+    // Navigate to edit page - using window.location for now
+    window.location.href = `/machinery/edit/${machineryId}`;
+  };
+
+  // Booking Actions
+  const handleSelectBooking = async (booking: BookingSchema) => {
+    setSelectedBooking(booking);
+    await fetchBookingMessages(booking._id || '');
+  };
+
+  const getFilteredBookings = () => {
+    if (bookingFilter === 'all') {
+      return userBookings;
+    }
+    return userBookings.filter(b => b.status === bookingFilter);
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !selectedBooking) return;
+
+    try {
+      await messageService.sendMessage({
+        senderId: ownerId,
+        senderName: user?.name || 'User',
+        receiverId: selectedBooking.renterId === ownerId ? selectedBooking.ownerId : selectedBooking.renterId,
+        receiverName: selectedBooking.renterId === ownerId ? selectedBooking.ownerName : selectedBooking.renterName,
+        content: messageText,
+        relatedBookingId: selectedBooking._id,
+        messageType: 'text'
+      });
+      setMessageText('');
+      await fetchBookingMessages(selectedBooking._id || '');
+      toast({ title: 'Message sent', description: 'Your message has been sent' });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to send message', variant: 'destructive' });
     }
   };
 
@@ -166,11 +192,11 @@ export default function UserProfile() {
     try {
       const response = await bookingService.updateBookingStatus(bookingId, 'confirmed');
       if (response.success) {
-        toast({ title: "Booking Approved", description: "The booking has been confirmed" });
-        fetchDashboardData();
+        toast({ title: 'Success', description: 'Booking approved' });
+        fetchUserData();
       }
     } catch (error) {
-      toast({ title: "Error", description: "Failed to approve booking", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to approve booking', variant: 'destructive' });
     }
   };
 
@@ -178,763 +204,972 @@ export default function UserProfile() {
     try {
       const response = await bookingService.updateBookingStatus(bookingId, 'cancelled');
       if (response.success) {
-        toast({ title: "Booking Rejected", description: "The booking has been cancelled" });
-        fetchDashboardData();
+        toast({ title: 'Success', description: 'Booking rejected' });
+        fetchUserData();
       }
     } catch (error) {
-      toast({ title: "Error", description: "Failed to reject booking", variant: "destructive" });
+      toast({ title: 'Error', description: 'Failed to reject booking', variant: 'destructive' });
     }
   };
 
-  const handleEditMachinery = (machineryId: string) => {
-    window.location.href = `/machinery/edit/${machineryId}`;
-  };
-
-  const handleDeleteMachinery = (machineryId: string, machineryName: string) => {
-    // Show custom delete dialog
-    setDeleteDialog({ open: true, id: machineryId, name: machineryName });
-  };
-
-  const confirmDeleteMachinery = async () => {
-    const { id, name } = deleteDialog;
-    console.log('Deleting machinery:', id, name);
-
-    try {
-      const response = await machineryService.deleteMachinery(id);
-      console.log('Delete response:', response);
-
-      if (response.success) {
-        toast({ title: "Machinery Deleted", description: `${name} has been deleted successfully` });
-        fetchDashboardData();
-      } else {
-        toast({ title: "Error", description: response.error || "Failed to delete machinery", variant: "destructive" });
-      }
-    } catch (error) {
-      console.error('Delete error:', error);
-      toast({ title: "Error", description: "Failed to delete machinery", variant: "destructive" });
-    } finally {
-      setDeleteDialog({ open: false, id: '', name: '' });
+  // API Key Management
+  const handleSaveApiKey = () => {
+    if (apiKey.trim()) {
+      geminiAI.updateAPIKey(apiKey.trim());
+      toast({ title: 'Success', description: 'Gemini API key saved' });
+      setApiKey('');
+      setShowApiKey(false);
     }
   };
 
-  // Model config handler
+  const handleSaveGroqApiKey = () => {
+    if (groqApiKey.trim()) {
+      groqAI.updateAPIKey(groqApiKey.trim());
+      toast({ title: 'Success', description: 'Groq API key saved' });
+      setGroqApiKey('');
+      setShowGroqApiKey(false);
+    }
+  };
+
   const handleSaveModelConfig = () => {
     saveModelConfig(modelConfig);
-    toast({
-      title: "Model Settings Saved",
-      description: "Your preferred AI model has been saved.",
-    });
+    toast({ title: 'Success', description: 'Model settings saved' });
+  };
+
+  const getCurrentApiKey = () => {
+    const saved = localStorage.getItem('gemini_api_key');
+    return saved ? `${saved.substring(0, 8)}...${saved.substring(saved.length - 4)}` : 'Not configured';
+  };
+
+  const getCurrentGroqApiKey = () => {
+    const saved = localStorage.getItem('groq_api_key');
+    return saved ? `${saved.substring(0, 8)}...${saved.substring(saved.length - 4)}` : 'Not configured';
   };
 
   const handleLogout = () => {
     logout();
-    toast({
-      title: "Logged Out",
-      description: "You have been logged out successfully.",
-    });
+    toast({ title: 'Logged out', description: 'You have been logged out' });
   };
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Please Login</h1>
-          <p className="text-muted-foreground">You need to be logged in to view your profile.</p>
-          <br />
-
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-2 border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-            onClick={() => {
-              // Trigger login modal - find the app component
-              const appRoot = document.getElementById('root');
-              if (appRoot) {
-                const event = new CustomEvent('openLoginModal');
-                appRoot.dispatchEvent(event);
-              }
-            }}
-          >
-            <User className="w-5 h-5 mr-2" />
-            Get Started Free
-          </Button>
-
-        </div>
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle>Login Required</CardTitle>
+            <CardDescription>Please log in to access your profile</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full" size="lg" onClick={() => window.location.href = '/'}>
+              <User className="w-4 h-4 mr-2" />
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  // Mock data for demonstration
-  const recentActivity = [
-    { id: 1, type: 'disease-check', description: 'Checked tomato leaf disease', date: '2025-01-15', result: 'Early Blight detected' },
-    { id: 2, type: 'machinery-booking', description: 'Booked John Deere tractor', date: '2025-01-13', result: 'Booking confirmed' },
-    { id: 3, type: 'scheme-application', description: 'Applied for PM-KISAN scheme', date: '2025-01-12', result: 'Application submitted' }
-  ];
-
-  const notifications = [
-    { id: 1, type: 'weather', message: 'Heavy rain expected in your area tomorrow', priority: 'high' },
-    { id: 2, type: 'scheme', message: 'New subsidy scheme available for organic farmers', priority: 'medium' },
-    { id: 3, type: 'machinery', message: 'Your booked tractor is ready for pickup', priority: 'high' },
-    { id: 4, type: 'ai-insight', message: 'Optimal sowing time for cotton approaching', priority: 'low' }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Profile Dashboard</h1>
-            <p className="text-muted-foreground">Manage your account and farm information</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">My Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Manage your profile, bookings, and machinery</p>
           </div>
-          <Button onClick={handleLogout} variant="outline">
+          <Button onClick={handleLogout} variant="outline" className="w-full md:w-auto">
             Logout
           </Button>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="activity">Activity</TabsTrigger>
-            <TabsTrigger value="dashboard" onClick={() => fetchDashboardData()}>Dashboard</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+        {/* Main Tabs */}
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="flex flex-wrap w-full gap-2 mb-6 h-auto bg-transparent p-0 border-b">
+            <TabsTrigger value="overview" className="text-xs md:text-sm px-3 py-2">Overview</TabsTrigger>
+            <TabsTrigger value="profile" className="text-xs md:text-sm px-3 py-2">Profile</TabsTrigger>
+            <TabsTrigger value="bookings" className="text-xs md:text-sm px-3 py-2">My Bookings</TabsTrigger>
+            <TabsTrigger value="machinery" className="text-xs md:text-sm px-3 py-2">My Machinery</TabsTrigger>
+            <TabsTrigger value="dashboard" className="text-xs md:text-sm px-3 py-2">Owner Panel</TabsTrigger>
+            <TabsTrigger value="settings" className="text-xs md:text-sm px-3 py-2">Settings</TabsTrigger>
           </TabsList>
 
-          {/* Overview Tab */}
+          {/* Overview Tab - Clean Implementation Only */}
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Profile Summary */}
+              {/* User Card */}
               <Card>
-                <CardHeader className="text-center">
-                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <User className="h-10 w-10 text-primary" />
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                      <User className="w-8 h-8 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <CardTitle className="text-lg">{user.name}</CardTitle>
+                      <CardDescription className="text-sm">{user.email}</CardDescription>
+                    </div>
                   </div>
-                  <CardTitle>{user.name}</CardTitle>
-                  <CardDescription className="flex items-center justify-center">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {user.location}
-                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Farm Size</span>
-                      <span className="font-medium">{user.farmSize} acres</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Crops</span>
-                      <span className="font-medium">{user.crops.length}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Language</span>
-                      <span className="font-medium capitalize">{user.language}</span>
-                    </div>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span>{user.location || 'Not set'}</span>
                   </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    <span>{user.phone || 'Not set'}</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full mt-2"
+                    onClick={() => {
+                      setEditFormData({
+                        name: user.name || '',
+                        phone: user.phone || '',
+                        location: user.location || '',
+                        language: user.language || 'hindi',
+                        farmSize: user.farmSize || 0,
+                        crops: (user.crops || []).join(', ')
+                      });
+                      setIsEditingProfile(true);
+                    }}
+                  >
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
                 </CardContent>
               </Card>
 
-              {/* Farm Statistics */}
+              {/* Farm Stats */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <TrendingUp className="h-5 w-5 mr-2" />
-                    Farm Stats
-                  </CardTitle>
+                  <CardTitle className="text-lg">Farm Details</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Yield Efficiency</span>
-                      <span>78%</span>
-                    </div>
-                    <Progress value={78} />
+                    <div className="text-sm text-muted-foreground mb-1">Farm Size</div>
+                    <div className="text-2xl font-bold">{user.farmSize} acres</div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Soil Health</span>
-                      <span>85%</span>
+                    <div className="text-sm text-muted-foreground mb-1">Crops Growing</div>
+                    <div className="flex flex-wrap gap-2">
+                      {user.crops && user.crops.length > 0 ? (
+                        user.crops.map((crop, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">
+                            {crop}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-sm text-muted-foreground">No crops added</span>
+                      )}
                     </div>
-                    <Progress value={85} />
                   </div>
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Water Usage</span>
-                      <span>62%</span>
-                    </div>
-                    <Progress value={62} />
+                    <div className="text-sm text-muted-foreground mb-1">Preferred Language</div>
+                    <Badge variant="outline" className="capitalize">{user.language}</Badge>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Quick Actions */}
+              {/* Quick Stats */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
+                  <CardTitle className="text-lg">Activity Summary</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Sprout className="h-4 w-4 mr-2" />
-                    Check Crop Health
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Check Growth Rate
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Book Machinery
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Globe className="h-4 w-4 mr-2" />
-                    Find Schemes
-                  </Button>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total Bookings Made</span>
+                    <span className="text-2xl font-bold">{userBookings.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Equipment Owned</span>
+                    <span className="text-2xl font-bold">{machinery.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Booking Requests</span>
+                    <span className="text-2xl font-bold">{ownerBookings.filter(b => b.status === 'pending').length}</span>
+                  </div>
                 </CardContent>
               </Card>
             </div>
-
-            {/* Notifications */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Bell className="h-5 w-5 mr-2" />
-                  Recent Notifications
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {notifications.map((notification) => (
-                    <div key={notification.id} className="flex items-start space-x-3 p-3 rounded-lg bg-secondary/10">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${notification.priority === 'high' ? 'bg-red-500' :
-                        notification.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
-                        }`} />
-                      <div className="flex-1">
-                        <p className="text-sm">{notification.message}</p>
-                        <Badge variant="outline" className="text-xs mt-1 capitalize">
-                          {notification.type}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
-          {/* Profile Tab */}
-          <TabsContent value="profile">
-            <Card>
-              <CardHeader>
-                <CardTitle>Profile Information</CardTitle>
-                <CardDescription>Update your personal and farm details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      disabled={!isEditing}
-                    />
+          {/* Profile Tab - Editable */}
+          <TabsContent value="profile" className="space-y-6">
+            {isEditingProfile ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Edit Profile</CardTitle>
+                  <CardDescription>Update your personal and farm information</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <Input
+                        id="name"
+                        value={editFormData.name}
+                        onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        value={editFormData.phone}
+                        onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                        placeholder="Your phone number"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="location">Location/City</Label>
+                      <Input
+                        id="location"
+                        value={editFormData.location}
+                        onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })}
+                        placeholder="Your city/district"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="language">Preferred Language</Label>
+                      <Select value={editFormData.language} onValueChange={(value) => setEditFormData({ ...editFormData, language: value })}>
+                        <SelectTrigger id="language">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hindi">Hindi</SelectItem>
+                          <SelectItem value="marathi">Marathi</SelectItem>
+                          <SelectItem value="english">English</SelectItem>
+                          <SelectItem value="malayalam">Malayalam</SelectItem>
+                          <SelectItem value="punjabi">Punjabi</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="farmSize">Farm Size (acres)</Label>
+                      <Input
+                        id="farmSize"
+                        type="number"
+                        value={editFormData.farmSize}
+                        onChange={(e) => setEditFormData({ ...editFormData, farmSize: parseInt(e.target.value) || 0 })}
+                        placeholder="Farm size in acres"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="crops">Crops (comma separated)</Label>
+                      <Input
+                        id="crops"
+                        value={editFormData.crops}
+                        onChange={(e) => setEditFormData({ ...editFormData, crops: e.target.value })}
+                        placeholder="e.g., Wheat, Rice, Cotton"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      disabled={!isEditing}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="location">Location</Label>
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      disabled={!isEditing}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="language">Preferred Language</Label>
-                    <Select value={formData.language} onValueChange={(value) => setFormData({ ...formData, language: value })} disabled={!isEditing}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="hindi">Hindi</SelectItem>
-                        <SelectItem value="marathi">Marathi</SelectItem>
-                        <SelectItem value="malayalam">Malayalam</SelectItem>
-                        <SelectItem value="punjabi">Punjabi</SelectItem>
-                        <SelectItem value="english">English</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="farmSize">Farm Size (acres)</Label>
-                    <Input
-                      id="farmSize"
-                      type="number"
-                      value={formData.farmSize}
-                      onChange={(e) => setFormData({ ...formData, farmSize: Number(e.target.value) })}
-                      disabled={!isEditing}
-                    />
-                  </div>
-                </div>
 
-                <div>
-                  <Label>Current Crops</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {user.crops.map((crop, index) => (
-                      <Badge key={index} variant="secondary">
-                        {crop}
-                      </Badge>
-                    ))}
+                  <div className="flex gap-3 pt-4 border-t">
+                    <Button onClick={handleProfileUpdate} className="gap-2">
+                      <Save className="w-4 h-4" />
+                      Save Changes
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsEditingProfile(false)}
+                      className="gap-2"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </Button>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardHeader className="flex flex-row items-start justify-between pb-4">
+                  <div className="space-y-1">
+                    <CardTitle>Profile Information</CardTitle>
+                    <CardDescription>Your current profile details</CardDescription>
+                  </div>
+                  <Button 
+                    size="sm"
+                    onClick={() => {
+                      setEditFormData({
+                        name: user.name || '',
+                        phone: user.phone || '',
+                        location: user.location || '',
+                        language: user.language || 'hindi',
+                        farmSize: user.farmSize || 0,
+                        crops: (user.crops || []).join(', ')
+                      });
+                      setIsEditingProfile(true);
+                    }}
+                    className="gap-2"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase">Full Name</div>
+                      <div className="text-base font-medium">{user.name}</div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase">Email</div>
+                      <div className="text-base font-medium">{user.email}</div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase">Phone</div>
+                      <div className="text-base font-medium">{user.phone || 'Not set'}</div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase">Location</div>
+                      <div className="text-base font-medium">{user.location || 'Not set'}</div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase">Farm Size</div>
+                      <div className="text-base font-medium">{user.farmSize} acres</div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground uppercase">Preferred Language</div>
+                      <div className="text-base font-medium capitalize">{user.language}</div>
+                    </div>
+                  </div>
+                  <div className="space-y-2 pt-2 border-t">
+                    <div className="text-xs font-medium text-muted-foreground uppercase">Crops Growing</div>
+                    <div className="flex flex-wrap gap-2">
+                      {user.crops && user.crops.length > 0 ? (
+                        user.crops.map((crop, idx) => (
+                          <Badge key={idx} variant="secondary">{crop}</Badge>
+                        ))
+                      ) : (
+                        <span className="text-sm text-muted-foreground">No crops added</span>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
-                <div className="flex space-x-2">
-                  {isEditing ? (
-                    <>
-                      <Button onClick={handleSave}>Save Changes</Button>
-                      <Button variant="outline" onClick={() => setIsEditing(false)}>
-                        Cancel
-                      </Button>
-                    </>
-                  ) : (
-                    <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+          {/* My Bookings Tab - NEW */}
+          <TabsContent value="bookings" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-6">My Bookings</h2>
+              
+              {/* Filter Tabs */}
+              <Tabs value={bookingFilter} onValueChange={setBookingFilter} className="mb-6">
+                <TabsList className="flex flex-wrap gap-2 bg-transparent h-auto p-0">
+                  <TabsTrigger 
+                    value="all"
+                    className="px-4 py-2 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    All
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="pending"
+                    className="px-4 py-2 rounded-full data-[state=active]:bg-yellow-500 data-[state=active]:text-white"
+                  >
+                    Pending
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="confirmed"
+                    className="px-4 py-2 rounded-full data-[state=active]:bg-green-500 data-[state=active]:text-white"
+                  >
+                    Confirmed
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="in-progress"
+                    className="px-4 py-2 rounded-full data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                  >
+                    In Progress
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="completed"
+                    className="px-4 py-2 rounded-full data-[state=active]:bg-gray-500 data-[state=active]:text-white"
+                  >
+                    Completed
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="cancelled"
+                    className="px-4 py-2 rounded-full data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                  >
+                    Cancelled
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            {isLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : getFilteredBookings().length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <h3 className="text-lg font-medium mb-2">No Bookings Yet</h3>
+                  <p className="text-muted-foreground mb-6">
+                    {bookingFilter === 'all' 
+                      ? "You haven't made any machinery bookings yet"
+                      : `No ${bookingFilter} bookings found`}
+                  </p>
+                  {bookingFilter === 'all' && (
+                    <Button onClick={() => window.location.href = '/machinery'}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Browse Machinery
+                    </Button>
                   )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Activity Tab */}
-          <TabsContent value="activity">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Your farming activities and platform usage</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentActivity.map((activity) => (
-                    <div key={activity.id} className="flex items-start space-x-4 p-4 rounded-lg border">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                        {activity.type === 'disease-check' && <Sprout className="h-5 w-5 text-primary" />}
-                        {activity.type === 'machinery-booking' && <Calendar className="h-5 w-5 text-primary" />}
-                        {activity.type === 'scheme-application' && <Globe className="h-5 w-5 text-primary" />}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium">{activity.description}</h4>
-                        <p className="text-sm text-muted-foreground">{activity.result}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{activity.date}</p>
-                      </div>
-                    </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Bookings List */}
+                <div className="lg:col-span-2 space-y-4">
+                  {getFilteredBookings().map((booking) => (
+                    <Card 
+                      key={booking._id} 
+                      className="cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => handleSelectBooking(booking)}
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg">{booking.machineryName}</h3>
+                            <p className="text-sm text-muted-foreground">Owner: {booking.ownerName}</p>
+                            <div className="flex flex-wrap gap-4 mt-3 text-sm">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                <span>{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <IndianRupee className="w-4 h-4" />
+                                <span>₹{booking.finalAmount}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant={
+                              booking.status === 'confirmed' ? 'default' :
+                              booking.status === 'pending' ? 'secondary' :
+                              booking.status === 'completed' ? 'outline' : 'destructive'
+                            }>
+                              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                            </Badge>
+                            <Badge variant={booking.paymentStatus === 'paid' ? 'default' : 'secondary'}>
+                              {booking.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Booking Details & Messages */}
+                {selectedBooking && (
+                  <div className="lg:col-span-1 space-y-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Booking Details</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <div className="text-xs text-muted-foreground">Booking Number</div>
+                          <div className="font-mono text-sm">{selectedBooking.bookingNumber}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Status</div>
+                          <Badge className="mt-1">{selectedBooking.status}</Badge>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Total Amount</div>
+                          <div className="text-xl font-bold">₹{selectedBooking.finalAmount}</div>
+                        </div>
+                        <div className="pt-2">
+                          <div className="text-xs text-muted-foreground mb-2">Owner Contact</div>
+                          <Button variant="outline" size="sm" className="w-full">
+                            <MessageSquare className="w-4 h-4 mr-2" />
+                            Message Owner
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Messages Section */}
+                    <Card className="flex flex-col h-80">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4" />
+                          Messages
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-1 overflow-y-auto space-y-3">
+                        {bookingMessages.length === 0 ? (
+                          <p className="text-sm text-muted-foreground text-center py-4">No messages yet</p>
+                        ) : (
+                          bookingMessages.map((msg) => (
+                            <div 
+                              key={msg._id} 
+                              className={`p-3 rounded-lg text-sm ${
+                                msg.senderId === ownerId 
+                                  ? 'bg-primary/10 ml-auto max-w-xs'
+                                  : 'bg-secondary/50 mr-auto max-w-xs'
+                              }`}
+                            >
+                              <div className="text-xs text-muted-foreground font-medium mb-1">{msg.senderName}</div>
+                              <div>{msg.content}</div>
+                              <div className="text-xs text-muted-foreground mt-1">
+                                {new Date(msg.createdAt).toLocaleTimeString()}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </CardContent>
+                      <div className="p-3 border-t space-y-2">
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Type message..."
+                            value={messageText}
+                            onChange={(e) => setMessageText(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                            className="text-sm"
+                          />
+                          <Button 
+                            size="sm"
+                            onClick={handleSendMessage}
+                            disabled={!messageText.trim()}
+                          >
+                            Send
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
 
-          {/* Dashboard Tab */}
-          <TabsContent value="dashboard">
-            {dashboardLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          {/* My Machinery Tab */}
+          <TabsContent value="machinery" className="space-y-6">
+            {isLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : (
-              <div className="space-y-6">
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold">My Machinery</h2>
+                    <p className="text-muted-foreground">Manage your equipment listings</p>
+                  </div>
+                  <Button onClick={() => window.location.href = '/machinery/add'}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Machinery
+                  </Button>
+                </div>
+
+                {machinery.length === 0 ? (
                   <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium">Total Machinery</CardTitle>
-                      <Package className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{dashboardStats.totalMachinery}</div>
-                      <p className="text-xs text-muted-foreground">{dashboardStats.activeMachinery} available</p>
+                    <CardContent className="py-12 text-center">
+                      <Package className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                      <h3 className="text-lg font-medium mb-2">No Machinery Listed</h3>
+                      <p className="text-muted-foreground mb-6">Start earning by listing your equipment</p>
+                      <Button onClick={() => window.location.href = '/machinery/add'}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Your First Equipment
+                      </Button>
                     </CardContent>
                   </Card>
+                ) : (
+                  <div className="grid gap-4">
+                    {machinery.map((item) => (
+                      <Card key={item._id}>
+                        <CardContent className="p-6">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-lg">{item.name}</h3>
+                              <p className="text-sm text-muted-foreground">{item.type}</p>
+                              <div className="flex flex-wrap gap-4 mt-3 text-sm">
+                                <div className="flex items-center gap-1">
+                                  <IndianRupee className="w-4 h-4" />
+                                  <span>{item.pricePerDay}/day</span>
+                                </div>
+                                <Badge variant={item.available ? 'default' : 'secondary'}>
+                                  {item.available ? 'Available' : 'Unavailable'}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="flex gap-2 flex-wrap md:flex-nowrap">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleEditMachinery(item._id!)}
+                              >
+                                <Edit2 className="w-4 h-4 mr-1" />
+                                Edit
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="text-red-600 hover:text-red-700"
+                                onClick={() => handleDeleteMachinery(item._id!, item.name)}
+                              >
+                                <Trash2 className="w-4 h-4 mr-1" />
+                                Delete
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </TabsContent>
 
+          {/* Owner Dashboard Tab */}
+          <TabsContent value="dashboard" className="space-y-6">
+            {isLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <div>
+                {/* Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                   <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm font-medium">Equipment Listed</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{machinery.length}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-3">
                       <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{dashboardStats.totalBookings}</div>
-                      <p className="text-xs text-muted-foreground">{dashboardStats.pendingRequests} pending</p>
+                      <div className="text-2xl font-bold">{ownerBookings.length}</div>
                     </CardContent>
                   </Card>
-
                   <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-                      <IndianRupee className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">₹{dashboardStats.totalEarnings.toLocaleString()}</div>
-                      <p className="text-xs text-muted-foreground">From confirmed bookings</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardHeader className="pb-3">
                       <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
-                      <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{dashboardStats.pendingRequests}</div>
-                      <p className="text-xs text-muted-foreground">Awaiting approval</p>
+                      <div className="text-2xl font-bold">{ownerBookings.filter(b => b.status === 'pending').length}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">₹{ownerBookings.filter(b => b.paymentStatus === 'paid').reduce((sum, b) => sum + b.finalAmount, 0).toLocaleString()}</div>
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Tabs for Machinery and Bookings */}
-                <Tabs defaultValue="machinery" className="space-y-4">
-                  <TabsList>
-                    <TabsTrigger value="machinery">My Machinery</TabsTrigger>
-                    <TabsTrigger value="bookings">Booking Requests</TabsTrigger>
-                  </TabsList>
+                {/* Booking Requests */}
+                <h3 className="text-xl font-bold mb-4">Booking Requests</h3>
+                {ownerBookings.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                      <p className="text-muted-foreground">No booking requests yet</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid gap-4">
+                    {ownerBookings.map((booking) => (
+                      <Card key={booking._id} className="overflow-hidden">
+                        <CardContent className="p-6 space-y-4">
+                          {/* Header Row - Machinery & Status */}
+                          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 pb-4 border-b">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold">{booking.machineryName}</h3>
+                              <p className="text-sm text-muted-foreground">{booking.machineryType}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={booking.status === 'pending' ? 'secondary' : 'default'}>
+                                {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                              </Badge>
+                            </div>
+                          </div>
 
-                  <TabsContent value="machinery" className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold">My Machinery</h3>
-                      <Button onClick={() => window.location.href = '/machinery/add'}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Machinery
-                      </Button>
-                    </div>
+                          {/* Renter Information */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Renter Name</div>
+                              <div className="font-medium">{booking.renterName}</div>
+                            </div>
+                            <div>
+                              <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Phone Number</div>
+                              <div className="font-medium flex items-center gap-2">
+                                <Phone className="w-4 h-4 text-primary" />
+                                {booking.renterPhone || 'Not provided'}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Email</div>
+                              <div className="font-medium flex items-center gap-2">
+                                <Mail className="w-4 h-4 text-primary" />
+                                {booking.renterEmail || 'Not provided'}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Total Amount</div>
+                              <div className="text-lg font-bold text-primary">₹{booking.finalAmount.toLocaleString()}</div>
+                            </div>
+                          </div>
 
-                    {machinery.length === 0 ? (
-                      <Card>
-                        <CardContent className="py-12 text-center">
-                          <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                          <p className="text-muted-foreground">No machinery listed yet</p>
+                          {/* Booking Dates */}
+                          <div className="bg-secondary/50 rounded-lg p-3">
+                            <div className="flex flex-wrap gap-4 text-sm">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-muted-foreground" />
+                                <span>
+                                  {new Date(booking.startDate).toLocaleDateString()} → {new Date(booking.endDate).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-muted-foreground" />
+                                <span>{booking.totalDays} day(s)</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Special Requirements / Message */}
+                          {(booking.specialRequirements || booking.purpose) && (
+                            <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                              <div className="text-xs font-medium text-blue-700 dark:text-blue-300 uppercase mb-2 flex items-center gap-2">
+                                <MessageSquare className="w-4 h-4" />
+                                Message / Requirements
+                              </div>
+                              <p className="text-sm text-blue-900 dark:text-blue-100">
+                                {booking.specialRequirements || booking.purpose || 'No special requirements'}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Delivery Information */}
+                          {booking.deliveryRequired && (
+                            <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                              <div className="text-xs font-medium text-amber-700 dark:text-amber-300 uppercase mb-2 flex items-center gap-2">
+                                <Package className="w-4 h-4" />
+                                Delivery Required
+                              </div>
+                              <p className="text-sm text-amber-900 dark:text-amber-100">
+                                {booking.deliveryAddress || 'Address not specified'}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Action Buttons */}
+                          <div className="pt-4 border-t flex flex-col md:flex-row gap-3">
+                            {booking.status === 'pending' && (
+                              <>
+                                <Button 
+                                  className="flex-1 gap-2"
+                                  onClick={() => handleApproveBooking(booking._id!)}
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                  Approve Booking
+                                </Button>
+                                <Button 
+                                  className="flex-1 gap-2"
+                                  variant="outline"
+                                  onClick={() => handleRejectBooking(booking._id!)}
+                                >
+                                  <XCircle className="w-4 h-4" />
+                                  Reject Booking
+                                </Button>
+                              </>
+                            )}
+                            {booking.status === 'confirmed' && (
+                              <Button variant="outline" className="w-full gap-2" disabled>
+                                <CheckCircle className="w-4 h-4" />
+                                Booking Confirmed
+                              </Button>
+                            )}
+                            {booking.status === 'rejected' && (
+                              <Button variant="outline" className="w-full gap-2" disabled>
+                                <XCircle className="w-4 h-4" />
+                                Booking Rejected
+                              </Button>
+                            )}
+                          </div>
                         </CardContent>
                       </Card>
-                    ) : (
-                      <div className="grid gap-4">
-                        {machinery.map((item) => (
-                          <Card key={item._id}>
-                            <CardContent className="p-6">
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                  <h4 className="font-semibold text-lg">{item.name}</h4>
-                                  <p className="text-sm text-muted-foreground">{item.category}</p>
-                                  <div className="flex gap-4 mt-2">
-                                    <span className="text-sm">₹{item.pricePerDay}/day</span>
-                                    <Badge variant={item.available ? "default" : "secondary"}>
-                                      {item.available ? "Available" : "Unavailable"}
-                                    </Badge>
-                                  </div>
-                                </div>
-                                <div className="flex gap-2">
-                                  <Button variant="outline" size="sm" onClick={() => handleEditMachinery(item._id!)}>
-                                    Edit
-                                  </Button>
-                                  <Button variant="outline" size="sm" className="text-red-600" onClick={() => handleDeleteMachinery(item._id!, item.name)}>
-                                    Delete
-                                  </Button>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  <TabsContent value="bookings" className="space-y-4">
-                    <h3 className="text-lg font-semibold">Booking Requests</h3>
-
-                    {dashboardBookings.length === 0 ? (
-                      <Card>
-                        <CardContent className="py-12 text-center">
-                          <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                          <p className="text-muted-foreground">No booking requests yet</p>
-                        </CardContent>
-                      </Card>
-                    ) : (
-                      <div className="grid gap-4">
-                        {dashboardBookings.map((booking) => (
-                          <Card key={booking._id}>
-                            <CardContent className="p-6">
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                  <h4 className="font-semibold">{booking.machineryName}</h4>
-                                  <p className="text-sm text-muted-foreground">Renter: {booking.renterName}</p>
-                                  <div className="flex gap-4 mt-2 text-sm">
-                                    <span>{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</span>
-                                    <span className="font-semibold">₹{booking.finalAmount}</span>
-                                  </div>
-                                  <Badge className="mt-2" variant={
-                                    booking.status === 'confirmed' ? 'default' :
-                                      booking.status === 'pending' ? 'secondary' : 'destructive'
-                                  }>
-                                    {booking.status}
-                                  </Badge>
-                                </div>
-                                {booking.status === 'pending' && (
-                                  <div className="flex gap-2">
-                                    <Button size="sm" onClick={() => handleApproveBooking(booking._id!)}>
-                                      <CheckCircle className="h-4 w-4 mr-1" />
-                                      Approve
-                                    </Button>
-                                    <Button size="sm" variant="outline" onClick={() => handleRejectBooking(booking._id!)}>
-                                      <XCircle className="h-4 w-4 mr-1" />
-                                      Reject
-                                    </Button>
-                                  </div>
-                                )}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    )}
-                  </TabsContent>
-                </Tabs>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </TabsContent>
 
           {/* Settings Tab */}
-          <TabsContent value="settings">
-            <div className="space-y-6">
-              {/* API Keys Management */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Key className="h-5 w-5 mr-2" />
-                    AI Analysis API Keys
-                  </CardTitle>
-                  <CardDescription>
-                    Configure your API keys for Gemini and Groq models
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Gemini API Key */}
-                  <div className="space-y-3 pb-4 border-b">
-                    <h3 className="font-medium">Gemini API Key</h3>
-                    <div>
-                      <Label>Current Status</Label>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        {getCurrentApiKey()}
-                      </div>
-                    </div>
-
-                    {showApiKey ? (
-                      <div className="space-y-3">
-                        <div>
-                          <Label htmlFor="api-key">Enter your Gemini API Key</Label>
-                          <Input
-                            id="api-key"
-                            placeholder="AIzaSy..."
-                            value={apiKey}
-                            onChange={(e) => setApiKey(e.target.value)}
-                            type="password"
-                          />
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Google AI Studio</a>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button onClick={handleSaveApiKey}>Save API Key</Button>
-                          <Button variant="outline" onClick={() => { setShowApiKey(false); setApiKey(''); }}>
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex space-x-2">
-                        <Button variant="outline" onClick={() => setShowApiKey(true)}>
-                          Add API Key
-                        </Button>
-                        {localStorage.getItem('gemini_api_key') && (
-                          <Button variant="outline" onClick={handleRemoveApiKey}>
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Remove Custom Key
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Groq API Key */}
-                  <div className="space-y-3">
-                    <h3 className="font-medium">Groq API Key</h3>
-                    <div>
-                      <Label>Current Status</Label>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        {getCurrentGroqApiKey()}
-                      </div>
-                    </div>
-
-                    {showGroqApiKey ? (
-                      <div className="space-y-3">
-                        <div>
-                          <Label htmlFor="groq-api-key">Enter your Groq API Key</Label>
-                          <Input
-                            id="groq-api-key"
-                            placeholder="gsk_..."
-                            value={groqApiKey}
-                            onChange={(e) => setGroqApiKey(e.target.value)}
-                            type="password"
-                          />
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Get your free API key from <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Groq Console</a>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button onClick={handleSaveGroqApiKey}>Save API Key</Button>
-                          <Button variant="outline" onClick={() => { setShowGroqApiKey(false); setGroqApiKey(''); }}>
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex space-x-2">
-                        <Button variant="outline" onClick={() => setShowGroqApiKey(true)}>
-                          Add API Key
-                        </Button>
-                        {localStorage.getItem('groq_api_key') && (
-                          <Button variant="outline" onClick={handleRemoveGroqApiKey}>
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Remove Key
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Model Selection */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Settings className="h-5 w-5 mr-2" />
-                    AI Model Selection
-                  </CardTitle>
-                  <CardDescription>Choose which AI model to use for disease detection</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label>Disease Detection Model</Label>
-                    <Select
-                      value={modelConfig.diseaseDetection}
-                      onValueChange={(value) => setModelConfig({ ...modelConfig, diseaseDetection: value as 'gemini' | 'groq' })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="gemini">Google Gemini 2.0 Flash - Fast & accurate</SelectItem>
-                        <SelectItem value="groq">Groq Llama 4 Scout - Ultra-fast inference</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Chatbot Model (Future Feature)</Label>
-                    <Select
-                      value={modelConfig.chatbot}
-                      onValueChange={(value) => setModelConfig({ ...modelConfig, chatbot: value as 'gemini' | 'groq' })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="gemini">Google Gemini - Advanced conversational AI</SelectItem>
-                        <SelectItem value="groq">Groq Llama - Lightning-fast responses</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <Button onClick={handleSaveModelConfig}>Save Model Preferences</Button>
-                </CardContent>
-              </Card>
-
-              {/* Other Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Settings className="h-5 w-5 mr-2" />
-                    Preferences
-                  </CardTitle>
-                  <CardDescription>Manage your preferences and notifications</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <h3 className="font-medium mb-3">Notification Preferences</h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center space-x-2">
-                        <input type="checkbox" defaultChecked className="rounded" />
-                        <span className="text-sm">Weather alerts</span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input type="checkbox" defaultChecked className="rounded" />
-                        <span className="text-sm">Scheme notifications</span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input type="checkbox" className="rounded" />
-                        <span className="text-sm">Machinery reminders</span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input type="checkbox" defaultChecked className="rounded" />
-                        <span className="text-sm">AI insights</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium mb-3">Privacy Settings</h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center space-x-2">
-                        <input type="checkbox" defaultChecked className="rounded" />
-                        <span className="text-sm">Share farm data for insights</span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input type="checkbox" className="rounded" />
-                        <span className="text-sm">Allow location tracking</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <Button>Save Settings</Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        {/* Delete Confirmation Dialog - Placed at root level to work on all tabs */}
-        {deleteDialog.open && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <Card className="w-full max-w-md mx-4">
+          <TabsContent value="settings" className="space-y-6">
+            {/* API Keys */}
+            <Card>
               <CardHeader>
-                <CardTitle>Confirm Delete</CardTitle>
-                <CardDescription>
-                  Are you sure you want to delete "{deleteDialog.name}"? This action cannot be undone.
-                </CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Key className="w-5 h-5" />
+                  AI Model API Keys
+                </CardTitle>
+                <CardDescription>Configure your preferred AI providers</CardDescription>
               </CardHeader>
-              <CardContent className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setDeleteDialog({ open: false, id: '', name: '' })}>
-                  Cancel
-                </Button>
-                <Button variant="destructive" onClick={confirmDeleteMachinery}>
-                  Delete
+              <CardContent className="space-y-6">
+                {/* Gemini API Key */}
+                <div className="space-y-3 pb-4 border-b">
+                  <h3 className="font-medium">Google Gemini API Key</h3>
+                  {showApiKey ? (
+                    <div className="space-y-3">
+                      <Input
+                        placeholder="Enter Gemini API key"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        type="password"
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={handleSaveApiKey}>Save</Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setShowApiKey(false);
+                            setApiKey('');
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      {getCurrentApiKey()}
+                    </div>
+                  )}
+                  {!showApiKey && (
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setShowApiKey(true)}
+                    >
+                      Add/Change Key
+                    </Button>
+                  )}
+                </div>
+
+                {/* Groq API Key */}
+                <div className="space-y-3">
+                  <h3 className="font-medium">Groq API Key</h3>
+                  {showGroqApiKey ? (
+                    <div className="space-y-3">
+                      <Input
+                        placeholder="Enter Groq API key"
+                        value={groqApiKey}
+                        onChange={(e) => setGroqApiKey(e.target.value)}
+                        type="password"
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={handleSaveGroqApiKey}>Save</Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setShowGroqApiKey(false);
+                            setGroqApiKey('');
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      {getCurrentGroqApiKey()}
+                    </div>
+                  )}
+                  {!showGroqApiKey && (
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setShowGroqApiKey(true)}
+                    >
+                      Add/Change Key
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Model Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="w-5 h-5" />
+                  AI Model Selection
+                </CardTitle>
+                <CardDescription>Choose which AI model to use</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="disease-model" className="mb-2 block">Disease Detection Model</Label>
+                  <Select
+                    value={modelConfig.diseaseDetection}
+                    onValueChange={(value) => setModelConfig({ ...modelConfig, diseaseDetection: value as 'gemini' | 'groq' })}
+                  >
+                    <SelectTrigger id="disease-model">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gemini">Google Gemini (Fast & Accurate)</SelectItem>
+                      <SelectItem value="groq">Groq Llama (Ultra-fast)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={handleSaveModelConfig} className="w-full md:w-auto">
+                  Save Preferences
                 </Button>
               </CardContent>
             </Card>
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialog.open} onOpenChange={(open) => !open && setDeleteDialog({ open: false, id: '', name: '' })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Machinery</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{deleteDialog.name}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline"
+              onClick={() => setDeleteDialog({ open: false, id: '', name: '' })}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={confirmDeleteMachinery}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
