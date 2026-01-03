@@ -228,63 +228,6 @@ router.get('/me', authenticateToken, async (req, res) => {
     }
 });
 
-// PUT /api/users/:id - Update user profile
-router.put('/:id', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const {
-            name,
-            phone,
-            location,
-            language,
-            farmSize,
-            crops
-        } = req.body;
 
-        // Verify user is updating their own profile
-        if (req.user.userId !== id) {
-            return res.status(403).json({
-                success: false,
-                error: 'Unauthorized to update this profile'
-            });
-        }
-
-        const db = await getDatabase();
-        const usersCollection = db.collection(collections.users);
-
-        const updateData = {
-            ...(name && { name }),
-            ...(phone && { phone }),
-            ...(location && { location }),
-            ...(language && { language }),
-            ...(farmSize !== undefined && { farmSize }),
-            ...(crops && { crops }),
-            updatedAt: new Date()
-        };
-
-        const result = await usersCollection.updateOne(
-            { _id: id },
-            { $set: updateData }
-        );
-
-        if (result.matchedCount === 0) {
-            return res.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-        }
-
-        res.json({
-            success: true,
-            message: 'Profile updated successfully'
-        });
-    } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to update profile'
-        });
-    }
-});
 
 export default router;

@@ -8,10 +8,11 @@ import cors from 'cors';
 // Import API routes
 import machineryRoutes from './api/machinery.js';
 import bookingsRoutes from './api/bookings.js';
-import reviewsRoutes from './api/reviews.js';
 import messagesRoutes from './api/messages.js';
 import usersRoutes from './api/users.js';
 import weatherRoutes from './api/weather.js';
+import diseasesRoutes from './api/diseases.js';
+import schemesRoutes from './api/schemes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -58,9 +59,10 @@ app.use('/api/auth', usersRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/machinery', machineryRoutes);
 app.use('/api/bookings', bookingsRoutes);
-app.use('/api/reviews', reviewsRoutes);
 app.use('/api/messages', messagesRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/diseases', diseasesRoutes);
+app.use('/api/schemes', schemesRoutes);
 
 // Serve static files from dist directory
 app.use(express.static(join(__dirname, 'dist')));
@@ -138,8 +140,9 @@ app.get("/api/health", (req, res) => {
         apiEndpoints: {
             machinery: '/api/machinery',
             bookings: '/api/bookings',
-            reviews: '/api/reviews',
-            messages: '/api/messages'
+            messages: '/api/messages',
+            diseases: '/api/diseases',
+            schemes: '/api/schemes'
         }
     });
 });
@@ -164,7 +167,6 @@ app.listen(PORT + 1, () => {
     console.log(`💓 Ping endpoint: http://localhost:${PORT + 1}/api/ping`);
     console.log(`🚜 Machinery API: http://localhost:${PORT + 1}/api/machinery`);
     console.log(`📅 Bookings API: http://localhost:${PORT + 1}/api/bookings`);
-    console.log(`⭐ Reviews API: http://localhost:${PORT + 1}/api/reviews`);
     console.log(`💬 Messages API: http://localhost:${PORT + 1}/api/messages`);
 });
 

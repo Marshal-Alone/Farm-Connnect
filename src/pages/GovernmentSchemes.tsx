@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -116,17 +116,43 @@ export default function GovernmentSchemes() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterState, setFilterState] = useState('all');
   const [selectedScheme, setSelectedScheme] = useState<Scheme | null>(null);
+  const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const filteredSchemes = schemesData.filter(scheme => {
-    const matchesSearch = scheme.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         scheme.nameHindi.includes(searchTerm) ||
-                         scheme.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || scheme.category === filterCategory;
-    const matchesState = filterState === 'all' || scheme.state.includes(filterState);
-    
-    return matchesSearch && matchesCategory && matchesState;
-  });
+  React.useEffect(() => {
+    const fetchSchemes = async () => {
+      setIsLoading(true);
+      try {
+        const queryParams = new URLSearchParams();
+        if (filterCategory !== 'all') queryParams.append('category', filterCategory);
+        if (filterState !== 'all') queryParams.append('state', filterState);
+        if (searchTerm) queryParams.append('search', searchTerm);
+
+        const response = await fetch(`/api/schemes?${queryParams.toString()}`);
+        const result = await response.json();
+
+        if (result.success) {
+          setSchemes(result.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch schemes:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load government schemes. Please try again later.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      fetchSchemes();
+    }, 300); // Debounce search
+
+    return () => clearTimeout(timer);
+  }, [filterCategory, filterState, searchTerm, toast]);
 
   const handleApplyScheme = (scheme: Scheme) => {
     if (scheme.status === 'closed') {
@@ -195,7 +221,7 @@ export default function GovernmentSchemes() {
                 className="pl-10"
               />
             </div>
-            
+
             <Select value={filterCategory} onValueChange={setFilterCategory}>
               <SelectTrigger>
                 <Filter className="h-4 w-4 mr-2" />
@@ -226,7 +252,7 @@ export default function GovernmentSchemes() {
 
         {/* Schemes Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredSchemes.map((scheme) => (
+          {schemes.map((scheme) => (
             <Card key={scheme.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -236,8 +262,8 @@ export default function GovernmentSchemes() {
                   </div>
                   <div className="flex items-center space-x-2">
                     {getStatusIcon(scheme.status)}
-                    <Badge variant={scheme.status === 'active' ? 'default' : 
-                                  scheme.status === 'deadline-soon' ? 'destructive' : 'secondary'}>
+                    <Badge variant={scheme.status === 'active' ? 'default' :
+                      scheme.status === 'deadline-soon' ? 'destructive' : 'secondary'}>
                       {getStatusText(scheme.status)}
                     </Badge>
                   </div>
@@ -314,15 +340,15 @@ export default function GovernmentSchemes() {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-2 pt-4">
-                  <Button 
+                  <Button
                     onClick={() => handleApplyScheme(scheme)}
                     className="flex-1"
                     disabled={scheme.status === 'closed'}
                   >
                     {scheme.status === 'closed' ? 'Application Closed' : 'Apply Now'}
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setSelectedScheme(scheme)}
                   >
                     View Details
@@ -333,7 +359,7 @@ export default function GovernmentSchemes() {
           ))}
         </div>
 
-        {filteredSchemes.length === 0 && (
+        {schemes.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
               No schemes found matching your criteria.
@@ -351,8 +377,8 @@ export default function GovernmentSchemes() {
                     <CardTitle>{selectedScheme.name}</CardTitle>
                     <p className="text-muted-foreground">{selectedScheme.nameHindi}</p>
                   </div>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => setSelectedScheme(null)}
                   >
@@ -362,7 +388,7 @@ export default function GovernmentSchemes() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p>{selectedScheme.description}</p>
-                
+
                 <div>
                   <h4 className="font-medium mb-2">Application Process:</h4>
                   <ol className="list-decimal list-inside space-y-1 text-sm">
@@ -390,7 +416,7 @@ export default function GovernmentSchemes() {
                   </ul>
                 </div>
 
-                <Button 
+                <Button
                   onClick={() => handleApplyScheme(selectedScheme)}
                   className="w-full"
                   disabled={selectedScheme.status === 'closed'}

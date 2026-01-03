@@ -15,7 +15,7 @@ import { messageService } from '@/lib/api/messageService';
 import { MachinerySchema } from '@/lib/schemas/machinery.schema';
 import { BookingSchema } from '@/lib/schemas/booking.schema';
 import { MessageSchema } from '@/lib/schemas/message.schema';
-import { User, MapPin, Phone, Mail, Globe, Sprout, Calendar, Settings, Key, Trash2, IndianRupee, Package, CheckCircle, Clock, XCircle, Loader2, Plus, MessageSquare, Edit2, Save, X } from 'lucide-react';
+import { User, MapPin, Phone, Mail, Globe, Sprout, Calendar, Settings, Key, Trash2, IndianRupee, Package, CheckCircle, Clock, XCircle, Loader2, Plus, MessageSquare, Edit2, Save, X, BarChart3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { geminiAI } from '@/lib/gemini';
 import { groqAI } from '@/lib/groq';
@@ -30,9 +30,14 @@ export default function UserProfile() {
   const [userBookings, setUserBookings] = useState<BookingSchema[]>([]);
   const [ownerBookings, setOwnerBookings] = useState<BookingSchema[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<BookingSchema | null>(null);
-  const [bookingMessages, setBookingMessages] = useState<MessageSchema[]>([]);
   const [messageText, setMessageText] = useState('');
+
+  // Messaging Unified State
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<any | null>(null);
+  const [conversationMessages, setConversationMessages] = useState<MessageSchema[]>([]);
+  const [isMessagesLoading, setIsMessagesLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Profile Editing
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -68,8 +73,140 @@ export default function UserProfile() {
   useEffect(() => {
     if (user) {
       fetchUserData();
+      fetchConversations();
     }
   }, [user]);
+
+  const fetchConversations = async () => {
+    if (!ownerId) return;
+    setIsMessagesLoading(true);
+    try {
+      const response = await messageService.getUserConversations(ownerId);
+      if (response.success) {
+        setConversations(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    } finally {
+      setIsMessagesLoading(false);
+    }
+  };
+
+  const handleSelectConversation = async (conversation: any) => {
+    setSelectedConversation(conversation);
+    setIsMessagesLoading(true);
+    try {
+      // Find the other participant's ID
+      const otherParticipant = conversation.participants.find((p: any) => p.userId !== ownerId);
+      if (otherParticipant) {
+        const response = await messageService.getConversation(ownerId, otherParticipant.userId);
+        if (response.success) {
+          setConversationMessages(response.data);
+
+          // Mark all as read if there are unread messages
+          if (conversation.unreadCount > 0) {
+            await messageService.markAllAsRead(conversation.conversationId, ownerId);
+            // Update local unread count
+            setConversations(conversations.map(c =>
+              c.conversationId === conversation.conversationId
+                ? { ...c, unreadCount: 0 }
+                : c
+            ));
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setIsMessagesLoading(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !selectedConversation || !user) return;
+
+    const otherParticipant = selectedConversation.participants.find((p: any) => p.userId !== ownerId);
+    if (!otherParticipant) return;
+
+    try {
+      const response = await messageService.sendMessage({
+        senderId: ownerId,
+        senderName: user.name || 'User',
+        receiverId: otherParticipant.userId,
+        receiverName: otherParticipant.userName,
+        content: messageText,
+      });
+
+      if (response.success) {
+        setConversationMessages([...conversationMessages, response.data]);
+        setMessageText('');
+
+        // If it was a temp conversation, refresh the whole list to get real IDs
+        if (selectedConversation.conversationId === 'temp') {
+          fetchConversations();
+        } else {
+          // Update last message in list
+          setConversations(conversations.map(c =>
+            c.conversationId === selectedConversation.conversationId
+              ? { ...c, lastMessage: response.data }
+              : c
+          ));
+        }
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to send message', variant: 'destructive' });
+    }
+  };
+
+  // Deep link to message if query param exists
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    const otherId = params.get('otherId');
+
+    if (tab === 'messages') {
+      setActiveTab('messages');
+      if (otherId && conversations.length > 0) {
+        const conv = conversations.find(c => c.participants.some((p: any) => p.userId === otherId));
+        if (conv) {
+          handleSelectConversation(conv);
+        }
+      }
+    }
+  }, [conversations.length]); // Only run once conversations are loaded
+
+  // Instant messaging poll
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (activeTab === 'messages') {
+      // Refresh conversation list for new unread messages
+      fetchConversations();
+
+      interval = setInterval(() => {
+        // Refresh conversation list
+        fetchConversations();
+
+        // If a conversation is selected, refresh its messages too
+        if (selectedConversation) {
+          const otherParticipant = selectedConversation.participants.find((p: any) => p.userId !== ownerId);
+          if (otherParticipant && selectedConversation.conversationId !== 'temp') {
+            messageService.getConversation(ownerId, otherParticipant.userId).then(res => {
+              if (res.success) {
+                // Only update if message count changed to avoid UI flickering
+                setConversationMessages(prev => {
+                  if (prev.length !== res.data.length) return res.data;
+                  return prev;
+                });
+              }
+            });
+          }
+        }
+      }, 3000); // 3-second poll
+    }
+
+    return () => clearInterval(interval);
+  }, [activeTab, selectedConversation?.conversationId]);
 
   const fetchUserData = async () => {
     setIsLoading(true);
@@ -91,17 +228,6 @@ export default function UserProfile() {
       toast({ title: 'Error', description: 'Failed to load data', variant: 'destructive' });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const fetchBookingMessages = async (bookingId: string) => {
-    try {
-      const response = await messageService.getConversation(ownerId, bookingId);
-      if (response.success) {
-        setBookingMessages(response.data);
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error);
     }
   };
 
@@ -156,8 +282,41 @@ export default function UserProfile() {
 
   // Booking Actions
   const handleSelectBooking = async (booking: BookingSchema) => {
-    setSelectedBooking(booking);
-    await fetchBookingMessages(booking._id || '');
+    const otherUserId = booking.renterId === ownerId ? booking.ownerId : booking.renterId;
+
+    // Switch to messages tab
+    setActiveTab('messages');
+
+    // Try to find existing conversation
+    const existingConversation = conversations.find(c =>
+      c.participants.some((p: any) => p.userId === otherUserId)
+    );
+
+    if (existingConversation) {
+      handleSelectConversation(existingConversation);
+    } else {
+      // If no conversation exists, we'll need to fetch it or wait for the list to update
+      // For now, let's just fetch messages directly with that user
+      setIsMessagesLoading(true);
+      try {
+        const response = await messageService.getConversation(ownerId, otherUserId);
+        if (response.success) {
+          setConversationMessages(response.data);
+          // Create a "virtual" selected conversation for the UI
+          setSelectedConversation({
+            conversationId: 'temp',
+            participants: [
+              { userId: ownerId, userName: user?.name },
+              { userId: otherUserId, userName: booking.renterId === ownerId ? booking.ownerName : booking.renterName }
+            ]
+          });
+        }
+      } catch (error) {
+        console.error('Error selecting booking conversation:', error);
+      } finally {
+        setIsMessagesLoading(false);
+      }
+    }
   };
 
   const getFilteredBookings = () => {
@@ -165,27 +324,6 @@ export default function UserProfile() {
       return userBookings;
     }
     return userBookings.filter(b => b.status === bookingFilter);
-  };
-
-  const handleSendMessage = async () => {
-    if (!messageText.trim() || !selectedBooking) return;
-
-    try {
-      await messageService.sendMessage({
-        senderId: ownerId,
-        senderName: user?.name || 'User',
-        receiverId: selectedBooking.renterId === ownerId ? selectedBooking.ownerId : selectedBooking.renterId,
-        receiverName: selectedBooking.renterId === ownerId ? selectedBooking.ownerName : selectedBooking.renterName,
-        content: messageText,
-        relatedBookingId: selectedBooking._id,
-        messageType: 'text'
-      });
-      setMessageText('');
-      await fetchBookingMessages(selectedBooking._id || '');
-      toast({ title: 'Message sent', description: 'Your message has been sent' });
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to send message', variant: 'destructive' });
-    }
   };
 
   const handleApproveBooking = async (bookingId: string) => {
@@ -285,13 +423,21 @@ export default function UserProfile() {
         </div>
 
         {/* Main Tabs */}
-        <Tabs defaultValue="overview" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-wrap w-full gap-2 mb-6 h-auto bg-transparent p-0 border-b">
             <TabsTrigger value="overview" className="text-xs md:text-sm px-3 py-2">Overview</TabsTrigger>
             <TabsTrigger value="profile" className="text-xs md:text-sm px-3 py-2">Profile</TabsTrigger>
             <TabsTrigger value="bookings" className="text-xs md:text-sm px-3 py-2">My Bookings</TabsTrigger>
             <TabsTrigger value="machinery" className="text-xs md:text-sm px-3 py-2">My Machinery</TabsTrigger>
             <TabsTrigger value="dashboard" className="text-xs md:text-sm px-3 py-2">Owner Panel</TabsTrigger>
+            <TabsTrigger value="messages" className="text-xs md:text-sm px-3 py-2 flex items-center gap-1">
+              Messages
+              {conversations.some(c => c.unreadCount > 0) && (
+                <Badge variant="destructive" className="h-4 w-4 p-0 flex items-center justify-center text-[10px]">
+                  {conversations.filter(c => c.unreadCount > 0).length}
+                </Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="settings" className="text-xs md:text-sm px-3 py-2">Settings</TabsTrigger>
           </TabsList>
 
@@ -320,9 +466,9 @@ export default function UserProfile() {
                     <Phone className="w-4 h-4 text-muted-foreground" />
                     <span>{user.phone || 'Not set'}</span>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="w-full mt-2"
                     onClick={() => {
                       setEditFormData({
@@ -474,8 +620,8 @@ export default function UserProfile() {
                       <Save className="w-4 h-4" />
                       Save Changes
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => setIsEditingProfile(false)}
                       className="gap-2"
                     >
@@ -492,7 +638,7 @@ export default function UserProfile() {
                     <CardTitle>Profile Information</CardTitle>
                     <CardDescription>Your current profile details</CardDescription>
                   </div>
-                  <Button 
+                  <Button
                     size="sm"
                     onClick={() => {
                       setEditFormData({
@@ -559,41 +705,41 @@ export default function UserProfile() {
           <TabsContent value="bookings" className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold mb-6">My Bookings</h2>
-              
+
               {/* Filter Tabs */}
               <Tabs value={bookingFilter} onValueChange={setBookingFilter} className="mb-6">
                 <TabsList className="flex flex-wrap gap-2 bg-transparent h-auto p-0">
-                  <TabsTrigger 
+                  <TabsTrigger
                     value="all"
                     className="px-4 py-2 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white"
                   >
                     All
                   </TabsTrigger>
-                  <TabsTrigger 
+                  <TabsTrigger
                     value="pending"
                     className="px-4 py-2 rounded-full data-[state=active]:bg-yellow-500 data-[state=active]:text-white"
                   >
                     Pending
                   </TabsTrigger>
-                  <TabsTrigger 
+                  <TabsTrigger
                     value="confirmed"
                     className="px-4 py-2 rounded-full data-[state=active]:bg-green-500 data-[state=active]:text-white"
                   >
                     Confirmed
                   </TabsTrigger>
-                  <TabsTrigger 
+                  <TabsTrigger
                     value="in-progress"
                     className="px-4 py-2 rounded-full data-[state=active]:bg-blue-500 data-[state=active]:text-white"
                   >
                     In Progress
                   </TabsTrigger>
-                  <TabsTrigger 
+                  <TabsTrigger
                     value="completed"
                     className="px-4 py-2 rounded-full data-[state=active]:bg-gray-500 data-[state=active]:text-white"
                   >
                     Completed
                   </TabsTrigger>
-                  <TabsTrigger 
+                  <TabsTrigger
                     value="cancelled"
                     className="px-4 py-2 rounded-full data-[state=active]:bg-red-500 data-[state=active]:text-white"
                   >
@@ -613,7 +759,7 @@ export default function UserProfile() {
                   <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
                   <h3 className="text-lg font-medium mb-2">No Bookings Yet</h3>
                   <p className="text-muted-foreground mb-6">
-                    {bookingFilter === 'all' 
+                    {bookingFilter === 'all'
                       ? "You haven't made any machinery bookings yet"
                       : `No ${bookingFilter} bookings found`}
                   </p>
@@ -626,131 +772,227 @@ export default function UserProfile() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Bookings List */}
-                <div className="lg:col-span-2 space-y-4">
+              <>
+                <div className="space-y-4">
                   {getFilteredBookings().map((booking) => (
-                    <Card 
-                      key={booking._id} 
-                      className="cursor-pointer hover:shadow-lg transition-shadow"
-                      onClick={() => handleSelectBooking(booking)}
+                    <Card
+                      key={booking._id}
+                      className="overflow-hidden hover:shadow-lg transition-all duration-200 border-l-4"
+                      style={{
+                        borderLeftColor: booking.status === 'confirmed' ? '#22c55e' :
+                          booking.status === 'pending' ? '#eab308' :
+                            booking.status === 'in-progress' ? '#3b82f6' :
+                              booking.status === 'completed' ? '#6b7280' :
+                                booking.status === 'cancelled' ? '#ef4444' : '#6b7280'
+                      }}
                     >
-                      <CardContent className="p-6">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      {/* Card Header with Machinery Info */}
+                      <CardHeader className="bg-secondary/30 pb-3">
+                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg">{booking.machineryName}</h3>
-                            <p className="text-sm text-muted-foreground">Owner: {booking.ownerName}</p>
-                            <div className="flex flex-wrap gap-4 mt-3 text-sm">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="w-4 h-4" />
-                                <span>{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <IndianRupee className="w-4 h-4" />
-                                <span>₹{booking.finalAmount}</span>
-                              </div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <CardTitle className="text-xl">{booking.machineryName}</CardTitle>
+                              <Badge variant="outline" className="text-xs">
+                                {booking.machineryType}
+                              </Badge>
                             </div>
+                            <p className="text-sm text-muted-foreground font-mono">
+                              Booking #{booking.bookingNumber}
+                            </p>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={
-                              booking.status === 'confirmed' ? 'default' :
-                              booking.status === 'pending' ? 'secondary' :
-                              booking.status === 'completed' ? 'outline' : 'destructive'
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge className={
+                              booking.status === 'confirmed' ? 'bg-green-500 text-white' :
+                                booking.status === 'pending' ? 'bg-yellow-500 text-white' :
+                                  booking.status === 'in-progress' ? 'bg-blue-500 text-white' :
+                                    booking.status === 'completed' ? 'bg-gray-500 text-white' :
+                                      'bg-red-500 text-white'
                             }>
-                              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                              {booking.status === 'in-progress' ? 'In Progress' :
+                                booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                             </Badge>
                             <Badge variant={booking.paymentStatus === 'paid' ? 'default' : 'secondary'}>
-                              {booking.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
+                              {booking.paymentStatus === 'paid' ? '✓ Paid' :
+                                booking.paymentStatus === 'partial' ? 'Partial' : 'Payment Pending'}
                             </Badge>
                           </div>
+                        </div>
+                      </CardHeader>
+
+                      <CardContent className="pt-4">
+                        {/* Main Info Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                          {/* Rental Period */}
+                          <div className="flex items-start gap-3 p-3 bg-secondary/20 rounded-lg">
+                            <Calendar className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs text-muted-foreground font-medium uppercase">Rental Period</p>
+                              <p className="font-semibold text-sm">
+                                {new Date(booking.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} - {new Date(booking.endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{booking.totalDays} day{booking.totalDays > 1 ? 's' : ''}</p>
+                            </div>
+                          </div>
+
+                          {/* Amount */}
+                          <div className="flex items-start gap-3 p-3 bg-green-500/10 rounded-lg">
+                            <IndianRupee className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs text-muted-foreground font-medium uppercase">Total Amount</p>
+                              <p className="font-bold text-lg text-green-600">₹{booking.finalAmount.toLocaleString('en-IN')}</p>
+                              <p className="text-xs text-muted-foreground">
+                                ₹{booking.pricePerDay}/day
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Owner */}
+                          <div className="flex items-start gap-3 p-3 bg-secondary/20 rounded-lg">
+                            <User className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs text-muted-foreground font-medium uppercase">Owner</p>
+                              <p className="font-semibold text-sm">{booking.ownerName}</p>
+                              <Button
+                                variant="link"
+                                size="sm"
+                                className="h-auto p-0 text-xs text-primary"
+                                onClick={(e) => { e.stopPropagation(); handleSelectBooking(booking); }}
+                              >
+                                <MessageSquare className="w-3 h-3 mr-1" />
+                                Message
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Booked On */}
+                          <div className="flex items-start gap-3 p-3 bg-secondary/20 rounded-lg">
+                            <Clock className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs text-muted-foreground font-medium uppercase">Booked On</p>
+                              <p className="font-semibold text-sm">
+                                {new Date(booking.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(booking.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Payment Breakdown */}
+                        {(booking.deliveryCharge > 0 || booking.securityDeposit > 0 || booking.discount > 0) && (
+                          <div className="mb-4 p-3 bg-secondary/10 rounded-lg border">
+                            <p className="text-xs text-muted-foreground font-medium uppercase mb-2">Payment Breakdown</p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                              <div>
+                                <span className="text-muted-foreground">Base:</span>
+                                <span className="ml-1 font-medium">₹{booking.totalAmount.toLocaleString('en-IN')}</span>
+                              </div>
+                              {booking.deliveryCharge > 0 && (
+                                <div>
+                                  <span className="text-muted-foreground">Delivery:</span>
+                                  <span className="ml-1 font-medium">₹{booking.deliveryCharge.toLocaleString('en-IN')}</span>
+                                </div>
+                              )}
+                              {booking.securityDeposit > 0 && (
+                                <div>
+                                  <span className="text-muted-foreground">Deposit:</span>
+                                  <span className="ml-1 font-medium">₹{booking.securityDeposit.toLocaleString('en-IN')}</span>
+                                </div>
+                              )}
+                              {booking.discount > 0 && (
+                                <div>
+                                  <span className="text-muted-foreground">Discount:</span>
+                                  <span className="ml-1 font-medium text-green-600">-₹{booking.discount.toLocaleString('en-IN')}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Purpose */}
+                        {booking.purpose && (
+                          <div className="mb-4 p-3 bg-blue-500/10 rounded-lg">
+                            <p className="text-xs text-muted-foreground font-medium uppercase mb-1">Purpose</p>
+                            <p className="text-sm">{booking.purpose}</p>
+                          </div>
+                        )}
+
+                        {/* Special Requirements */}
+                        {booking.specialRequirements && (
+                          <div className="mb-4 p-3 bg-amber-500/10 rounded-lg">
+                            <p className="text-xs text-muted-foreground font-medium uppercase mb-1">Special Requirements</p>
+                            <p className="text-sm">{booking.specialRequirements}</p>
+                          </div>
+                        )}
+
+                        {/* Delivery Address */}
+                        {booking.deliveryRequired && booking.deliveryAddress && (
+                          <div className="mb-4 p-3 bg-secondary/20 rounded-lg">
+                            <div className="flex items-center gap-2 mb-1">
+                              <MapPin className="w-4 h-4 text-primary" />
+                              <p className="text-xs text-muted-foreground font-medium uppercase">Delivery Address</p>
+                            </div>
+                            <p className="text-sm">{booking.deliveryAddress}</p>
+                          </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap gap-2 pt-3 border-t">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => { e.stopPropagation(); window.location.href = `/machinery/${booking.machineryId}`; }}
+                          >
+                            <Package className="w-4 h-4 mr-1" />
+                            View Machinery
+                          </Button>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => { e.stopPropagation(); handleSelectBooking(booking); }}
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            Messages
+                          </Button>
+
+                          {(booking.status === 'pending' || booking.status === 'confirmed') && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (confirm('Are you sure you want to cancel this booking?')) {
+                                  try {
+                                    const response = await bookingService.cancelBooking(
+                                      booking._id!,
+                                      'Cancelled by user',
+                                      'renter'
+                                    );
+                                    if (response.success) {
+                                      toast({ title: 'Success', description: 'Booking cancelled successfully' });
+                                      fetchUserData();
+                                    }
+                                  } catch (error) {
+                                    toast({ title: 'Error', description: 'Failed to cancel booking', variant: 'destructive' });
+                                  }
+                                }
+                              }}
+                            >
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Cancel Booking
+                            </Button>
+                          )}
+
+
                         </div>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
-
-                {/* Booking Details & Messages */}
-                {selectedBooking && (
-                  <div className="lg:col-span-1 space-y-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Booking Details</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div>
-                          <div className="text-xs text-muted-foreground">Booking Number</div>
-                          <div className="font-mono text-sm">{selectedBooking.bookingNumber}</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Status</div>
-                          <Badge className="mt-1">{selectedBooking.status}</Badge>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Total Amount</div>
-                          <div className="text-xl font-bold">₹{selectedBooking.finalAmount}</div>
-                        </div>
-                        <div className="pt-2">
-                          <div className="text-xs text-muted-foreground mb-2">Owner Contact</div>
-                          <Button variant="outline" size="sm" className="w-full">
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            Message Owner
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Messages Section */}
-                    <Card className="flex flex-col h-80">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <MessageSquare className="w-4 h-4" />
-                          Messages
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="flex-1 overflow-y-auto space-y-3">
-                        {bookingMessages.length === 0 ? (
-                          <p className="text-sm text-muted-foreground text-center py-4">No messages yet</p>
-                        ) : (
-                          bookingMessages.map((msg) => (
-                            <div 
-                              key={msg._id} 
-                              className={`p-3 rounded-lg text-sm ${
-                                msg.senderId === ownerId 
-                                  ? 'bg-primary/10 ml-auto max-w-xs'
-                                  : 'bg-secondary/50 mr-auto max-w-xs'
-                              }`}
-                            >
-                              <div className="text-xs text-muted-foreground font-medium mb-1">{msg.senderName}</div>
-                              <div>{msg.content}</div>
-                              <div className="text-xs text-muted-foreground mt-1">
-                                {new Date(msg.createdAt).toLocaleTimeString()}
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </CardContent>
-                      <div className="p-3 border-t space-y-2">
-                        <div className="flex gap-2">
-                          <Input
-                            placeholder="Type message..."
-                            value={messageText}
-                            onChange={(e) => setMessageText(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                            className="text-sm"
-                          />
-                          <Button 
-                            size="sm"
-                            onClick={handleSendMessage}
-                            disabled={!messageText.trim()}
-                          >
-                            Send
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  </div>
-                )}
-              </div>
+              </>
             )}
           </TabsContent>
 
@@ -805,16 +1047,16 @@ export default function UserProfile() {
                               </div>
                             </div>
                             <div className="flex gap-2 flex-wrap md:flex-nowrap">
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={() => handleEditMachinery(item._id!)}
                               >
                                 <Edit2 className="w-4 h-4 mr-1" />
                                 Edit
                               </Button>
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 size="sm"
                                 className="text-red-600 hover:text-red-700"
                                 onClick={() => handleDeleteMachinery(item._id!, item.name)}
@@ -841,6 +1083,21 @@ export default function UserProfile() {
               </div>
             ) : (
               <div>
+                {/* Header with Dashboard Link */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold">Owner Panel</h2>
+                    <p className="text-muted-foreground text-sm">Manage your machinery and booking requests</p>
+                  </div>
+                  <Button
+                    className="gap-2 bg-primary hover:bg-primary/90"
+                    onClick={() => window.location.href = '/owner/dashboard'}
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    Open Full Dashboard
+                  </Button>
+                </div>
+
                 {/* Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                   <Card>
@@ -976,14 +1233,14 @@ export default function UserProfile() {
                           <div className="pt-4 border-t flex flex-col md:flex-row gap-3">
                             {booking.status === 'pending' && (
                               <>
-                                <Button 
+                                <Button
                                   className="flex-1 gap-2"
                                   onClick={() => handleApproveBooking(booking._id!)}
                                 >
                                   <CheckCircle className="w-4 h-4" />
                                   Approve Booking
                                 </Button>
-                                <Button 
+                                <Button
                                   className="flex-1 gap-2"
                                   variant="outline"
                                   onClick={() => handleRejectBooking(booking._id!)}
@@ -1005,6 +1262,14 @@ export default function UserProfile() {
                                 Booking Rejected
                               </Button>
                             )}
+                            <Button
+                              variant="outline"
+                              className="flex-1 gap-2 border-primary text-primary hover:bg-primary/5"
+                              onClick={() => handleSelectBooking(booking)}
+                            >
+                              <MessageSquare className="w-4 h-4" />
+                              {booking.status === 'pending' ? 'Message Renter' : 'Chat'}
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -1013,6 +1278,143 @@ export default function UserProfile() {
                 )}
               </div>
             )}
+          </TabsContent>
+
+          {/* Unified Messaging Tab */}
+          <TabsContent value="messages" className="space-y-0 h-[600px] border rounded-xl overflow-hidden bg-card shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-12 h-full">
+              {/* Conversations List */}
+              <div className={`md:col-span-4 border-r bg-muted/20 flex flex-col h-full ${selectedConversation ? 'hidden md:flex' : 'flex'}`}>
+                <div className="p-4 border-b bg-card">
+                  <h3 className="font-bold flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-primary" />
+                    Messages
+                  </h3>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                  {conversations.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full p-8 text-center text-muted-foreground">
+                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                        <MessageSquare className="w-6 h-6" />
+                      </div>
+                      <p className="font-medium">No conversations yet</p>
+                      <p className="text-xs">Your chats with owners and renters will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-border/50">
+                      {conversations.map((conversation) => {
+                        const otherParticipant = conversation.participants.find((p: any) => p.userId !== ownerId);
+                        const isSelected = selectedConversation?.conversationId === conversation.conversationId;
+                        return (
+                          <button
+                            key={conversation.conversationId}
+                            onClick={() => handleSelectConversation(conversation)}
+                            className={`w-full p-4 flex items-start gap-3 hover:bg-muted/50 transition-colors text-left ${isSelected ? 'bg-primary/5 border-l-2 border-primary' : ''}`}
+                          >
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary shrink-0">
+                              {(otherParticipant?.userName || 'U').charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="font-semibold text-sm truncate">{otherParticipant?.userName || 'Unknown User'}</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {conversation.lastMessage ? new Date(conversation.lastMessage.createdAt).toLocaleDateString() : ''}
+                                </p>
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {conversation.lastMessage?.content || 'Started a conversation'}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Chat Window */}
+              <div className={`md:col-span-8 flex flex-col h-full bg-card ${!selectedConversation ? 'hidden md:flex' : 'flex'}`}>
+                {selectedConversation ? (
+                  <>
+                    {/* Chat Header */}
+                    <div className="p-3 border-b flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="md:hidden"
+                          onClick={() => setSelectedConversation(null)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
+                          {(selectedConversation.participants.find((p: any) => p.userId !== ownerId)?.userName || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">
+                            {selectedConversation.participants.find((p: any) => p.userId !== ownerId)?.userName}
+                          </p>
+                          <p className="text-[10px] text-green-500 font-medium">Online</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Messages Body */}
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/5">
+                      {isMessagesLoading && conversationMessages.length === 0 ? (
+                        <div className="flex items-center justify-center h-full">
+                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                        </div>
+                      ) : (
+                        conversationMessages.map((msg, idx) => {
+                          const isMe = msg.senderId === ownerId;
+                          return (
+                            <div key={msg._id || idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${isMe
+                                ? 'bg-primary text-primary-foreground rounded-tr-none'
+                                : 'bg-secondary text-secondary-foreground rounded-tl-none'
+                                }`}>
+                                <p>{msg.content}</p>
+                                <p className={`text-[10px] mt-1 text-right opacity-70`}>
+                                  {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+
+                    {/* Chat Input */}
+                    <div className="p-4 border-t">
+                      <form
+                        className="flex gap-2"
+                        onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
+                      >
+                        <Input
+                          placeholder="Type your message..."
+                          value={messageText}
+                          onChange={(e) => setMessageText(e.target.value)}
+                          className="flex-1"
+                        />
+                        <Button type="submit" size="icon" disabled={!messageText.trim()}>
+                          <Plus className="w-4 h-4 rotate-45 scale-125" />
+                        </Button>
+                      </form>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center p-12 text-muted-foreground">
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                      <MessageSquare className="w-8 h-8 opacity-20" />
+                    </div>
+                    <h4 className="font-semibold text-foreground">AgriSmart Messaging</h4>
+                    <p className="max-w-xs text-sm mt-1">Select a conversation to view history and send messages.</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </TabsContent>
 
           {/* Settings Tab */}
@@ -1040,8 +1442,8 @@ export default function UserProfile() {
                       />
                       <div className="flex gap-2">
                         <Button size="sm" onClick={handleSaveApiKey}>Save</Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => {
                             setShowApiKey(false);
@@ -1058,8 +1460,8 @@ export default function UserProfile() {
                     </div>
                   )}
                   {!showApiKey && (
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => setShowApiKey(true)}
                     >
@@ -1081,8 +1483,8 @@ export default function UserProfile() {
                       />
                       <div className="flex gap-2">
                         <Button size="sm" onClick={handleSaveGroqApiKey}>Save</Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => {
                             setShowGroqApiKey(false);
@@ -1099,8 +1501,8 @@ export default function UserProfile() {
                     </div>
                   )}
                   {!showGroqApiKey && (
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => setShowGroqApiKey(true)}
                     >
@@ -1155,13 +1557,13 @@ export default function UserProfile() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => setDeleteDialog({ open: false, id: '', name: '' })}
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               variant="destructive"
               onClick={confirmDeleteMachinery}
             >
@@ -1170,6 +1572,6 @@ export default function UserProfile() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   );
 }

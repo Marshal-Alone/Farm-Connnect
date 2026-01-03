@@ -31,33 +31,47 @@ class DetectionStorageService {
   getRecentDetections(userId?: string): DetectionRecord[] {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     const detections: DetectionRecord[] = stored ? JSON.parse(stored) : [];
-    
+
     if (userId) {
       return detections.filter(d => d.userId === userId).slice(0, 10);
     }
-    
+
     return detections.slice(0, 10);
   }
 
   // Save a new detection
-  saveDetection(detection: Omit<DetectionRecord, 'id' | 'date'>): DetectionRecord {
+  async saveDetection(detection: Omit<DetectionRecord, 'id' | 'date'>): Promise<DetectionRecord> {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     const detections: DetectionRecord[] = stored ? JSON.parse(stored) : [];
-    
+
     const newDetection: DetectionRecord = {
       ...detection,
       id: Date.now().toString(),
       date: new Date().toISOString()
     };
-    
+
+    // Save to LocalStorage for offline/instant access
     detections.unshift(newDetection);
-    
-    // Keep only last 50 detections
     if (detections.length > 50) {
       detections.splice(50);
     }
-    
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(detections));
+
+    // Save to Backend for persistence
+    try {
+      await fetch('/api/diseases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...detection,
+          createdAt: newDetection.date
+        })
+      });
+      console.log('✅ Detection synced to cloud');
+    } catch (error) {
+      console.error('❌ Failed to sync detection to cloud:', error);
+    }
+
     return newDetection;
   }
 

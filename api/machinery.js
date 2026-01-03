@@ -94,46 +94,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /api/machinery/nearby - Get nearby machinery based on coordinates
-router.get('/nearby', async (req, res) => {
-    console.log('📋 [GET /api/machinery/nearby] Request received', { latitude: req.query.latitude, longitude: req.query.longitude, radius: req.query.radius, timestamp: new Date().toISOString() });
-    try {
-        const { latitude, longitude, radius = 50 } = req.query;
 
-        if (!latitude || !longitude) {
-            return res.status(400).json({
-                success: false,
-                error: 'Latitude and longitude are required'
-            });
-        }
-
-        const db = await getDatabase();
-        const machineryCollection = db.collection(collections.machinery);
-
-        // Find machinery within radius (in km)
-        const machinery = await machineryCollection.find({
-            isActive: true,
-            available: true,
-            'location.coordinates': {
-                $near: {
-                    $geometry: {
-                        type: 'Point',
-                        coordinates: [parseFloat(longitude), parseFloat(latitude)]
-                    },
-                    $maxDistance: parseFloat(radius) * 1000 // Convert km to meters
-                }
-            }
-        }).toArray();
-
-        res.json({
-            success: true,
-            data: machinery
-        });
-    } catch (error) {
-        console.error('Error fetching nearby machinery:', error);
-        res.status(500).json({ success: false, error: 'Failed to fetch nearby machinery' });
-    }
-});
 
 // GET /api/machinery/:id - Get single machinery by ID
 router.get('/:id', async (req, res) => {

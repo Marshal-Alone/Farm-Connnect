@@ -170,7 +170,7 @@ export default function DiseaseDetection() {
       setResult(analysisResult);
 
       // Save detection to storage
-      const savedDetection = detectionStorage.saveDetection({
+      const savedDetection = await detectionStorage.saveDetection({
         crop: 'Unknown Crop', // You could add crop detection logic here
         disease: analysisResult.disease,
         confidence: analysisResult.confidence,

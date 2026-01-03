@@ -227,16 +227,7 @@ export default function BookingHistory() {
                                             </Button>
                                         )}
 
-                                        {booking.status === 'completed' && !booking.reviewSubmitted && (
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="text-green-600"
-                                                onClick={() => {/* TODO: Open review modal */ }}
-                                            >
-                                                Write Review
-                                            </Button>
-                                        )}
+
                                     </div>
                                 </CardContent>
                             </Card>

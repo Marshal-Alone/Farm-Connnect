@@ -41,13 +41,10 @@ export async function getDatabase() {
 // Collections
 export const collections = {
     users: 'users',
-    farms: 'farms',
     machinery: 'machinery',
     schemes: 'schemes',
     bookings: 'bookings',
     diseases: 'diseases',
-    predictions: 'predictions',
-    reviews: 'reviews',
     messages: 'messages',
     conversations: 'conversations'
 };

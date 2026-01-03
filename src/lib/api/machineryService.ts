@@ -83,22 +83,7 @@ class MachineryService {
         }
     }
 
-    // Get nearby machinery
-    async getNearbyMachinery(latitude: number, longitude: number, radius: number = 50): Promise<MachineryResponse> {
-        try {
-            const response = await fetch(
-                `${API_BASE_URL}/machinery/nearby?latitude=${latitude}&longitude=${longitude}&radius=${radius}`
-            );
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching nearby machinery:', error);
-            return {
-                success: false,
-                data: [],
-                error: 'Failed to fetch nearby machinery'
-            };
-        }
-    }
+
 
     // Check availability
     async checkAvailability(id: string, startDate: string, endDate: string): Promise<AvailabilityResponse> {

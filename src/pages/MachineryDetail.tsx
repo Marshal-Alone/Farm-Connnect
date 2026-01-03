@@ -7,11 +7,12 @@ import { Separator } from '@/components/ui/separator';
 import { Calendar } from '@/components/ui/calendar';
 import {
     MapPin, Star, Truck, Phone, Mail, Calendar as CalendarIcon,
-    IndianRupee, Shield, Clock, ArrowLeft, Check, X, Loader2
+    IndianRupee, Shield, Clock, ArrowLeft, Check, X, Loader2, MessageSquare
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { machineryService } from '@/lib/api/machineryService';
 import { bookingService } from '@/lib/api/bookingService';
+import { messageService } from '@/lib/api/messageService';
 import { MachinerySchema } from '@/lib/schemas/machinery.schema';
 import { format, addDays, differenceInDays } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,6 +39,7 @@ export default function MachineryDetail() {
         email: '',
         purpose: ''
     });
+
 
     useEffect(() => {
         fetchMachineryDetails();
@@ -157,6 +159,20 @@ export default function MachineryDetail() {
         } finally {
             setBookingLoading(false);
         }
+    };
+
+    const handleOpenChat = () => {
+        if (!user) {
+            toast({
+                title: "Login Required",
+                description: "Please login to message the owner",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        // Redirect to profile messages tab with the owner's ID
+        navigate(`/profile?tab=messages&otherId=${machinery?.ownerId}`);
     };
 
     if (loading) {
@@ -289,8 +305,17 @@ export default function MachineryDetail() {
 
                         {/* Owner Info */}
                         <Card>
-                            <CardHeader>
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle>Owner Information</CardTitle>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-2"
+                                    onClick={handleOpenChat}
+                                >
+                                    <MessageSquare className="h-4 w-4" />
+                                    Message Owner
+                                </Button>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-center gap-2">
@@ -335,7 +360,7 @@ export default function MachineryDetail() {
                                     <Calendar
                                         mode="range"
                                         selected={selectedDates}
-                                        onSelect={(range) => setSelectedDates(range || { from: undefined, to: undefined })}
+                                        onSelect={(range: any) => setSelectedDates(range || { from: undefined, to: undefined })}
                                         disabled={(date) => date < new Date()}
                                         className="rounded-md border"
                                     />

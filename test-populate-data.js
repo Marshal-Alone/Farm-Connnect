@@ -249,6 +249,97 @@ const sampleMachinery = [
     }
 ];
 
+const sampleSchemes = [
+    {
+        name: 'PM-KISAN Samman Nidhi',
+        nameHindi: 'प्रधानमंत्री किसान सम्मान निधि',
+        category: 'income-support',
+        state: 'All States',
+        subsidy: 100,
+        maxAmount: 6000,
+        eligibility: ['Small & Marginal Farmers', 'Land ownership documents', 'Valid Aadhaar'],
+        documents: ['Aadhaar Card', 'Land Records', 'Bank Passbook', 'Passport Photo'],
+        deadline: '2025-03-31',
+        status: 'active',
+        priority: 10,
+        description: 'Direct income support of ₹6000 per year to farmer families',
+        applicationProcess: [
+            'Visit PM-KISAN website',
+            'Fill online application form',
+            'Upload required documents',
+            'Submit application',
+            'Track application status'
+        ],
+        createdAt: new Date()
+    },
+    {
+        name: 'Pradhan Mantri Fasal Bima Yojana',
+        nameHindi: 'प्रधानमंत्री फसल बीमा योजना',
+        category: 'insurance',
+        state: 'Maharashtra',
+        subsidy: 95,
+        maxAmount: 200000,
+        eligibility: ['All farmers', 'Valid crop insurance', 'Land records'],
+        documents: ['Aadhaar Card', 'Land Records', 'Sowing Certificate', 'Bank Details'],
+        deadline: '2025-02-15',
+        status: 'deadline-soon',
+        priority: 8,
+        description: 'Comprehensive crop insurance scheme covering yield losses',
+        applicationProcess: [
+            'Visit nearest CSC or bank',
+            'Fill application form',
+            'Pay farmer premium (2%)',
+            'Get insurance policy',
+            'Report crop loss if any'
+        ],
+        createdAt: new Date()
+    },
+    {
+        name: 'Soil Health Card Scheme',
+        nameHindi: 'मृदा स्वास्थ्य कार्ड योजना',
+        category: 'soil-health',
+        state: 'Kerala',
+        subsidy: 100,
+        maxAmount: 0,
+        eligibility: ['All farmers with land', 'Soil testing required'],
+        documents: ['Land Records', 'Aadhaar Card', 'Mobile Number'],
+        deadline: '2025-06-30',
+        status: 'active',
+        priority: 5,
+        description: 'Free soil testing and health cards for farmers',
+        applicationProcess: [
+            'Contact local agriculture officer',
+            'Provide soil samples',
+            'Wait for lab testing',
+            'Receive soil health card',
+            'Follow recommendations'
+        ],
+        createdAt: new Date()
+    },
+    {
+        name: 'Kisan Credit Card',
+        nameHindi: 'किसान क्रेडिट कार्ड',
+        category: 'credit',
+        state: 'Punjab',
+        subsidy: 0,
+        maxAmount: 300000,
+        eligibility: ['Crop cultivators', 'Good credit history', 'Land ownership'],
+        documents: ['Aadhaar Card', 'Land Records', 'Income Certificate', 'Bank Statements'],
+        deadline: '2025-12-31',
+        status: 'active',
+        priority: 7,
+        description: 'Easy credit access for agriculture and allied activities',
+        applicationProcess: [
+            'Visit bank branch',
+            'Fill KCC application',
+            'Submit documents',
+            'Credit assessment',
+            'Receive KCC card'
+        ],
+        createdAt: new Date()
+    }
+];
+
 async function populateData() {
     const client = new MongoClient(uri);
 
@@ -257,24 +348,22 @@ async function populateData() {
         console.log('✅ Connected to MongoDB');
 
         const db = client.db('FarmConnect');
-        const machineryCollection = db.collection('machinery');
 
-        // Clear existing data
+        // Populate Machinery
+        const machineryCollection = db.collection('machinery');
         await machineryCollection.deleteMany({});
         console.log('🗑️  Cleared existing machinery data');
+        const machineryResult = await machineryCollection.insertMany(sampleMachinery);
+        console.log(`✅ Inserted ${machineryResult.insertedCount} machinery items`);
 
-        // Insert sample data
-        const result = await machineryCollection.insertMany(sampleMachinery);
-        console.log(`✅ Inserted ${result.insertedCount} machinery items`);
-
-        // Verify insertion
-        const count = await machineryCollection.countDocuments();
-        console.log(`📊 Total machinery in database: ${count}`);
+        // Populate Schemes
+        const schemesCollection = db.collection('schemes');
+        await schemesCollection.deleteMany({});
+        console.log('🗑️  Cleared existing schemes data');
+        const schemesResult = await schemesCollection.insertMany(sampleSchemes);
+        console.log(`✅ Inserted ${schemesResult.insertedCount} schemes`);
 
         console.log('\n🎉 Sample data populated successfully!');
-        console.log('\nYou can now test the API at:');
-        console.log('- GET http://localhost:4173/api/machinery');
-        console.log('- GET http://localhost:4173/api/health');
 
     } catch (error) {
         console.error('❌ Error:', error);
