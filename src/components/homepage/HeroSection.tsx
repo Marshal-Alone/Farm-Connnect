@@ -1,211 +1,114 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { 
-  Mic, 
-  MicOff,
-  Play,
-  Pause,
-  Volume2,
-  Languages,
+import {
   Sparkles,
-  ArrowRight,
   Brain,
-  User
+  User,
+  Users,
+  CheckCircle,
+  Languages
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-farm.jpg";
+import VoiceInterface from "@/components/VoiceInterface";
 
 export default function HeroSection() {
-  const [isListening, setIsListening] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState("English");
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
+  const [voiceQuery, setVoiceQuery] = useState("");
 
-  const languages = ["English", "Hindi", "Tamil", "Telugu", "Bengali", "Marathi"];
-
-  const handleVoiceToggle = () => {
-    setIsListening(!isListening);
-    if (!isListening) {
-      toast({
-        title: "Voice Assistant Activated",
-        description: "Listening for your commands...",
-      });
-      // Simulate voice recognition
-      setTimeout(() => {
-        setIsListening(false);
-        toast({
-          title: "Voice Command Received",
-          description: "Processing your request...",
-        });
-      }, 3000);
-    } else {
-      toast({
-        title: "Voice Assistant Stopped",
-        description: "Voice recognition disabled.",
-      });
-    }
-  };
-
-  const toggleLanguage = () => {
-    const currentIndex = languages.indexOf(currentLanguage);
-    const nextIndex = (currentIndex + 1) % languages.length;
-    setCurrentLanguage(languages[nextIndex]);
-    toast({
-      title: "Language Changed",
-      description: `Switched to ${languages[nextIndex]}`,
-    });
-  };
-
-  const startDemo = () => {
-    setIsPlaying(true);
-    toast({
-      title: "Demo Started",
-      description: "Showcasing platform features...",
-    });
-    setTimeout(() => {
-      setIsPlaying(false);
-      navigate("/disease-detection");
-    }, 2000);
+  const handleVoiceQuery = (query: string, language: string) => {
+    // Parent handler if needed, can log or track
+    console.log("Voice query:", query, language);
   };
 
   return (
-    <section className="min-h-screen relative overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0"> 
-        <img 
-          src={heroImage} 
-          alt="Modern farming landscape" 
-          className="w-full h-full object-cover" 
-        /> 
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-transparent" /> 
+    <section className="min-h-screen relative overflow-hidden flex items-center">
+      {/* Background Image with Green Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={heroImage}
+          alt="Modern farming landscape"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 via-green-800/80 to-green-900/40" />
       </div>
-      
-      <div className="container relative z-10 px-6 py-24">
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm border-green-200">
-                <Sparkles className="w-3 h-3 mr-1" />
+
+      <div className="container relative z-10 px-6 py-12 md:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left Column: Content */}
+          <div className="space-y-8 animate-in slide-in-from-left duration-700">
+            <div className="space-y-6">
+              <Badge variant="outline" className="bg-white/10 text-white backdrop-blur-md border-white/20 px-4 py-1.5 text-sm uppercase tracking-wide">
+                <Sparkles className="w-4 h-4 mr-2 text-yellow-400" />
                 AI-Powered Agriculture Platform
               </Badge>
-              <h1 className="text-5xl md:text-6xl font-bold leading-tight text-white">
-                स्मार्ट खेती का
-                <span className="block">Digital भविष्य</span>
+
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white tracking-tight">
+                Smart Farming <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-400">
+                  Digital Future
+                </span>
               </h1>
-              <p className="text-xl text-white/90 leading-relaxed">
-                AI से सशक्त होकर बेहतर फसल उगाएं। रोग पहचान, मौसम विश्लेषण, और कृषि सलाह 
-                आपकी भाषा में पाएं।
+
+              <p className="text-xl text-white/80 leading-relaxed max-w-xl">
+                Empower your farm with AI. Get instant disease detection, weather insights, and expert advice in your local language.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Button
                 size="lg"
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-xl transform hover:scale-105 transition-all duration-200"
+                className="h-14 px-8 text-lg bg-green-500 hover:bg-green-600 text-white shadow-xl shadow-green-500/20 rounded-xl transition-all hover:scale-105"
                 onClick={() => navigate("/disease-detection")}
               >
-                <Brain className="w-5 h-5 mr-2" />
-                AI Disease Detection
+                <Brain className="w-6 h-6 mr-2" />
+                Try Disease Detection
               </Button>
-              {!user && (
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  className="border-2 border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                  onClick={() => {
-                    // Trigger login modal - find the app component
-                    const appRoot = document.getElementById('root');
-                    if (appRoot) {
-                      const event = new CustomEvent('openLoginModal');
-                      appRoot.dispatchEvent(event);
-                    }
-                  }}
-                >
-                  <User className="w-5 h-5 mr-2" />
-                  Get Started Free
-                </Button>
-              )}
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
-              <div className="text-center">
+            {/* Stats Bar */}
+            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10">
+              <div className="space-y-1">
+                <div className="flex items-center text-yellow-400 mb-1">
+                  <Users className="w-5 h-5 mr-1" />
+                </div>
                 <div className="text-2xl font-bold text-white">50K+</div>
-                <div className="text-sm text-white/80">Active Farmers</div>
+                <div className="text-sm text-white/60">Active Farmers</div>
               </div>
-              <div className="text-center">
+              <div className="space-y-1">
+                <div className="flex items-center text-green-400 mb-1">
+                  <CheckCircle className="w-5 h-5 mr-1" />
+                </div>
                 <div className="text-2xl font-bold text-white">95%</div>
-                <div className="text-sm text-white/80">Disease Accuracy</div>
+                <div className="text-sm text-white/60">AI Accuracy</div>
               </div>
-              <div className="text-center">
+              <div className="space-y-1">
+                <div className="flex items-center text-blue-400 mb-1">
+                  <Languages className="w-5 h-5 mr-1" />
+                </div>
                 <div className="text-2xl font-bold text-white">12+</div>
-                <div className="text-sm text-white/80">Indian Languages</div>
+                <div className="text-sm text-white/60">Languages</div>
               </div>
             </div>
           </div>
 
-          {/* Hero Image */}
-          <div className="relative">
-            <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
-              <img 
-                src={heroImage} 
-                alt="Smart farming with AI technology" 
-                className="w-full h-auto object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          {/* Right Column: Voice Assistant */}
+          <div className="animate-in slide-in-from-right duration-700 delay-200 relative">
+            {/* Glow Effect */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-green-500/30 to-blue-500/30 blur-2xl rounded-full opacity-50" />
+
+            <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 shadow-2xl">
+              <div className="absolute -top-6 -right-6 bg-yellow-400 text-black px-4 py-2 rounded-full font-bold shadow-lg transform rotate-12 flex items-center text-sm z-20">
+                <Sparkles className="w-4 h-4 mr-1" />
+                Try saying "Hello"
+              </div>
+
+              <VoiceInterface onVoiceQuery={handleVoiceQuery} />
             </div>
-            
-            {/* Floating elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-green-400/30 rounded-full animate-bounce delay-300" />
-            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-blue-400/30 rounded-full animate-bounce delay-700" />
           </div>
-        </div>
-
-        {/* Enhanced Feature Cards */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="bg-white/90 backdrop-blur-sm border-green-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-            <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Brain className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">AI Disease Detection</h3>
-              <p className="text-gray-600 text-sm">
-                Upload crop photos for instant AI-powered disease identification with 95% accuracy
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/90 backdrop-blur-sm border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-            <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Mic className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Voice Assistant</h3>
-              <p className="text-gray-600 text-sm">
-                Get farming advice in 12+ Indian languages using our multilingual voice AI
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/90 backdrop-blur-sm border-emerald-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-            <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Volume2 className="w-8 h-8 text-emerald-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Smart Weather</h3>
-              <p className="text-gray-600 text-sm">
-                Real-time weather insights and crop recommendations for optimal farming decisions
-              </p>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </section>

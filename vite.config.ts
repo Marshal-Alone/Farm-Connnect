@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
     server: {
       host: "::",
       port: 8080,
+      allowedHosts: ["denticulately-pyrenocarpic-kristofer.ngrok-free.dev"],
       proxy: {
         '/api': {
           target: apiUrl,
