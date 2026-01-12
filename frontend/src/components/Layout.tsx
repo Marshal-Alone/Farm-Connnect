@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { 
-  Menu, 
-  Leaf, 
-  Home, 
-  Camera, 
-  BarChart3, 
-  Cloud, 
-  Tractor, 
+import {
+  Menu,
+  Leaf,
+  Home,
+  Camera,
+  BarChart3,
+  Cloud,
+  Tractor,
   FileText,
   User,
   LogIn
@@ -21,7 +21,7 @@ import React from "react";
 const navItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "Disease Detection", href: "/disease-detection", icon: Camera },
-  
+
   { name: "Weather", href: "/weather", icon: Cloud },
   { name: "Machinery", href: "/machinery", icon: Tractor },
   { name: "Schemes", href: "/schemes", icon: FileText },
@@ -40,7 +40,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     const handleOpenLogin = () => setLoginModalOpen(true);
     const rootElement = document.getElementById('root');
-    
+
     if (rootElement) {
       rootElement.addEventListener('openLoginModal', handleOpenLogin);
       return () => rootElement.removeEventListener('openLoginModal', handleOpenLogin);
@@ -68,18 +68,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center space-x-1 lg:space-x-2 text-sm font-medium transition-colors hover:text-primary ${
-                    isActive(item.href) 
-                      ? "text-primary border-b-2 border-primary pb-1" 
-                      : "text-muted-foreground"
-                  }`}
+                  className={`flex items-center space-x-1 lg:space-x-2 text-sm font-medium transition-colors hover:text-primary ${isActive(item.href)
+                    ? "text-primary border-b-2 border-primary pb-1"
+                    : "text-muted-foreground"
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   <span className="hidden lg:inline">{item.name}</span>
                 </Link>
               );
             })}
-            
+
             {/* Auth Button */}
             {user ? (
               <Button variant="outline" size="sm" onClick={logout}>
@@ -109,11 +108,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       key={item.name}
                       to={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center space-x-3 text-sm font-medium p-3 rounded-lg transition-colors ${
-                        isActive(item.href)
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-accent hover:text-accent-foreground"
-                      }`}
+                      className={`flex items-center space-x-3 text-sm font-medium p-3 rounded-lg transition-colors ${isActive(item.href)
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-accent hover:text-accent-foreground"
+                        }`}
                     >
                       <Icon className="h-5 w-5" />
                       <span>{item.name}</span>
@@ -150,7 +148,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h3 className="font-semibold mb-3">Features</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Disease Detection</li>
-                
+
                 <li>Weather Insights</li>
                 <li>Machinery Rental</li>
               </ul>
@@ -175,15 +173,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 FarmConnect</p>
+            <p>© 2025 FarmConnect · <Link to="/credits" className="hover:text-primary transition-colors">Credits</Link></p>
           </div>
         </div>
       </footer>
 
       {/* Login Modal */}
-      <LoginModal 
-        isOpen={loginModalOpen} 
-        onClose={() => setLoginModalOpen(false)} 
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
       />
     </div>
   );

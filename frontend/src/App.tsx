@@ -20,6 +20,7 @@ import MachineryMarketplace from "./pages/MachineryMarketplace";
 import GovernmentSchemes from "./pages/GovernmentSchemes";
 import UserProfile from "./pages/UserProfile";
 import KisanBazaar from "./pages/KisanBazaar";
+import Credits from "./pages/Credits";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +64,7 @@ const App = () => {
                 <Route path="/schemes" element={<GovernmentSchemes />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/bazaar" element={<KisanBazaar />} />
+                <Route path="/credits" element={<Credits />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
