@@ -172,8 +172,8 @@ export default function MachineryMarketplace() {
         {!loading && machinery.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {machinery.map((item) => (
-              <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow border-0 shadow-md cursor-pointer" onClick={() => handleViewDetails(item._id!)}>
-                <div className="relative">
+              <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow border-0 shadow-md cursor-pointer flex flex-col h-full" onClick={() => handleViewDetails(item._id!)}>
+                <div className="relative flex-shrink-0">
                   <img
                     src={item.images[0] || 'https://via.placeholder.com/400x300?text=No+Image'}
                     alt={item.name}
@@ -196,12 +196,12 @@ export default function MachineryMarketplace() {
                       <span className="text-sm font-medium">{item.rating.toFixed(1)}</span>
                     </div>
                   </div>
-                  <CardDescription className="text-sm text-gray-600 leading-relaxed">
+                  <CardDescription className="text-sm text-gray-600 leading-relaxed line-clamp-2">
                     {item.description}
                   </CardDescription>
                 </CardHeader>
 
-                <CardContent className="pt-0 pb-4">
+                <CardContent className="pt-0 pb-4 flex-grow">
                   <div className="space-y-3">
                     <div className="flex items-center text-sm text-gray-500">
                       <MapPin className="h-4 w-4 mr-2 text-gray-400" />
@@ -213,8 +213,8 @@ export default function MachineryMarketplace() {
                       Owner: {item.ownerName}
                     </div>
 
-                    <div className="flex flex-wrap gap-1">
-                      {item.features.slice(0, 3).map((feature, index) => (
+                    <div className="flex flex-wrap gap-1 h-8 overflow-hidden">
+                      {(item.features || []).slice(0, 3).map((feature, index) => (
                         <Badge key={index} variant="outline" className="text-xs border-gray-200 text-gray-600 px-2 py-1">
                           {feature}
                         </Badge>
@@ -223,7 +223,7 @@ export default function MachineryMarketplace() {
                   </div>
                 </CardContent>
 
-                <CardFooter className="flex items-center justify-between pt-0">
+                <CardFooter className="flex items-center justify-between pt-0 mt-auto">
                   <div className="text-xl font-bold text-green-600">
                     ₹{item.pricePerDay}/day
                   </div>

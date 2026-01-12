@@ -104,12 +104,14 @@ export default function UserProfile() {
           setConversationMessages(response.data);
 
           // Mark all as read if there are unread messages
-          if (conversation.unreadCount > 0) {
+          // Check unread count for the current user (unreadCount is an object keyed by userId)
+          const myUnreadCount = conversation.unreadCount?.[ownerId] || 0;
+          if (myUnreadCount > 0) {
             await messageService.markAllAsRead(conversation.conversationId, ownerId);
             // Update local unread count
             setConversations(conversations.map(c =>
               c.conversationId === conversation.conversationId
-                ? { ...c, unreadCount: 0 }
+                ? { ...c, unreadCount: { ...c.unreadCount, [ownerId]: 0 } }
                 : c
             ));
           }
@@ -192,10 +194,16 @@ export default function UserProfile() {
           const otherParticipant = selectedConversation.participants.find((p: any) => p.userId !== ownerId);
           if (otherParticipant && selectedConversation.conversationId !== 'temp') {
             messageService.getConversation(ownerId, otherParticipant.userId).then(res => {
-              if (res.success) {
-                // Only update if message count changed to avoid UI flickering
+              if (res.success && res.data.length > 0) {
+                // Compare by latest message ID to avoid race conditions during send
                 setConversationMessages(prev => {
-                  if (prev.length !== res.data.length) return res.data;
+                  if (prev.length === 0) return res.data;
+                  const prevLastId = prev[prev.length - 1]?._id;
+                  const newLastId = res.data[res.data.length - 1]?._id;
+                  // Only update if we have truly new messages from the server
+                  if (res.data.length > prev.length || prevLastId !== newLastId) {
+                    return res.data;
+                  }
                   return prev;
                 });
               }
@@ -432,9 +440,9 @@ export default function UserProfile() {
             <TabsTrigger value="dashboard" className="text-xs md:text-sm px-3 py-2">Owner Panel</TabsTrigger>
             <TabsTrigger value="messages" className="text-xs md:text-sm px-3 py-2 flex items-center gap-1">
               Messages
-              {conversations.some(c => c.unreadCount > 0) && (
+              {conversations.some(c => (c.unreadCount?.[ownerId] || 0) > 0) && (
                 <Badge variant="destructive" className="h-4 w-4 p-0 flex items-center justify-center text-[10px]">
-                  {conversations.filter(c => c.unreadCount > 0).length}
+                  {conversations.filter(c => (c.unreadCount?.[ownerId] || 0) > 0).length}
                 </Badge>
               )}
             </TabsTrigger>

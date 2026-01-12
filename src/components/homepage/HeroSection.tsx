@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Sparkles,
   Brain,
-  User,
   Users,
   CheckCircle,
   Languages
@@ -17,10 +16,8 @@ import VoiceInterface from "@/components/VoiceInterface";
 export default function HeroSection() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [voiceQuery, setVoiceQuery] = useState("");
 
   const handleVoiceQuery = (query: string, language: string) => {
-    // Parent handler if needed, can log or track
     console.log("Voice query:", query, language);
   };
 

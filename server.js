@@ -21,14 +21,14 @@ const app = express();
 const PORT = process.env.PORT || 4174;
 
 // Keep-alive tracking
-const serverHealth = {
-    startTime: Date.now(),
-    lastPing: Date.now(),
-    nextPing: Date.now() + (10 * 60 * 1000), // 10 minutes
-    pingCount: 0,
-    pingInterval: 10 * 60 * 1000, // 10 minutes in milliseconds
-    status: 'active'
-};
+// const serverHealth = {
+//     startTime: Date.now(),
+//     lastPing: Date.now(),
+//     nextPing: Date.now() + (10 * 60 * 1000), // 10 minutes
+//     pingCount: 0,
+//     pingInterval: 10 * 60 * 1000, // 10 minutes in milliseconds
+//     status: 'active'
+// };
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
