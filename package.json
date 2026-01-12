@@ -4,12 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "npm install --legacy-peer-deps && vite build",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "server": "node server.js"
+    "dev": "cd frontend && vite",
+    "build": "cd frontend && npm install --legacy-peer-deps && vite build",
+    "build:dev": "cd frontend && vite build --mode development",
+    "lint": "cd frontend && eslint .",
+    "preview": "cd frontend && vite preview",
+    "server": "node backend/index.js",
+    "seed": "node backend/scripts/seedDemoMachinery.js"
   },
   "dependencies": {
     "@google/genai": "^1.25.0",

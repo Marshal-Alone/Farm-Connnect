@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDatabase, collections } from '../database.js';
+import { getDatabase, collections } from '../config/database.js';
 import { ObjectId } from 'mongodb';
 
 const router = express.Router();

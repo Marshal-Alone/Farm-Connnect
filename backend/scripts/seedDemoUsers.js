@@ -1,4 +1,4 @@
-import { getDatabase, collections } from '../database.js';
+import { getDatabase, collections } from '../config/database.js';
 import bcrypt from 'bcrypt';
 
 async function seedDemoUsers() {

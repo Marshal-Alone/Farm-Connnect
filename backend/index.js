@@ -64,8 +64,8 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/diseases', diseasesRoutes);
 app.use('/api/schemes', schemesRoutes);
 
-// Serve static files from dist directory
-app.use(express.static(join(__dirname, 'dist')));
+// Serve static files from frontend/dist directory
+app.use(express.static(join(__dirname, '..', 'frontend', 'dist')));
 
 // Helper function to format duration
 function formatDuration(ms) {
@@ -158,7 +158,7 @@ app.use((err, req, res, next) => {
 
 // Serve index.html for all other routes (SPA support)
 app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, 'dist', 'index.html'));
+    res.sendFile(join(__dirname, '..', 'frontend', 'dist', 'index.html'));
 });
 
 app.listen(PORT + 1, () => {
