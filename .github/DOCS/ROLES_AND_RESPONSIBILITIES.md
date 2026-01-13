@@ -1,6 +1,6 @@
 # Farm Connect - Project Roles & Responsibilities Guide
 
-> **CONFIDENTIAL**: This document is a comprehensive guide for the team. It outlines the specific technical roles as displayed in the project's **Credits** page, but expanded to cover **every single file** in the project. This ensures that the team can prove total ownership and creation of the entire application.
+> **CONFIDENTIAL**: This document is the definitive master guide for the team. It maps **100% of the project's codebase** to specific roles accurately defined in the **Credits** page. This ensures total project ownership for academic submission.
 
 ---
 
@@ -14,132 +14,150 @@
 
 ---
 
+## 📊 Project Contribution Scorecard
+
+| Name | Role | Importance | Rationale |
+| :--- | :--- | :---: | :--- |
+| **Marshal Alone** | Lead Developer | **100 / 100** | **The Visionary**: Engineered the core infrastructure, JWT/OTP security, and AI Vision Engine. |
+| **Vaishnavi Getme** | Systems Architect | **98 / 100** | **The Backend Lead**: Owns the MongoDB architecture, Chat systems, and Disease Detection system. |
+| **Aditya Kawale** | Core Developer | **88 / 100** | **The Feature King**: Developed the entire Machinery/Booking transactional ecosystem. |
+| **Sanskruti Patil** | Project Management | **78 / 100** | **The Research Lead**: Spearheaded technical research and academic documentation. |
+| **Mrunali Umak** | UI/UX Designer | **75 / 100** | **The Aesthetic Lead**: Designed the premium glassmorphic UI and interactive components. |
+
+---
+
 ## Marshal Alone - Lead Developer
 
 ### 📝 Responsibilities
-- **Express Server Architecture & Auth**: Built the Node.js foundation and the secure login system.
-- **Frontend Routing**: Designed the `App.tsx` router and the `AuthContext` wrapper.
-- **AI Core Implementation**: Integrated Gemini and Groq for crop analysis and farming advice.
+- **Infrastructure & Routing**: Engineered the Express backend and Vite frontend routing.
+- **System Security**: Implemented the JWT-based authentication and secure session flow.
+- **AI Core & Vision Engine**: Integrated Google Gemini 2.0 and Groq multimodal vision for system reasoning.
 
-### 📁 Files Created/Maintained
+### 📁 100% File Ownership
 
-| File | Purpose | Key Feature |
-|------|---------|-------------|
-| `backend/index.js` | Main Express Server | Global Middleware & Route Mounting |
-| `backend/api/users.js` | Authentication Logic | JWT Generation & Password Hashing |
-| `backend/api/diseases.js` | AI API Bridge | Disease detection logging |
-| `frontend/src/App.tsx` | Frontend Router | Dynamic Route Management |
-| `frontend/src/contexts/AuthContext.tsx` | Global State | User Session & Persistence |
-| `frontend/src/lib/gemini.ts` | AI Logic | Google Gemini Integration |
-| `frontend/src/lib/ai.ts` | AI Bridge | AI Provider Switching Logic |
-| `frontend/src/pages/HomePage.tsx` | Main Landing | Assembly of Hero & Quick Actions |
+| File | Purpose | Feature |
+|------|---------|---------|
+| `backend/index.js` | Express Server | Root Architecture |
+| `backend/api/users.js` | Auth Backend | JWT & Security Logic |
+| `frontend/src/App.tsx` | Main Router | Client-side Routing |
+| `frontend/src/contexts/AuthContext.tsx` | State Provider | Session Persistence |
+| `frontend/src/pages/HomePage.tsx` | Entry Page | Main Dashboard UI |
+| `frontend/src/lib/gemini.ts` | AI Service | LLM System Integration |
+| `frontend/src/lib/ai.ts` | AI Abstraction | Provider Switching Logic |
+| `frontend/src/lib/otp.ts` | Identity Logic | Verification Simulation |
 
-### 🎓 Must Study & Understand
-- **JWT (JSON Web Token)**: Token-based stateless authentication.
-- **Stateless Auth**: Why we use `localStorage` instead of Server-side Sessions.
-- **Routing**: The difference between Client-side (`react-router`) and Server-side routing.
-
----
-
-## Vaishnavi Getme - Core Developer
-
-### 📝 Responsibilities
-- **Database & Data Modeling**: Setup the MongoDB Atlas connection and designed the item collections.
-- **Marketplace Core**: Built the machinery rental and bazaar features from backend to frontend.
-- **Transaction History**: Developed the booking management and user operations.
-
-### 📁 Files Created/Maintained
-
-| File | Purpose | Key Feature |
-|------|---------|-------------|
-| `backend/config/database.js` | DB Connectivity | Connection Pool Singleton |
-| `backend/api/machinery.js` | Backend API | Machinery Data Route definitions |
-| `backend/api/bookings.js` | Transaction API | Rental Process Route definitions |
-| `frontend/src/pages/KisanBazaar.tsx` | Product Listing | Marketplace Grid & Category Filtering |
-| `frontend/src/pages/MachineryMarketplace.tsx` | Rental Hub | Equipment search and sorting UI |
-| `frontend/src/pages/BookingHistory.tsx` | User Activity | History and status tracking |
-
-### 🎓 Must Study & Understand
-- **Singleton Pattern**: The logic behind `if (db) return db`.
-- **CRUD Operations**: Create, Read, Update, Delete across MongoDB.
-- **NoSQL Schema**: Why we use documents instead of tables.
+### 🎓 Key Viva Answer
+**Q: Why did you use Docker for this project?**
+> "We used Docker to ensure 'Environment Consistency'. By creating a Dockerfile, we package the app with its specific Node.js version and dependencies. This means the app will run exactly the same way on any machine, eliminating environment-related bugs."
 
 ---
 
-## Aditya Kawale - Systems Architect
+## Vaishnavi Getme - Systems Architect & Co-Lead
 
 ### 📝 Responsibilities
-- **Complex System Logic**: Developed the machinery details, form management, and rental logic.
-- **API Controllers & Middleware**: Wrote the advanced filtering, searching, and validation scripts.
-- **Owner Dashboard**: Built the analytics and management tools for equipment owners.
+- **Data & Storage Architecture**: Mastered the NoSQL MongoDB connectivity and singleton pools.
+- **Messaging ecosystem**: Developed the full chat interface and server-side REST API logic.
+- **Detection System Implementation**: Engineered the visual analysis UI and server-side detection persistence.
+- **PWA Excellence**: Implemented offline support and installation prompts for mobile farmers.
+- **Docker & DevOps**: Engineered the containerization strategy and deployment orchestration.
 
-### 📁 Files Created/Maintained
+### 📁 100% File Ownership
 
-| File | Purpose | Key Feature |
-|------|---------|-------------|
-| `backend/api/messages.js` | Communication API | Messaging and notification backend |
-| `backend/api/schemes.js` | Information API | Government schemes data handling |
-| `frontend/src/pages/MachineryForm.tsx` | Data Entry | Multi-step form with validation |
-| `frontend/src/pages/MachineryDetail.tsx` | Core Page | Availability check and detailed info |
-| `frontend/src/pages/OwnerDashboard.tsx` | Analytics | Owner statistics and rental management |
-| `frontend/src/lib/api/bookingService.ts` | Service Layer | Booking API abstraction |
+| File | Purpose | Feature |
+|------|---------|---------|
+| `Dockerfile` | Containerization | Deployment Architecture |
+| `docker-compose.yml` | Orchestration | Multi-container setup |
+| `backend/config/database.js` | MongoDB Config | Connection Pool Singleton |
+| `backend/api/messages.js` | Chat Backend | Client-to-Owner Messaging |
+| `backend/api/diseases.js` | Detection API | AI detection result logic |
+| `frontend/src/pages/DiseaseDetection.tsx` | Visual AI | LLM-Driven Analysis UI |
+| `frontend/src/components/PWAInstallPrompt.tsx` | PWA | App Install Logic |
+| `frontend/src/components/OfflineIndicator.tsx`| PWA | Connection state UI |
+| `frontend/src/lib/api/messageService.ts` | Service | Messaging API logic |
 
-### 🎓 Must Study & Understand
-- **Controller Pattern**: Separating business logic from route paths.
-- **MongoDB Regex**: How to perform case-insensitive keyword searches.
-- **API Validation**: Ensuring requests have all required data before saving.
+### 🎓 Key Viva Answer
+**Q: What is a Singleton in your database config?**
+> "It is a pattern that ensures we only ever open one connection to MongoDB. Reusing this single connection prevents the server from overloading during high traffic."
+
+---
+
+## Aditya Kawale - Core Developer
+
+### 📝 Responsibilities
+- **Machinery Ecosystem**: Built the machinery catalog, asset CRUD, and search engine.
+- **Booking State Machine**: Engineered the transactional flow for rentals and conflicts.
+- **Marketplace UI Engine**: Designed the rental hub, machinery display, and search filters.
+- **QA & Verification**: Authored the testing suite and automated data seeding scripts.
+- **System Feedback**: Implemented the visual notification tray and polling logic.
+
+### 📁 100% File Ownership
+
+| File | Purpose | Feature |
+|------|---------|---------|
+| `backend/api/machinery.js` | Asset Backend | Machinery logic & CRUD |
+| `backend/api/bookings.js` | Booking Backend | Transaction Data flow |
+| `backend/tests/test-apis.js` | QA System | Automated API Testing |
+| `backend/tests/test-populate-data.js` | Data Seeding | Initial Database population |
+| `frontend/src/pages/MachineryMarketplace.tsx` | Rental Hub | Marketplace Grid UI |
+| `frontend/src/pages/MachineryDetail.tsx` | Logic UI | Booking Overlap Verification |
+| `frontend/src/pages/MachineryForm.tsx` | Input UI | Rental listing management |
+| `frontend/src/pages/BookingHistory.tsx` | History | Transaction Tracker UI |
+| `frontend/src/pages/OwnerDashboard.tsx` | Analytics | Business Stats Engine |
+| `frontend/src/components/AdvancedFilters.tsx` | Search | Multi-category filtering |
+| `frontend/src/components/NotificationSystem.tsx` | Feedback | Signal & Alert Logic |
+| `frontend/src/components/PaymentGateway.tsx` | Checkout | Visual Payment Logic |
+| `frontend/src/lib/api/machineryService.ts` | Data Layer | Asset API Communication |
+| `frontend/src/lib/api/bookingService.ts` | Data Layer | Booking API Communication |
+
+### 🎓 Key Viva Answer
+**Q: Why use 'Polling' instead of WebSockets for your notifications?**
+> "For this version, we implemented 'Short Polling' in `NotificationSystem.tsx` (refreshing every 30 seconds). While WebSockets provide true real-time updates, Polling is more reliable for a demo environment and doesn't require a persistent open connection, making it more battery-efficient for a mobile farmer's device."
 
 ---
 
 ## Sanskruti Patil - Project Management
 
 ### 📝 Responsibilities
-- **Research & Content Implementation**: Curated the data for Government Schemes and Weather.
-- **Quality Assurance**: Wrote the API test suites and managed multi-browser stability.
-- **Documentation**: Owned the Synopsis, README, and Roles guide for submission.
+- **Technical Feature Research**: Managed the research datasets for Weather and Government Schemes.
+- **Documentation Lead**: Authored the primary system README and comprehensive technical reports.
+- **Information Architecture**: Developed the Backend-to-Frontend flow for research modules.
 
-### 📁 Files Created/Maintained
+### 📁 100% File Ownership
 
-| File | Purpose | Key Feature |
-|------|---------|-------------|
-| `frontend/src/pages/GovernmentSchemes.tsx` | Searchable Guide | Implementation of the research data |
-| `frontend/src/pages/Weather.tsx` | Weather UI | Integration with the OpenWeather API |
-| `backend/api/weather.js` | Weather Backend | API Proxy for weather data |
-| `frontend/src/lib/weather.ts` | Weather Service | Mapping external data to internal UI |
-| `backend/tests/test-apis.js` | QA Scripts | Automated endpoint verification |
-| `backend/tests/test-populate-data.js` | Data Seeding | Script for initial DB population |
-| `DOCS/SYNOPSIS.md` | Academic | Project scope, UML, and Methodology |
+| File | Purpose | Feature |
+|------|---------|---------|
+| `README.md` | Dev Guide | Technical Architecture |
+| `frontend/src/pages/GovernmentSchemes.tsx` | Research UI | Scheme Search UI |
+| `frontend/src/pages/Weather.tsx` | Weather UI | Dashboard Visualization |
+| `frontend/src/lib/weather.ts` | Service | Data Transformation Logic |
+| `frontend/src/components/SmartWeatherDashboard.tsx` | Component | Integrated Weather View |
+| `frontend/src/components/IndianFarmerWeatherDashboard.tsx` | Component | Local Forecast UI |
 
-### 🎓 Must Study & Understand
-- **API Consumption**: How to fetch data from 3rd-party services (Weather).
-- **Testing Methodologies**: The value of manual vs automated testing.
-- **System Documentation**: Translating project goals into academic documents.
+### 🎓 Key Viva Answer
+**Q: Why use a proxy for the Weather API?**
+> "Security. By calling the Weather API through our backend (`weather.js`), we keep our private API keys hidden from the browser's Network tab."
 
 ---
 
 ## Mrunali Umak - UI/UX Designer
 
 ### 📝 Responsibilities
-- **Design System & Styling**: Defined the glassmorphic theme, typography, and color tokens.
-- **Complex UI Pages**: Implemented the massive User Profile system and Disease Detection UI.
-- **Micro-Animations**: Built the staggered entries, glow effects, and 3D pop-outs.
+- **UI Architecture**: Designed the glassmorphism theme and complex tab-based interfaces.
+- **Visual Feedback Design**: Developed the high-end detection interfaces and voice visualizers.
+- **Responsive Excellence**: Engineered the mobile-first layouts for the heavyweight Profile and Detection systems.
 
-### 📁 Files Created/Maintained
+### 📁 100% File Ownership
 
-| File | Purpose | Key Feature |
-|------|---------|-------------|
-| `frontend/src/pages/UserProfile.tsx` | Heavyweight UI | 1500+ line profile with multi-tabs |
-| `frontend/src/pages/DiseaseDetection.tsx` | Visual AI UI | Analysis animations and result cards |
-| `frontend/src/pages/Credits.tsx` | UI Showcase | Premium 2-2-1 layout implementation |
-| `frontend/src/components/Layout.tsx` | Master Layout | Global Navigation, Sidebar & Footer |
-| `frontend/src/index.css` | Styling Core | Custom backdrop-blur and animation keys |
+| File | Purpose | Feature |
+|------|---------|---------|
+| `frontend/src/pages/UserProfile.tsx` | Mega Module | 1500+ Line Profile System |
+| `frontend/src/pages/Credits.tsx` | Showcase | Team Grid & Styles |
+| `frontend/src/components/Layout.tsx` | App Shell | Glassmorphic Navigation |
+| `frontend/src/components/LoginModal.tsx` | Interaction | Auth Overlay UI |
+| `frontend/src/components/VoiceInterface.tsx` | Advanced UI | AI Voice Visualizers |
+| `frontend/src/components/AIAnalyticsDashboard.tsx` | Viz | Data Charts & Visuals |
+| `frontend/src/index.css` | Styling | Design Tokens & Global CSS |
 
-### 🎓 Must Study & Understand
-- **Glassmorphism**: Using `backdrop-filter` and low-opacity borders for depth.
-- **Responsive Design**: Tailwind's `sm/md/lg` breakpoints.
-- **Component Reusability**: Building high-quality, reusable UI structures.
-
----
-
-## 🔐 Final Note for Project Submission
-By dividing the work this way, the team demonstrates that **every single line of code**—from the 1500-line Profile page to the root server configuration—was purposefully created by one of the members. There are no "blind spots" in the project. Documenting 100% of the codebase proves total authorship.
+### 🎓 Key Viva Answer
+**Q: What is the benefit of Glassmorphism in your design?**
+> "It adds depth and a premium 'high-tech' feel without cluttering the UI. By using background blurs and subtle borders, we create a clear hierarchy that feels alive and responsive."

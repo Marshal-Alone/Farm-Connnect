@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GraduationCap, Sparkles, Code, Database, Palette, Server, Brain, BookOpen } from 'lucide-react';
+import { GraduationCap, Sparkles, Code, Database, Palette, Server, Brain, BookOpen, ShieldCheck, MessageSquare } from 'lucide-react';
 
 // Team member data with detailed info
 const teamMembers = [
@@ -7,9 +7,9 @@ const teamMembers = [
         name: "Marshal Alone",
         role: "Lead Developer",
         initials: "MA",
-        skills: ["Express server", "Authentication", "AI Integration"],
+        skills: ["Infrastructure", "Auth", "AI Core"],
         id: "1",
-        contribution: "Express server architecture, secure authentication and system integration",
+        contribution: "Express server architecture, secure authentication and AI integration engine",
         icon: Brain,
         image: "/assets/team/marshal.png",
         color: "from-green-500 to-emerald-600",
@@ -18,12 +18,12 @@ const teamMembers = [
     },
     {
         name: "Vaishnavi Getme",
-        role: "Core Developer",
+        role: "Systems Architect & Co-Lead",
         initials: "VG",
-        skills: ["MongoDB", "Backend Routes", "Database"],
+        skills: ["Chat API", "MongoDB", "PWA", "Detection System"],
         id: "2",
-        contribution: "Database design, MongoDB setup and backend route implementation",
-        icon: Palette,
+        contribution: "Systems architecture lead, communication systems and disease detection implementation",
+        icon: Database,
         image: "/assets/team/vaishnavi.png",
         color: "from-pink-500 to-rose-600",
         glow: "rgba(244, 63, 94, 0.3)",
@@ -31,12 +31,12 @@ const teamMembers = [
     },
     {
         name: "Aditya Kawale",
-        role: "Systems Architect",
+        role: "Core Developer",
         initials: "AK",
-        skills: ["API Logic", "Controllers", "Middleware"],
+        skills: ["Machinery Catalog", "Booking Logic", "QA"],
         id: "3",
-        contribution: "Backend controller logic and robust system middleware",
-        icon: Server,
+        contribution: "Machinery marketplace engine, transaction states and system verification",
+        icon: ShieldCheck,
         image: "",
         color: "from-blue-500 to-indigo-600",
         glow: "rgba(59, 130, 246, 0.3)",
@@ -46,9 +46,9 @@ const teamMembers = [
         name: "Sanskruti Patil",
         role: "Project Management",
         initials: "SP",
-        skills: ["Documentation", "QA", "Research"],
+        skills: ["Technical Research", "Data Systems", "Documentation"],
         id: "4",
-        contribution: "Detailed project documentation and quality assurance",
+        contribution: "Technical feature research, data management and comprehensive project documentation",
         icon: Code,
         image: "",
         color: "from-orange-500 to-amber-600",
