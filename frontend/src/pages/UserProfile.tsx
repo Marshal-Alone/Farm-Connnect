@@ -15,7 +15,7 @@ import { messageService } from '@/lib/api/messageService';
 import { MachinerySchema } from '@/lib/schemas/machinery.schema';
 import { BookingSchema } from '@/lib/schemas/booking.schema';
 import { MessageSchema } from '@/lib/schemas/message.schema';
-import { User, MapPin, Phone, Mail, Globe, Sprout, Calendar, Settings, Key, Trash2, IndianRupee, Package, CheckCircle, Clock, XCircle, Loader2, Plus, MessageSquare, Edit2, Save, X, BarChart3 } from 'lucide-react';
+import { User, MapPin, Phone, Mail, Globe, Sprout, Calendar, Settings, Key, Trash2, IndianRupee, Package, CheckCircle, Clock, XCircle, Loader2, Plus, MessageSquare, Edit2, Save, X, BarChart3, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { geminiAI } from '@/lib/gemini';
 import { groqAI } from '@/lib/groq';
