@@ -547,6 +547,25 @@ export default function UserProfile() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Project Credits - NEW */}
+              <Card className="md:col-span-3 bg-gradient-to-r from-primary/10 to-transparent border-primary/20">
+                <CardContent className="py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 text-center md:text-left">
+                    <div className="p-3 bg-primary/20 rounded-full hidden md:block">
+                      <Users className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">Project Contributors</h3>
+                      <p className="text-sm text-muted-foreground">See the amazing people who built this platform</p>
+                    </div>
+                  </div>
+                  <Button onClick={() => window.location.href = '/credits'} className="w-full md:w-auto">
+                    <Globe className="w-4 h-4 mr-2" />
+                    View Project Credits
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 

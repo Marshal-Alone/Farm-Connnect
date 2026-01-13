@@ -2,8 +2,6 @@ const CACHE_NAME = 'farmer-connect-v3'; // Increment version when assets change
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/assets/index-*.js', // Vite bundles JS with content hash
-  '/assets/index-*.css', // Vite bundles CSS with content hash
   '/manifest.json',
   '/favicon.png',
   '/icon-192.png',
@@ -69,10 +67,10 @@ self.addEventListener('fetch', (event) => {
 
         // Only cache static assets in production
         // In dev, we want fresh content always
-        if (event.request.url.includes('/assets/') || 
-            event.request.url.includes('.png') || 
-            event.request.url.includes('.jpg') ||
-            event.request.url.includes('manifest.json')) {
+        if (event.request.url.includes('/assets/') ||
+          event.request.url.includes('.png') ||
+          event.request.url.includes('.jpg') ||
+          event.request.url.includes('manifest.json')) {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);

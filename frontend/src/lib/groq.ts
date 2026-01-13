@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 const getAPIKey = () => {
     const userAPIKey = localStorage.getItem('groq_api_key');
-    return userAPIKey || '';
+    return userAPIKey || import.meta.env.VITE_GROQ_API_KEY || '';
 };
 
 export interface AICropAnalysis {

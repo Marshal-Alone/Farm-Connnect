@@ -53,7 +53,7 @@ async function seedDemoMachinery() {
                     { key: 'Weight', value: '2400 kg' }
                 ],
                 features: ['Power Steering', 'Oil Brakes', 'High Torque'],
-                images: ['/src/assets/john-deere-tractor.jpg'],
+                images: ['/assets/john-deere-tractor.jpg'],
                 rating: 4.8,
                 totalReviews: 24,
                 totalBookings: 45,
@@ -96,7 +96,7 @@ async function seedDemoMachinery() {
                     { key: 'Weight', value: '2100 kg' }
                 ],
                 features: ['Low Maintenance', 'Fuel Efficient', 'Multi-Speed'],
-                images: ['/src/assets/mahindra-tractor.jpg'],
+                images: ['/assets/mahindra-tractor.jpg'],
                 rating: 4.6,
                 totalReviews: 18,
                 totalBookings: 32,
@@ -139,7 +139,7 @@ async function seedDemoMachinery() {
                     { key: 'Grain Tank Capacity', value: '1500-2000 L' }
                 ],
                 features: ['Auto Height Control', 'Grain Loss Monitor', 'GPS Ready'],
-                images: ['/src/assets/claas-harvester.jpg'],
+                images: ['/assets/claas-harvester.jpg'],
                 rating: 4.9,
                 totalReviews: 31,
                 totalBookings: 58,
@@ -181,7 +181,7 @@ async function seedDemoMachinery() {
                     { key: 'Blade Type', value: 'Boron Steel' }
                 ],
                 features: ['Heavy Duty', 'Multi-Gear', 'High Durability'],
-                images: ['/src/assets/rotavator.jpg'],
+                images: ['/assets/rotavator.jpg'],
                 rating: 4.5,
                 totalReviews: 15,
                 totalBookings: 28,
@@ -224,7 +224,7 @@ async function seedDemoMachinery() {
                     { key: 'Coverage', value: '16 acres/hour' }
                 ],
                 features: ['Auto-Pilot', 'Obstacle Avoidance', 'Precision Spray'],
-                images: ['/src/assets/spray-drone.jpg'],
+                images: ['/assets/spray-drone.jpg'],
                 rating: 4.7,
                 totalReviews: 12,
                 totalBookings: 20,
@@ -266,7 +266,7 @@ async function seedDemoMachinery() {
                     { key: 'Seed Box Capacity', value: '80 kg' }
                 ],
                 features: ['Precision Planting', 'Adjustable Depth', 'Fertilizer Attachment'],
-                images: ['/src/assets/seed-drill.jpg'],
+                images: ['/assets/seed-drill.jpg'],
                 rating: 4.4,
                 totalReviews: 9,
                 totalBookings: 15,

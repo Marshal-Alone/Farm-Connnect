@@ -396,16 +396,44 @@ interface ModelConfig {
 
 ---
 
-## 🚀 Getting Started
+## 🐳 Docker Support
+
+Run the entire Farm-Connect stack (Frontend, Backend, and MongoDB) with a single command:
+
+```bash
+# Start all services
+docker compose up --build
+```
+The app will be accessible at `http://localhost:8080`.
+
+---
+
+## 🚀 Deployment
+
+### 1. Hugging Face Spaces (100% Free)
+Detailed guide: [walkthrough.md](./walkthrough.md)
+
+1. Create a **Docker Space** on Hugging Face.
+2. Push your repository.
+3. Add `MONGODB_URI`, `JWT_SECRET`, and API keys as **Secrets** in Settings.
+4. Hugging Face will build and serve your app on port 7860 automatically.
+
+---
+
+## 🏁 Getting Started
 
 ### Prerequisites
 - Node.js 18+ 
-- npm or bun
-- MongoDB database
+- Docker & Docker Compose (optional, for one-command run)
+- MongoDB database (if not using Docker)
 - API keys (Groq, Gemini, WeatherAPI)
 
-### Installation
+### Method 1: Docker (Fastest)
+```bash
+docker compose up --build
+```
 
+### Method 2: Manual Installation
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -416,7 +444,6 @@ npm install
 
 # Create environment file
 cp .env.example .env
-# Add your API keys to .env
 
 # Start development server
 npm run dev

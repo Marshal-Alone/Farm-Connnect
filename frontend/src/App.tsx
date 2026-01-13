@@ -8,6 +8,8 @@ import Layout from "@/components/Layout";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import { useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import HomePage from "./pages/HomePage";
 import DiseaseDetection from "./pages/DiseaseDetection";
 import MachineryDetail from "./pages/MachineryDetail";
@@ -46,6 +48,8 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
+          <Analytics />
+          <SpeedInsights />
           <Toaster />
           <Sonner />
           <BrowserRouter>

@@ -18,7 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 4174;
+const PORT = Number(process.env.PORT) || 4174;
 
 // Keep-alive tracking
 // const serverHealth = {
@@ -161,12 +161,12 @@ app.get('*', (req, res) => {
     res.sendFile(join(__dirname, '..', 'frontend', 'dist', 'index.html'));
 });
 
-app.listen(PORT + 1, () => {
-    console.log(`✅ Server running on port ${PORT + 1}`);
-    console.log(`📊 Health endpoint: http://localhost:${PORT + 1}/api/health`);
-    console.log(`💓 Ping endpoint: http://localhost:${PORT + 1}/api/ping`);
-    console.log(`🚜 Machinery API: http://localhost:${PORT + 1}/api/machinery`);
-    console.log(`📅 Bookings API: http://localhost:${PORT + 1}/api/bookings`);
-    console.log(`💬 Messages API: http://localhost:${PORT + 1}/api/messages`);
+app.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`📊 Health endpoint: http://localhost:${PORT}/api/health`);
+    console.log(`💓 Ping endpoint: http://localhost:${PORT}/api/ping`);
+    console.log(`🚜 Machinery API: http://localhost:${PORT}/api/machinery`);
+    console.log(`📅 Bookings API: http://localhost:${PORT}/api/bookings`);
+    console.log(`💬 Messages API: http://localhost:${PORT}/api/messages`);
 });
 

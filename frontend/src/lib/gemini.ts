@@ -2,10 +2,11 @@ import { GoogleGenAI, Type } from '@google/genai';
 
 const DEFAULT_API_KEY = ''; // No default key - users must add their own
 
-// Get API key from localStorage or use default
+// Get API key from localStorage or use environment variable fallback
 const getAPIKey = () => {
   const userAPIKey = localStorage.getItem('gemini_api_key');
-  return userAPIKey || DEFAULT_API_KEY;
+  // Check both localStorage and Vite environment variables
+  return userAPIKey || import.meta.env.VITE_GEMINI_API_KEY || DEFAULT_API_KEY;
 };
 
 let genAI = new GoogleGenAI({ apiKey: getAPIKey() });

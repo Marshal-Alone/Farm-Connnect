@@ -12,7 +12,8 @@ import {
   Tractor,
   FileText,
   User,
-  LogIn
+  LogIn,
+  Users
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginModal from "@/components/LoginModal";
@@ -26,6 +27,7 @@ const navItems = [
   { name: "Machinery", href: "/machinery", icon: Tractor },
   { name: "Schemes", href: "/schemes", icon: FileText },
   { name: "Profile", href: "/profile", icon: User },
+  { name: "Credits", href: "/credits", icon: Users },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
