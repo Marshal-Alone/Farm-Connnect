@@ -6,10 +6,10 @@ services:
     ports:
       - "8080:7860" # Map host 8080 to container 7860 (Hugging Face port)
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/farm-connect
+      - MONGO_URI=mongodb://mongodb:27017/farm-connect
       - JWT_SECRET=development_secret_only
-      - VITE_GEMINI_API_KEY=${VITE_GEMINI_API_KEY}
-      - VITE_GROQ_API_KEY=${VITE_GROQ_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
       - NODE_ENV=production
     depends_on:
       - mongodb

@@ -18,9 +18,9 @@
 
 | Name | Role | Importance | Rationale |
 | :--- | :--- | :---: | :--- |
-| **Marshal Alone** | Lead Developer | **100 / 100** | **The Visionary**: Engineered the core infrastructure, JWT/OTP security, and AI Vision Engine. |
+| **Marshal Alone** | Lead Developer | **100 / 100** | **The Visionary**: Engineered the core infrastructure, secure AI API integration, and Hybrid Vision Engine. |
 | **Vaishnavi Getme** | Systems Architect | **98 / 100** | **The Backend Lead**: Owns the MongoDB architecture, Chat systems, and Disease Detection system. |
-| **Aditya Kawale** | Core Developer | **88 / 100** | **The Feature King**: Developed the entire Machinery/Booking transactional ecosystem. |
+| **Aditya Kawale** | Core Developer | **88 / 100** | **The Feature Lead**: Developed the entire Machinery/Booking transactional ecosystem. |
 | **Sanskruti Patil** | Project Management | **78 / 100** | **The Research Lead**: Spearheaded technical research and academic documentation. |
 | **Mrunali Umak** | UI/UX Designer | **75 / 100** | **The Aesthetic Lead**: Designed the premium glassmorphic UI and interactive components. |
 
@@ -31,24 +31,31 @@
 ### 📝 Responsibilities
 - **Infrastructure & Routing**: Engineered the Express backend and Vite frontend routing.
 - **System Security**: Implemented the JWT-based authentication and secure session flow.
-- **AI Core & Vision Engine**: Integrated Google Gemini 2.0 and Groq multimodal vision for system reasoning.
+- **AI Core & Hybrid Engine**: Integrated Google Gemini and Groq multimodal vision with a dual-model Hybrid reasoning logic.
+- **Secure API Proxy**: Architected the server-side AI key management system to prevent frontend key exposure.
 
 ### 📁 100% File Ownership
 
 | File | Purpose | Feature |
 |------|---------|---------|
 | `backend/index.js` | Express Server | Root Architecture |
-| `backend/api/users.js` | Auth Backend | JWT & Security Logic |
 | `frontend/src/App.tsx` | Main Router | Client-side Routing |
 | `frontend/src/contexts/AuthContext.tsx` | State Provider | Session Persistence |
 | `frontend/src/pages/HomePage.tsx` | Entry Page | Main Dashboard UI |
 | `frontend/src/lib/gemini.ts` | AI Service | LLM System Integration |
 | `frontend/src/lib/ai.ts` | AI Abstraction | Provider Switching Logic |
 | `frontend/src/lib/otp.ts` | Identity Logic | Verification Simulation |
+| `backend/api/ai.js` | Secure AI Engine | Server-side AI Key Proxy |
+| `frontend/src/lib/customModel.ts` | ML Browser Engine | TensorFlow.js Integration |
+| `backend/api/users.js` | Auth Admin | Secure Identity & Token Logic |
+
 
 ### 🎓 Key Viva Answer
-**Q: Why did you use Docker for this project?**
-> "We used Docker to ensure 'Environment Consistency'. By creating a Dockerfile, we package the app with its specific Node.js version and dependencies. This means the app will run exactly the same way on any machine, eliminating environment-related bugs."
+**Q: How do you handle AI API key security?**
+> "We use a **Server-First Proxy** model. API keys for Gemini and Groq are stored exclusively in the backend's `.env` file. When the frontend needs an analysis, it calls our own `/api/ai` endpoint. The backend handles the communication using its protected keys and only returns the result. This prevents attackers from stealing our keys from the browser's source code."
+
+**Q: What is the benefit of your 'Hybrid' AI mode?**
+> "It combines local and cloud AI. We run a custom CNN model in the browser for initial fast detection (~1.3s), then validate it using Groq's high-accuracy cloud engine. This gives us ~97% accuracy while minimizing cloud costs by providing the local prediction as a context to the LLM."
 
 ---
 
@@ -57,6 +64,7 @@
 ### 📝 Responsibilities
 - **Data & Storage Architecture**: Mastered the NoSQL MongoDB connectivity and singleton pools.
 - **Messaging ecosystem**: Developed the full chat interface and server-side REST API logic.
+- **Secure Frontend Integration**: Engineered the resilient fetch pattern for auth to handle server crashes gracefully.
 - **Detection System Implementation**: Engineered the visual analysis UI and server-side detection persistence.
 - **PWA Excellence**: Implemented offline support and installation prompts for mobile farmers.
 - **Docker & DevOps**: Engineered the containerization strategy and deployment orchestration.

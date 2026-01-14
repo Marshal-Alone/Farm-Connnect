@@ -1,8 +1,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
-dotenv.config();
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load .env from project root (one level up from backend/)
+dotenv.config({ path: join(__dirname, '..', '.env') });
+
 import cors from 'cors';
 
 // Import API routes
@@ -13,9 +19,7 @@ import usersRoutes from './api/users.js';
 import weatherRoutes from './api/weather.js';
 import diseasesRoutes from './api/diseases.js';
 import schemesRoutes from './api/schemes.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import aiRoutes from './api/ai.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 4174;
@@ -63,6 +67,7 @@ app.use('/api/messages', messagesRoutes);
 app.use('/api/weather', weatherRoutes);
 app.use('/api/diseases', diseasesRoutes);
 app.use('/api/schemes', schemesRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Serve static files from frontend/dist directory
 app.use(express.static(join(__dirname, '..', 'frontend', 'dist')));

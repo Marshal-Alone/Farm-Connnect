@@ -2,6 +2,8 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { getDatabase, collections } from '../config/database.js';
+import { ObjectId } from 'mongodb';
+
 
 const router = express.Router();
 
@@ -12,7 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'farmconnect_secret_key_change_in_p
 function generateToken(user) {
     return jwt.sign(
         {
-            userId: user._id,
+            userId: user._id.toString(),
             email: user.email,
             name: user.name
         },
@@ -94,12 +96,16 @@ router.post('/register', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error registering user:', error);
-        console.error('❌ [POST /api/auth/register] Failed', { error: error.message, timestamp: new Date().toISOString() });
-        res.status(500).json({
-            success: false,
-            error: 'Failed to register user'
-        });
+        console.error('❌ [POST /api/auth/register] CRITICAL ERROR:', error);
+
+        // Ensure we don't crash if res is already finished
+        if (!res.headersSent) {
+            res.status(500).json({
+                success: false,
+                error: error.message || 'Failed to register user',
+                details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            });
+        }
     }
 });
 
@@ -195,7 +201,6 @@ router.get('/me', authenticateToken, async (req, res) => {
     try {
         const db = await getDatabase();
         const usersCollection = db.collection(collections.users);
-        const { ObjectId } = await import('mongodb');
 
         // Convert userId to ObjectId
         let userId = req.user.userId;

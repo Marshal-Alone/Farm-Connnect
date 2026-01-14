@@ -934,7 +934,40 @@ class CustomModelService {
 
 ---
 
-## 10. Complete Glossary
+---
+
+## 10. AI Security & API Key Management
+
+### 10.1 The Security Challenge
+Directly exposing API keys (like Google Gemini or Groq) in the frontend code is a major security risk. Anyone could inspect the source code, steal the key, and use it, leading to quota exhaustion or financial loss.
+
+### 10.2 Our Secure Implementation
+We implemented a **"Server-First, Secure-Proxy"** model:
+
+1.  **Backend Proxy**: All AI requests are routed through our Node.js backend (`/api/ai/...`).
+2.  **Environment Variables**: The primary API keys are stored in the server's `.env` file, which is never sent to the browser.
+3.  **Automatic Detection**: The backend checks for the presence of the `GEMINI_API_KEY` or `GROQ_API_KEY` in the environment.
+4.  **Security Feedback**: The backend returns a `keySource` field to the frontend to confirm whether a secure server-key or a local-fallback key is being used.
+
+### 10.3 Key Management Logic
+```javascript
+// backend/routes/ai.js
+const getClient = () => {
+  const serverKey = process.env.API_KEY;
+  if (serverKey) {
+    return { client: authorizedClient, source: 'Server .env' };
+  }
+  return { client: fallbackClient, source: 'Local Storage Fallback' };
+}
+```
+
+### 10.4 Browser Console Logging
+For transparency during development and testing, every AI analysis logs the security source to the browser console:
+`🛡️ [Security] AI Engine using API key from: Server .env`
+
+---
+
+## 11. Complete Glossary
 
 ### A-E
 

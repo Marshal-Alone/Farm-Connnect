@@ -2,6 +2,8 @@ import { geminiAI, AICropAnalysis } from './gemini';
 import { groqAI } from './groq';
 import { customModelAI } from './customModel';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4174';
+
 /**
  * Model Provider Types
  * - 'gemini': Google Gemini Vision API (cloud-based)
@@ -105,112 +107,62 @@ async function analyzeWithHybridMode(imageBase64: string): Promise<AICropAnalysi
             console.log('⚠️ [Hybrid] Custom model failed, falling back to Groq only');
         }
 
-        // Step 2: Validate/enhance with Groq
-        console.log('🔍 [Hybrid] Step 2: Validating with Groq LLaMA Vision...');
+        // Step 2: Validate/enhance with Groq via secure backend proxy
+        console.log('🔍 [Hybrid] Step 2: Validating with Groq LLaMA Vision (via backend proxy)...');
 
-        const groqApiKey = localStorage.getItem('groq_api_key');
-        if (!groqApiKey) {
-            console.log('⚠️ [Hybrid] Groq API key not found, using custom model result only');
-            if (customResult) return customResult;
-            throw new Error('Groq API key required for hybrid mode');
-        }
+        try {
+            // Use the secure backend proxy for Groq validation
+            const response = await fetch(`${API_BASE_URL}/api/ai/analyze-crop`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    imageBase64,
+                    customPrediction: customResult ? {
+                        disease: customResult.disease,
+                        confidence: customResult.confidence
+                    } : null
+                }),
+            });
 
-        // Create validation prompt that includes custom model's prediction
-        const validationPrompt = customResult
-            ? `Analyze this plant image. Our ML model predicted: "${customResult.disease}" with ${customResult.confidence}% confidence.
+            const data = await response.json();
 
-Please verify this diagnosis. If you agree, confirm it. If you disagree, provide the correct diagnosis.
-
-Respond in JSON format:
-{
-    "agrees": true/false,
-    "disease": "Correct disease name",
-    "confidence": 0-100,
-    "severity": "Low/Medium/High",
-    "description": "Brief description",
-    "treatment": ["Treatment 1", "Treatment 2"],
-    "prevention": ["Prevention 1", "Prevention 2"],
-    "affectedArea": 0-100
-}`
-            : `Analyze this plant image for any diseases. Respond in JSON format:
-{
-    "disease": "Disease name or 'Healthy Plant'",
-    "confidence": 0-100,
-    "severity": "Low/Medium/High",
-    "description": "Brief description",
-    "treatment": ["Treatment 1", "Treatment 2"],
-    "prevention": ["Prevention 1", "Prevention 2"],
-    "affectedArea": 0-100
-}`;
-
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${groqApiKey}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                model: 'llama-3.2-90b-vision-preview',
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            { type: 'text', text: validationPrompt },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: imageBase64.startsWith('data:') ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`
-                                }
-                            }
-                        ]
-                    }
-                ],
-                temperature: 0.3,
-                max_tokens: 1000,
-            }),
-        });
-
-        if (!response.ok) {
-            console.log('⚠️ [Hybrid] Groq validation failed, using custom model result');
-            if (customResult) return customResult;
-            throw new Error('Groq API request failed');
-        }
-
-        const data = await response.json();
-        const content = data.choices?.[0]?.message?.content || '';
-
-        // Parse Groq's response
-        const jsonMatch = content.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-            console.log('⚠️ [Hybrid] Could not parse Groq response, using custom model result');
-            if (customResult) return customResult;
-            throw new Error('Invalid Groq response format');
-        }
-
-        const groqResult = JSON.parse(jsonMatch[0]);
-
-        // Log the validation result
-        if (customResult && groqResult.agrees !== undefined) {
-            if (groqResult.agrees) {
-                console.log('✅ [Hybrid] Groq CONFIRMED custom model prediction!');
-            } else {
-                console.log(`🔄 [Hybrid] Groq CORRECTED prediction: ${customResult.disease} → ${groqResult.disease}`);
+            if (!response.ok || !data.success) {
+                console.log('⚠️ [Hybrid] Groq validation failed, using custom model result');
+                if (customResult) return customResult;
+                throw new Error(data.error || 'Groq API request failed');
             }
+
+            const groqResult = data.data;
+
+            // Log the validation result
+            if (customResult) {
+                if (groqResult.disease === customResult.disease) {
+                    console.log('✅ [Hybrid] Groq CONFIRMED custom model prediction!');
+                } else {
+                    console.log(`🔄 [Hybrid] Groq CORRECTED prediction: ${customResult.disease} → ${groqResult.disease}`);
+                }
+            }
+
+            // Build final result matching AICropAnalysis interface
+            const finalResult: AICropAnalysis = {
+                disease: groqResult.disease || customResult?.disease || 'Unknown',
+                confidence: groqResult.confidence || customResult?.confidence || 80,
+                severity: (groqResult.severity || customResult?.severity || 'Medium') as 'Low' | 'Medium' | 'High',
+                description: groqResult.description || customResult?.description || '',
+                treatment: groqResult.treatment || customResult?.treatment || [],
+                prevention: groqResult.prevention || customResult?.prevention || [],
+                affectedArea: groqResult.affectedArea || customResult?.affectedArea || 50
+            };
+
+            console.log(`✓ [Hybrid] Final result: ${finalResult.disease} (${finalResult.confidence}%)`);
+            return finalResult;
+        } catch (proxyError) {
+            console.log('⚠️ [Hybrid] Backend proxy failed, using custom model result');
+            if (customResult) return customResult;
+            throw proxyError;
         }
-
-        // Build final result matching AICropAnalysis interface
-        const finalResult: AICropAnalysis = {
-            disease: groqResult.disease || customResult?.disease || 'Unknown',
-            confidence: groqResult.confidence || customResult?.confidence || 80,
-            severity: (groqResult.severity || customResult?.severity || 'Medium') as 'Low' | 'Medium' | 'High',
-            description: groqResult.description || customResult?.description || '',
-            treatment: groqResult.treatment || customResult?.treatment || [],
-            prevention: groqResult.prevention || customResult?.prevention || [],
-            affectedArea: groqResult.affectedArea || customResult?.affectedArea || 50
-        };
-
-        console.log(`✓ [Hybrid] Final result: ${finalResult.disease} (${finalResult.confidence}%)`);
-        return finalResult;
 
     } catch (error) {
         console.error('❌ [Hybrid] Analysis failed:', error);
@@ -244,29 +196,29 @@ Example format: ["🌡️ High heat - water crops early morning", "💧 Good hum
 
     try {
         if (provider === 'groq') {
-            const groqApiKey = localStorage.getItem('groq_api_key');
-            if (!groqApiKey) throw new Error('Groq API key not configured');
-
-            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            // Use secure backend proxy for farming advice
+            const response = await fetch(`${API_BASE_URL}/api/ai/farming-advice`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${groqApiKey}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    model: 'llama-3.3-70b-versatile',
-                    messages: [
-                        { role: 'system', content: 'You are an agricultural weather advisor. Return only valid JSON arrays.' },
-                        { role: 'user', content: prompt }
-                    ],
-                    temperature: 0.5,
-                    max_tokens: 300,
+                    query: prompt,
+                    language: 'english'
                 }),
             });
 
             const data = await response.json();
-            const content = data.choices?.[0]?.message?.content || '[]';
-            return JSON.parse(content.trim());
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Failed to get AI insights');
+            }
+
+            // Parse JSON from response
+            try {
+                return JSON.parse(data.data.response.trim());
+            } catch {
+                return [data.data.response.trim()];
+            }
         } else {
             // Use Gemini
             const result = await geminiAI.getFarmingAdvice(prompt, 'english');
@@ -311,28 +263,24 @@ export const getAIInsights = async (prompt: string): Promise<string[]> => {
 
     try {
         if (provider === 'groq') {
-            const groqApiKey = localStorage.getItem('groq_api_key');
-            if (!groqApiKey) throw new Error('Groq API key not configured');
-
-            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            // Use secure backend proxy for AI insights
+            const response = await fetch(`${API_BASE_URL}/api/ai/farming-advice`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${groqApiKey}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    model: 'llama-3.3-70b-versatile',
-                    messages: [
-                        { role: 'system', content: 'You are an agricultural expert. Provide practical advice.' },
-                        { role: 'user', content: prompt }
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 500,
+                    query: prompt,
+                    language: 'english'
                 }),
             });
 
             const data = await response.json();
-            const content = data.choices?.[0]?.message?.content || '';
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Failed to get AI insights');
+            }
+
+            const content = data.data.response || '';
 
             // Split response into individual insights
             const insights = content

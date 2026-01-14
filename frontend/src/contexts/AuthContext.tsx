@@ -104,7 +104,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify(userData),
       });
 
-      const data = await response.json();
+      // Clone response to try getting text if JSON fails
+      const responseClone = response.clone();
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        const text = await responseClone.text();
+        console.error('Failed to parse JSON response. Raw text:', text);
+        throw new Error(`Server returned non-JSON response (${response.status}): ${text.slice(0, 100)}...`);
+      }
 
       if (response.ok && data.success) {
         setUser(data.data.user);
@@ -112,6 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
         return true;
       } else {
+        console.error('Registration failed:', data.error || 'Unknown error');
         setLoading(false);
         return false;
       }

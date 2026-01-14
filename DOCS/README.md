@@ -26,6 +26,8 @@ Important AI conversation logs for future reference.
 |------|-------------|
 | [2026-01-14_ML_Model_Integration.md](AI_CHAT/2026-01-14_ML_Model_Integration.md) | Custom ML model integration session |
 | [2026-01-XX_Credits_Roles_Audit.md](AI_CHAT/2026-01-XX_Credits_Roles_Audit.md) | Credits page & roles documentation audit |
+| [2026-01-XX_API_Key_Security.md](AI_CHAT/2026-01-XX_API_Key_Security.md) | Securing and Managing AI API Keys |
+| [2026-01-XX_Registration_Error_Fix.md](AI_CHAT/2026-01-XX_Registration_Error_Fix.md) | User Registration 500 error fix |
 
 ---
 
@@ -50,7 +52,9 @@ Documentation for bug fixes and issue resolutions.
 |------|-------------|
 | [CROP_DISEASE_FIX.md](FIXES/CROP_DISEASE_FIX.md) | Disease detection fixes |
 | [DASHBOARD_FIXES.md](FIXES/DASHBOARD_FIXES.md) | Dashboard UI fixes |
-| [SERVICE_WORKER_FIX.md](FIXES/SERVICE_WORKER_FIX.md) | PWA service worker fixes |
+| [SERVICE_WORKER_FIX.md](FIXES/SERVICE_WORKER_FIX.md) | PWA Offline Support & Cache Logic |
+| [REGISTRATION_FIX.md](FIXES/REGISTRATION_FIX.md) | User Registration 500 & JSON Parse fix |
+| [DEPENDENCY_RECOVERY.md](FIXES/DEPENDENCY_RECOVERY.md) | Recovery from version conflicts & broken node_modules |
 
 ---
 
@@ -59,6 +63,7 @@ Implementation guides and how-to documentation.
 
 | File | Description |
 |------|-------------|
+| [API_KEY_SECURITY.md](GUIDES/API_KEY_SECURITY.md) | **API key security (backend proxy)** |
 | [DEPLOYMENT.md](GUIDES/DEPLOYMENT.md) | Deployment instructions |
 | [GROQ_VISION_IMPLEMENTATION.md](GUIDES/GROQ_VISION_IMPLEMENTATION.md) | Groq AI integration |
 | [LOGGING_SUMMARY.md](GUIDES/LOGGING_SUMMARY.md) | Logging system overview |

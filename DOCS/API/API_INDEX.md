@@ -141,6 +141,15 @@
 ✅ GET    /api/ping
 ```
 
+### AI Proxy Endpoints (NEW - Secure) 🔐
+```
+✅ POST   /api/ai/analyze-crop           (Groq disease detection)
+✅ POST   /api/ai/farming-advice         (Groq chatbot)
+✅ POST   /api/ai/gemini/analyze-crop    (Gemini disease detection)
+✅ POST   /api/ai/gemini/farming-advice  (Gemini chatbot)
+```
+> See [API_KEY_SECURITY.md](../GUIDES/API_KEY_SECURITY.md) for details
+
 ### 5 Routes Need Attention ⚠️
 ```
 ⚠️ PUT    /api/machinery/:id (BROKEN - returns 404)
