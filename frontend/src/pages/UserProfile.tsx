@@ -1554,16 +1554,21 @@ export default function UserProfile() {
                   <Label htmlFor="disease-model" className="mb-2 block">Disease Detection Model</Label>
                   <Select
                     value={modelConfig.diseaseDetection}
-                    onValueChange={(value) => setModelConfig({ ...modelConfig, diseaseDetection: value as 'gemini' | 'groq' })}
+                    onValueChange={(value) => setModelConfig({ ...modelConfig, diseaseDetection: value as 'gemini' | 'groq' | 'custom' | 'hybrid' })}
                   >
                     <SelectTrigger id="disease-model">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="gemini">Google Gemini (Fast & Accurate)</SelectItem>
-                      <SelectItem value="groq">Groq Llama (Ultra-fast)</SelectItem>
+                      <SelectItem value="hybrid">🔀 Hybrid (Custom + Groq, Best Accuracy)</SelectItem>
+                      <SelectItem value="custom">🧠 Custom Model (Offline, Fast)</SelectItem>
+                      <SelectItem value="groq">⚡ Groq Llama (Cloud, Ultra-fast)</SelectItem>
+                      <SelectItem value="gemini">✨ Google Gemini (Cloud-based)</SelectItem>
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    <strong>Hybrid mode (Recommended):</strong> Uses our custom model first, then validates with Groq for best accuracy!
+                  </p>
                 </div>
                 <Button onClick={handleSaveModelConfig} className="w-full md:w-auto">
                   Save Preferences
