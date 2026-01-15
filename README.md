@@ -1,3 +1,13 @@
+---
+title: "Farm Connect"
+emoji: "🌾"
+colorFrom: green
+colorTo: yellow
+sdk: docker
+sdk_version: "latest"
+app_file: app.py
+pinned: false
+---
 # 🌾 Farm Connect: Pathway to Progress
 
 > A comprehensive, AI-powered agricultural support platform designed to empower Indian farmers through technology integration. Built for B.Tech CSE final year project at Nagpur Institute of Technology.

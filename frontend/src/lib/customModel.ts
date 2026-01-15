@@ -214,13 +214,25 @@ class CustomModelService {
 
             // Try to use WebGL, fallback to CPU if not available
             try {
+                // Pre-check for WebGL support to avoid some internal TFJS crashes
+                console.log('🧠 [CustomModel] Checking for WebGL support...');
+
+                // Set flags to be more conservative with WebGL resources
+                tf.env().set('WEBGL_CPU_FORWARD', true);
+
                 await tf.setBackend('webgl');
                 await tf.ready();
                 console.log('✓ Using WebGL backend');
-            } catch {
-                console.log('⚠️ WebGL not available, using CPU backend');
-                await tf.setBackend('cpu');
-                await tf.ready();
+            } catch (webglError) {
+                console.warn('⚠️ WebGL initialization failed, falling back to CPU:', webglError);
+                try {
+                    await tf.setBackend('cpu');
+                    await tf.ready();
+                    console.log('✓ Successfully fell back to CPU backend');
+                } catch (cpuError) {
+                    console.error('❌ Even CPU backend failed:', cpuError);
+                    throw new Error('No valid AI backend (WebGL or CPU) could be initialized.');
+                }
             }
 
             // Load TensorFlow.js Graph Model (compatible with Keras 3.x)

@@ -1,41 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FarmConnect - Smart Agriculture Platform</title>
-    <meta name="description" content="Empowering farmers with technology and data-driven insights for better agriculture" />
-    <meta name="author" content="FarmConnect" />
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#4a7c59" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="FarmConnect" />
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
-    
-    <!-- Keep-Alive Service -->
 
-    
-    <!-- Favicon and Icons -->
-    <link rel="icon" type="image/x-icon" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FarmConnect - Smart Agriculture Platform</title>
+  <meta name="description"
+    content="Empowering farmers with technology and data-driven insights for better agriculture" />
+  <meta name="author" content="FarmConnect" />
 
-    <meta property="og:title" content="FarmConnect - Smart Agriculture Platform" />
-    <meta property="og:description" content="Empowering farmers with technology and data-driven insights for better agriculture" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/favicon.png" />
+  <meta name="keywords"
+    content="agriculture, farming, machinery rental, disease detection, weather, farm connect, smart farming" />
+  <link rel="canonical" href="https://farm-connnect.vercel.app/" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@luffy" />
-    <meta name="twitter:image" content="/favicon.png" />
-  </head>
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#4a7c59" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="FarmConnect" />
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="mask-icon" href="/favicon.png" color="#4a7c59" />
+
+  <meta property="og:site_name" content="FarmConnect" />
+  <meta property="og:title" content="FarmConnect - Smart Agriculture Platform" />
+  <meta property="og:description"
+    content="Empowering farmers with technology and data-driven insights for better agriculture" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://farm-connnect.vercel.app/" />
+  <meta property="og:image" content="https://farm-connnect.vercel.app/screenshot-desktop.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@FarmConnect" />
+  <meta name="twitter:title" content="FarmConnect - Smart Agriculture Platform" />
+  <meta name="twitter:description"
+    content="Empowering farmers with technology and data-driven insights for better agriculture" />
+  <meta name="twitter:image" content="https://farm-connnect.vercel.app/screenshot-desktop.png" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "FarmConnect",
+        "alternateName": ["Farm-Connect", "Farm Connect"],
+        "url": "https://farm-connnect.vercel.app/"
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "FarmConnect",
+        "url": "https://farm-connnect.vercel.app/",
+        "description": "Smart Agriculture Platform for farmers with machinery rental, disease detection, and weather insights.",
+        "applicationCategory": "AgricultureApplication",
+        "operatingSystem": "Web",
+        "logo": "https://farm-connnect.vercel.app/favicon.png",
+        "image": "https://farm-connnect.vercel.app/favicon.png",
+        "author": {
+          "@type": "Organization",
+          "name": "FarmConnect",
+          "url": "https://farm-connnect.vercel.app/",
+          "logo": "https://farm-connnect.vercel.app/favicon.png"
+        }
+      }
+    ]
+    </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

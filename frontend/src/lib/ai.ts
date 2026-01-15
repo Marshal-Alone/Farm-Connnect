@@ -2,7 +2,7 @@ import { geminiAI, AICropAnalysis } from './gemini';
 import { groqAI } from './groq';
 import { customModelAI } from './customModel';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4174';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 /**
  * Model Provider Types
@@ -111,6 +111,9 @@ async function analyzeWithHybridMode(imageBase64: string): Promise<AICropAnalysi
         console.log('🔍 [Hybrid] Step 2: Validating with Groq LLaMA Vision (via backend proxy)...');
 
         try {
+            // Get user's API key from settings (Profile > Settings)
+            const userApiKey = localStorage.getItem('groq_api_key');
+
             // Use the secure backend proxy for Groq validation
             const response = await fetch(`${API_BASE_URL}/api/ai/analyze-crop`, {
                 method: 'POST',
@@ -119,6 +122,7 @@ async function analyzeWithHybridMode(imageBase64: string): Promise<AICropAnalysi
                 },
                 body: JSON.stringify({
                     imageBase64,
+                    userApiKey, // Pass user's key for the proxy
                     customPrediction: customResult ? {
                         disease: customResult.disease,
                         confidence: customResult.confidence

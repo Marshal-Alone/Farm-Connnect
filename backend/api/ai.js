@@ -39,7 +39,7 @@ const getGroqClient = (userApiKey = null) => {
 router.post('/analyze-crop', async (req, res) => {
     console.log('🔬 [POST /api/ai/analyze-crop] Request received');
     try {
-        const { imageBase64, userApiKey } = req.body;
+        const { imageBase64, userApiKey, customPrediction } = req.body;
 
         if (!imageBase64) {
             return res.status(400).json({
@@ -56,10 +56,16 @@ router.post('/analyze-crop', async (req, res) => {
             formattedImage = `data:image/jpeg;base64,${imageBase64}`;
         }
 
-        const prompt = `You are a specialized plant pathologist and entomologist. Analyze this image of a crop/plant for diseases and pest infestations.
+        let prompt = `You are a specialized plant pathologist and entomologist. Analyze this image of a crop/plant for diseases and pest infestations.
       
       If the image is not a plant, indicate that clearly.
-      If it is a healthy plant with no visible issues, state that.
+      If it is a healthy plant with no visible issues, state that.`;
+
+        if (customPrediction) {
+            prompt += `\n\nHYBRID ANALYSIS HINT: A local model prediction suggest this might be: "${customPrediction.disease}" (${customPrediction.confidence}% confidence). Use this as a starting point but do your own independent verification.`;
+        }
+
+        prompt += `
       
       IMPORTANT: Look for BOTH diseases AND pests:
       
@@ -333,7 +339,7 @@ router.post('/gemini/analyze-crop', async (req, res) => {
         Provide practical treatment and prevention for Indian farmers.`;
 
         const response = await genAI.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-1.5-flash',
             contents: {
                 parts: [
                     { text: prompt },
@@ -418,7 +424,7 @@ router.post('/gemini/farming-advice', async (req, res) => {
             Keep the response concise (2-4 sentences).`;
 
         const result = await genAI.models.generateContent({
-            model: 'gemini-2.5-flash-lite',
+            model: 'gemini-1.5-flash',
             contents: { parts: [{ text: prompt }] },
             config: { temperature: 0.7 },
         });

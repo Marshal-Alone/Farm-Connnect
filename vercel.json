@@ -6,7 +6,7 @@
             "destination": "https://luffydtaro-farmconnect.hf.space/api/:path*"
         },
         {
-            "source": "/((?!api|assets|.*\\..*).*)",
+            "source": "/((?!api|assets|sitemap.xml|robots.txt|.*\\..*).*)",
             "destination": "/index.html"
         }
     ]

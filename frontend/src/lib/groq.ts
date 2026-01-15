@@ -3,7 +3,7 @@
  * API calls route through backend, with user API key fallback from Settings
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4174';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 // Get user's API key from localStorage (set in Profile > Settings)
 const getUserApiKey = () => localStorage.getItem('groq_api_key') || null;
