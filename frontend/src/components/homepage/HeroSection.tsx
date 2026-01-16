@@ -44,14 +44,14 @@ export default function HeroSection() {
               </Badge>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white tracking-tight">
-                Smart Farming <br />
+                Welcome to FarmConnect: <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-400">
-                  Digital Future
+                  The Future of Smart Farming
                 </span>
               </h1>
 
               <p className="text-xl text-white/80 leading-relaxed max-w-xl">
-                Empower your farm with AI. Get instant disease detection, weather insights, and expert advice in your local language.
+                Empower your farm with **FarmConnect**, the leading AI platform for **crop disease detection**, **machinery rental**, and **agricultural weather insights**.
               </p>
             </div>
 

@@ -156,26 +156,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-3">Support</h3>
+              <h3 className="font-semibold mb-3">Support & Resources</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Help Center</li>
-                <li>Contact Us</li>
-                <li>Government Schemes</li>
-                <li>Training Resources</li>
+                <li><Link to="/schemes" className="hover:text-primary transition-colors">Government Schemes</Link></li>
+                <li><Link to="/weather" className="hover:text-primary transition-colors">Agricultural Weather Guide</Link></li>
+                <li><Link to="/disease-detection" className="hover:text-primary transition-colors">Crop Disease Detection</Link></li>
+                <li><Link to="/machinery" className="hover:text-primary transition-colors">Machinery Marketplace</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-3">Connect</h3>
+              <h3 className="font-semibold mb-3">Brand & Trust</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Community Forum</li>
-                <li>Expert Network</li>
-                <li>Local Dealers</li>
+                <li><Link to="/credits" className="hover:text-primary transition-colors">Research & Credits</Link></li>
+                <li><a href="https://farm-connnect.vercel.app/sitemap.xml" className="hover:text-primary transition-colors">Site Map</a></li>
+                <li><Link to="/profile" className="hover:text-primary transition-colors">Expert Network</Link></li>
                 <li>Success Stories</li>
               </ul>
             </div>
           </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2025 FarmConnect · <Link to="/credits" className="hover:text-primary transition-colors">Credits</Link></p>
+          <div className="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+            <p>© 2025 FarmConnect · The Smart Agriculture Platform</p>
+            <p>Developed with passion by the **FarmConnect Team** · <Link to="/credits" className="hover:text-primary transition-colors underline decoration-dotted">E-E-A-T Verified Content</Link></p>
           </div>
         </div>
       </footer>

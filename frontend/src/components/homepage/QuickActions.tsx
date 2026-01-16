@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
-import { 
-  Camera, 
-  BarChart3, 
-  Cloud, 
-  Tractor, 
-  FileText, 
+import {
+  Camera,
+  BarChart3,
+  Cloud,
+  Tractor,
+  FileText,
   Smartphone,
   ArrowRight,
   Zap,
@@ -90,12 +90,12 @@ export default function QuickActions() {
             Quick Actions
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Everything You Need to
-            <span className="block text-primary">Boost Your Farm</span>
+            Advanced Farm Management with
+            <span className="block text-primary">FarmConnect Solutions</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Access powerful farming tools and resources with just one click. 
-            Our AI-powered platform helps you make better decisions for your crops.
+            Access powerful farming tools and resources with just one click.
+            The **FarmConnect** AI-powered platform helps you make better decisions for your crops and land.
           </p>
         </div>
 
@@ -103,14 +103,14 @@ export default function QuickActions() {
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
-              <Card 
-                key={action.id} 
+              <Card
+                key={action.id}
                 className="group relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 onClick={() => handleActionClick(action.route, action.title)}
               >
                 {/* Background Gradient */}
                 <div className={`absolute top-0 right-0 w-20 h-20 ${action.color} opacity-10 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500`} />
-                
+
                 <CardHeader className="relative">
                   <div className="flex items-start justify-between">
                     <div className={`p-3 rounded-lg ${action.color} shadow-lg`}>
@@ -124,21 +124,21 @@ export default function QuickActions() {
                     {action.title}
                   </CardTitle>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground leading-relaxed">
                     {action.description}
                   </p>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-sm text-muted-foreground">
                       <TrendingUp className="w-4 h-4 mr-1" />
                       {action.stats}
                     </div>
-                    
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className="group-hover:text-primary group-hover:bg-primary/10 transition-colors"
                     >
                       Try Now
@@ -154,9 +154,9 @@ export default function QuickActions() {
         {/* Call to Action */}
         {!user && (
           <div className="text-center mt-12">
-            <Button 
-              size="lg" 
-              variant="hero" 
+            <Button
+              size="lg"
+              variant="hero"
               onClick={() => navigate("/disease-detection")}
               className="group"
             >
