@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://farm-connnect.vercel.app/sitemap.xml
+# Explicitly allow favicon crawling
+Allow: /favicon*.png
+Allow: /favicon.ico
+
+Sitemap: https://farmbro.vercel.app/sitemap.xml

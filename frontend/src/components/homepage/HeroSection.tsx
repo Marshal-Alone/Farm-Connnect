@@ -51,7 +51,7 @@ export default function HeroSection() {
               </h1>
 
               <p className="text-xl text-white/80 leading-relaxed max-w-xl">
-                Empower your farm with **FarmConnect**, the leading AI platform for **crop disease detection**, **machinery rental**, and **agricultural weather insights**.
+                Empower your farm with FarmConnect, the leading AI platform for crop disease detection, machinery rental, and agricultural weather insights.
               </p>
             </div>
 

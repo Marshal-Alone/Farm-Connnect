@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FarmConnect - Smart Agriculture Platform</title>
+  <title>FarmConnect - AI Agriculture Platform</title>
   <meta name="description"
-    content="Empowering farmers with technology and data-driven insights for better agriculture" />
+    content="Farm-Connect: AI-powered platform for crop disease detection, machinery rental, and weather insights. Empowering farmers with smart agriculture technology." />
   <meta name="author" content="FarmConnect" />
 
   <meta name="keywords"
-    content="FarmConnect, agriculture, farming, machinery rental, crop disease detection, AI farming, weather insights, smart farming, farm connect" />
-  <link rel="canonical" href="https://farm-connnect.vercel.app/" />
+    content="FarmConnect, Farm-Connect, agriculture, farming, machinery rental, crop disease detection, AI farming, weather insights, smart farming, farm connect" />
+  <!-- Canonical URL is now handled dynamically per-page via react-helmet-async -->
 
   <!-- PWA Meta Tags -->
   <meta name="theme-color" content="#4a7c59" />
@@ -23,84 +23,96 @@
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json" />
 
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="shortcut icon" type="image/png" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="/favicon.png" />
-  <link rel="mask-icon" href="/favicon.png" color="#4a7c59" />
+  <!-- FAVICON SETUP - Optimized for Google Search -->
+  <!-- Primary favicon for Google Search (48x48 minimum recommended) -->
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+  <!-- Standard sizes for browsers -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <!-- Fallback for older browsers -->
+  <link rel="icon" href="/favicon.ico" />
+  <!-- Apple devices -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <!-- PWA/Android (for app installs, not search) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
 
   <meta property="og:site_name" content="FarmConnect" />
   <meta property="og:title" content="FarmConnect - AI Smart Agriculture Platform & Farm Solutions" />
   <meta property="og:description"
     content="FarmConnect is a comprehensive AI-powered agriculture platform offering crop disease detection, machinery rentals, and real-time weather insights." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://farm-connnect.vercel.app/" />
-  <meta property="og:image" content="https://farm-connnect.vercel.app/screenshot-desktop.png" />
+  <meta property="og:image" content="https://farmbro.vercel.app/screenshot-desktop.png" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@FarmConnect" />
   <meta name="twitter:title" content="FarmConnect - AI Smart Agriculture Platform & Farm Solutions" />
   <meta name="twitter:description"
     content="FarmConnect is a comprehensive AI-powered agriculture platform offering crop disease detection, machinery rentals, and real-time weather insights." />
-  <meta name="twitter:image" content="https://farm-connnect.vercel.app/screenshot-desktop.png" />
+  <meta name="twitter:image" content="https://farmbro.vercel.app/screenshot-desktop.png" />
 
-  <!-- Structured Data (JSON-LD) -->
+  <!-- Structured Data: WebSite (for site name in search results) -->
   <script type="application/ld+json">
-    [
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "FarmConnect",
-        "alternateName": ["Farm-Connect", "Farm Connect"],
-        "url": "https://farm-connnect.vercel.app/"
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "FarmConnect",
-        "url": "https://farm-connnect.vercel.app/",
-        "description": "Smart Agriculture Platform for farmers with machinery rental, disease detection, and weather insights.",
-        "applicationCategory": "AgricultureApplication",
-        "operatingSystem": "Web",
-        "logo": "https://farm-connnect.vercel.app/favicon.png",
-        "image": "https://farm-connnect.vercel.app/favicon.png",
-        "author": {
-          "@type": "Organization",
-          "name": "FarmConnect",
-          "url": "https://farm-connnect.vercel.app/",
-          "logo": "https://farm-connnect.vercel.app/favicon.png"
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://farm-connnect.vercel.app/"
-        },{
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Disease Detection",
-          "item": "https://farm-connnect.vercel.app/disease-detection"
-        },{
-          "@type": "ListItem",
-          "position": 3,
-          "name": "Machinery Rental",
-          "item": "https://farm-connnect.vercel.app/machinery"
-        },{
-          "@type": "ListItem",
-          "position": 4,
-          "name": "Weather",
-          "item": "https://farm-connnect.vercel.app/weather"
-        }]
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "FarmConnect",
+      "alternateName": ["FarmBro", "Farm-Connect", "Farm Connect"],
+      "url": "https://farmbro.vercel.app/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://farmbro.vercel.app/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
-    ]
-    </script>
+    }
+  </script>
+
+  <!-- Structured Data: Organization (reinforces brand name + sameAs for validation) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "FarmConnect",
+      "url": "https://farmbro.vercel.app/",
+      "logo": "https://farmbro.vercel.app/favicon-48x48.png",
+      "description": "AI-powered agriculture platform for farmers",
+      "sameAs": [
+        "https://twitter.com/FarmConnect",
+        "https://facebook.com/FarmConnect",
+        "https://linkedin.com/company/farmconnect"
+      ]
+    }
+  </script>
+
+  <!-- Structured Data: WebApplication -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "FarmConnect",
+      "url": "https://farmbro.vercel.app/",
+      "description": "Smart Agriculture Platform for farmers with machinery rental, disease detection, and weather insights.",
+      "applicationCategory": "AgricultureApplication",
+      "operatingSystem": "Web"
+    }
+  </script>
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- Fallback content for SEO - shown before React loads -->
+    <noscript>
+      <h1>FarmConnect - AI Agriculture Platform</h1>
+      <p>FarmConnect is an AI-powered platform for farmers offering crop disease detection, machinery rental, and
+        real-time weather insights. Enable JavaScript for the best experience.</p>
+      <ul>
+        <li><a href="/disease-detection">AI Crop Disease Detection</a></li>
+        <li><a href="/machinery">Farm Machinery Rental</a></li>
+        <li><a href="/weather">Agricultural Weather Insights</a></li>
+        <li><a href="/schemes">Government Schemes for Farmers</a></li>
+      </ul>
+    </noscript>
+  </div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

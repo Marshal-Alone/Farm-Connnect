@@ -95,7 +95,7 @@ export default function QuickActions() {
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Access powerful farming tools and resources with just one click.
-            The **FarmConnect** AI-powered platform helps you make better decisions for your crops and land.
+            The FarmConnect AI-powered platform helps you make better decisions for your crops and land.
           </p>
         </div>
 

@@ -27,7 +27,7 @@ const navItems = [
   { name: "Machinery", href: "/machinery", icon: Tractor },
   { name: "Schemes", href: "/schemes", icon: FileText },
   { name: "Profile", href: "/profile", icon: User },
-  { name: "Credits", href: "/credits", icon: Users },
+  { name: "Team", href: "/team", icon: Users },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -167,16 +167,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h3 className="font-semibold mb-3">Brand & Trust</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/credits" className="hover:text-primary transition-colors">Research & Credits</Link></li>
-                <li><a href="https://farm-connnect.vercel.app/sitemap.xml" className="hover:text-primary transition-colors">Site Map</a></li>
+                <li><Link to="/team" className="hover:text-primary transition-colors">Our Team</Link></li>
+                <li><a href="https://farmbro.vercel.app/sitemap.xml" className="hover:text-primary transition-colors">Site Map</a></li>
                 <li><Link to="/profile" className="hover:text-primary transition-colors">Expert Network</Link></li>
                 <li>Success Stories</li>
               </ul>
             </div>
           </div>
           <div className="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© 2025 FarmConnect · The Smart Agriculture Platform</p>
-            <p>Developed with passion by the **FarmConnect Team** · <Link to="/credits" className="hover:text-primary transition-colors underline decoration-dotted">E-E-A-T Verified Content</Link></p>
+            <p>© 2025 FarmConnect · The Smart Agriculture Platform · Powered by Vercel</p>
+            <p>Developed with passion by the FarmConnect Team · <Link to="/team" className="hover:text-primary transition-colors underline decoration-dotted">Meet the Team</Link></p>
           </div>
         </div>
       </footer>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GraduationCap, Sparkles, Code, Database, Palette, Server, Brain, BookOpen, ShieldCheck, MessageSquare } from 'lucide-react';
+import SEO from '@/components/SEO';
 
 // Team member data with detailed info
 const teamMembers = [
@@ -78,68 +79,74 @@ export default function Credits() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white selection:bg-green-500/30 selection:text-green-200">
-            {/* Dynamic Background Elements */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-500/10 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
-                <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-blue-500/5 rounded-full blur-[100px]" />
+        <>
+            <SEO
+                title="Meet the Team - FarmConnect Developers & Contributors"
+                description="Meet the talented team behind FarmConnect. Our developers, designers, and project guides from NIT Nagpur building AI-powered agriculture solutions."
+                url="https://farmbro.vercel.app/team"
+            />
+            <div className="min-h-screen bg-[#050505] text-white selection:bg-green-500/30 selection:text-green-200">
+                {/* Dynamic Background Elements */}
+                <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-500/10 rounded-full blur-[120px] animate-pulse" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+                    <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-blue-500/5 rounded-full blur-[100px]" />
 
-                {/* Subtle Grid overlay */}
-                <div className="absolute inset-0 opacity-[0.03]"
-                    style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}
-                />
-            </div>
-
-            <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 flex flex-col items-center">
-                {/* Project badge */}
-                <div
-                    className={`mb-5 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
-                        <BookOpen className="w-4 h-4 text-blue-400" />
-                        <span className="text-sm font-medium text-blue-300/90">B.Tech Major Project 2025-26</span>
-                    </div>
+                    {/* Subtle Grid overlay */}
+                    <div className="absolute inset-0 opacity-[0.03]"
+                        style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+                    />
                 </div>
 
-                {/* Main title */}
-                <div
-                    className={`text-center mb-10 transition-all duration-1000 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                >
-                    <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-3">
-                        <span className="bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent">
-                            Farm
-                        </span>
-                        <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                            Connect
-                        </span>
-                    </h1>
-                    <p className="text-xl md:text-2xl text-white/40 font-light tracking-[0.2em] uppercase">
-                        Pathway to Progress
+                <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 flex flex-col items-center">
+                    {/* Project badge */}
+                    <div
+                        className={`mb-5 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                    >
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
+                            <BookOpen className="w-4 h-4 text-blue-400" />
+                            <span className="text-sm font-medium text-blue-300/90">B.Tech Major Project 2025-26</span>
+                        </div>
+                    </div>
+
+                    {/* Main title */}
+                    <div
+                        className={`text-center mb-10 transition-all duration-1000 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                    >
+                        <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-3">
+                            <span className="bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent">
+                                Farm
+                            </span>
+                            <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                                Connect
+                            </span>
+                        </h1>
+                        <p className="text-xl md:text-2xl text-white/40 font-light tracking-[0.2em] uppercase">
+                            Pathway to Progress
+                        </p>
+                    </div>
+
+                    {/* Subtitle */}
+                    <p
+                        className={`text-white/30 text-center max-w-md mb-8 transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                    >
+                        An AI-powered agricultural support platform empowering Indian farmers through technology
                     </p>
-                </div>
 
-                {/* Subtitle */}
-                <p
-                    className={`text-white/30 text-center max-w-md mb-8 transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                >
-                    An AI-powered agricultural support platform empowering Indian farmers through technology
-                </p>
-
-                {/* Team section */}
-                <div
-                    className={`w-full max-w-4xl transition-all duration-1000 delay-400 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                >
-                    {/* Section label */}
-                    <div className="flex items-center justify-center gap-3 mb-8">
-                        <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/20" />
-                        <span className="text-xs font-medium tracking-[0.3em] text-white/40 uppercase">The Team</span>
-                        <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/20" />
+                    {/* Team section */}
+                    <div
+                        className={`w-full max-w-4xl transition-all duration-1000 delay-400 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                    >
+                        {/* Section label */}
+                        <div className="flex items-center justify-center gap-3 mb-8">
+                            <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/20" />
+                            <span className="text-xs font-medium tracking-[0.3em] text-white/40 uppercase">The Team</span>
+                            <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/20" />
+                        </div>
                     </div>
-                </div>
 
-                {/* Team Section */}
-                {/* <div className="w-full space-y-12 mb-32">
+                    {/* Team Section */}
+                    {/* <div className="w-full space-y-12 mb-32">
                     <div className="flex items-center gap-4 px-4 overflow-hidden">
                         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                         <span className="text-[10px] font-black tracking-[0.5em] uppercase text-white/20 whitespace-nowrap">The Research & Engineering Team</span>
@@ -159,70 +166,71 @@ export default function Credits() {
                     </div>
                 </div> */}
 
-                {/* Unified Team Grid (2-2-1 Layout) */}
-                <div className="w-full max-w-6xl mx-auto space-y-10 mb-32">
+                    {/* Unified Team Grid (2-2-1 Layout) */}
+                    <div className="w-full max-w-6xl mx-auto space-y-10 mb-32">
 
-                    {/* Row 1: 2 Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        {teamMembers.slice(0, 2).map((member, idx) => (
-                            <TeamCard key={member.name} member={member} index={idx} mounted={mounted} />
-                        ))}
-                    </div>
+                        {/* Row 1: 2 Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            {teamMembers.slice(0, 2).map((member, idx) => (
+                                <TeamCard key={member.name} member={member} index={idx} mounted={mounted} />
+                            ))}
+                        </div>
 
-                    {/* Row 2: 2 Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        {teamMembers.slice(2, 4).map((member, idx) => (
-                            <TeamCard key={member.name} member={member} index={idx + 2} mounted={mounted} />
-                        ))}
-                    </div>
+                        {/* Row 2: 2 Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            {teamMembers.slice(2, 4).map((member, idx) => (
+                                <TeamCard key={member.name} member={member} index={idx + 2} mounted={mounted} />
+                            ))}
+                        </div>
 
-                    {/* Row 3: 1 Centered Card */}
-                    <div className="flex justify-center">
-                        <div className="w-full md:w-1/2">
-                            <TeamCard member={teamMembers[4]} index={4} mounted={mounted} />
+                        {/* Row 3: 1 Centered Card */}
+                        <div className="flex justify-center">
+                            <div className="w-full md:w-1/2">
+                                <TeamCard member={teamMembers[4]} index={4} mounted={mounted} />
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* Support/Footer Section */}
-                <div className={`mt-10 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
-                    <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm group hover:border-white/10 transition-all">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 rounded-2xl bg-white/5 text-white/60 group-hover:bg-white/10 group-hover:text-white transition-all">
-                                <GraduationCap size={24} />
+                    {/* Support/Footer Section */}
+                    <div className={`mt-10 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm group hover:border-white/10 transition-all">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="p-3 rounded-2xl bg-white/5 text-white/60 group-hover:bg-white/10 group-hover:text-white transition-all">
+                                    <GraduationCap size={24} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black tracking-widest text-white/20 uppercase">Project Guide</h4>
+                                    <p className="text-xl font-bold text-white/80">Prof. Tejas Dhule</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="text-xs font-black tracking-widest text-white/20 uppercase">Project Guide</h4>
-                                <p className="text-xl font-bold text-white/80">Prof. Tejas Dhule</p>
-                            </div>
+                            <p className="text-sm text-white/40 font-light">Assistant Professor, Dept of Computer Science & Engineering.</p>
                         </div>
-                        <p className="text-sm text-white/40 font-light">Assistant Professor, Dept of Computer Science & Engineering.</p>
+
+                        <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm group hover:border-white/10 transition-all">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="p-3 rounded-2xl bg-white/5 text-white/60 group-hover:bg-white/10 group-hover:text-white transition-all">
+                                    <Sparkles size={24} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black tracking-widest text-white/20 uppercase">Institution</h4>
+                                    <p className="text-xl font-bold text-white/80">NIT Nagpur</p>
+                                </div>
+                            </div>
+                            <p className="text-sm text-white/40 font-light">Nagpur Institute of Technology. Session 2025-26.</p>
+                        </div>
                     </div>
 
-                    <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-sm group hover:border-white/10 transition-all">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 rounded-2xl bg-white/5 text-white/60 group-hover:bg-white/10 group-hover:text-white transition-all">
-                                <Sparkles size={24} />
-                            </div>
-                            <div>
-                                <h4 className="text-xs font-black tracking-widest text-white/20 uppercase">Institution</h4>
-                                <p className="text-xl font-bold text-white/80">NIT Nagpur</p>
-                            </div>
+                    {/* Thank You Section */}
+                    <div className={`mt-40 text-center space-y-8 transition-all duration-1000 delay-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="relative group inline-block">
+                            <h2 className="text-5xl md:text-8xl font-black italic tracking-tighter opacity-10 group-hover:opacity-100 transition-all duration-700 cursor-default uppercase whitespace-nowrap">
+                                Thank You
+                            </h2>
                         </div>
-                        <p className="text-sm text-white/40 font-light">Nagpur Institute of Technology. Session 2025-26.</p>
+                        <p className="text-[10px] font-bold tracking-[0.8em] uppercase text-white/5">Engineered for Indian Agriculture</p>
                     </div>
-                </div>
-
-                {/* Thank You Section */}
-                <div className={`mt-40 text-center space-y-8 transition-all duration-1000 delay-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
-                    <div className="relative group inline-block">
-                        <h2 className="text-5xl md:text-8xl font-black italic tracking-tighter opacity-10 group-hover:opacity-100 transition-all duration-700 cursor-default uppercase whitespace-nowrap">
-                            Thank You
-                        </h2>
-                    </div>
-                    <p className="text-[10px] font-bold tracking-[0.8em] uppercase text-white/5">Engineered for Indian Agriculture</p>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
