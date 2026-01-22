@@ -1,9 +1,22 @@
 # FarmConnect SEO Implementation - Complete Code Analysis
 ## Updated: 2026-01-22
 
-**Website URL:** https://farm-connnect.vercel.app/  
+**Website URL:** https://farmbro.vercel.app/ (Primary)  
+**Redirect:** https://farm-connnect.vercel.app → 307 redirect to farmbro.vercel.app  
 **Platform:** React SPA hosted on Vercel  
-**Issue:** Site name shows as "Vercel" instead of "FarmConnect" in Google Search results
+**Status:** ✅ All SEO optimizations implemented
+
+---
+
+## Domain Strategy
+
+| Domain | Role |
+|--------|------|
+| `farmbro.vercel.app` | **Production** (primary canonical) |
+| `farm-connnect.vercel.app` | 307 redirect → farmbro.vercel.app |
+
+**Brand Name:** FarmConnect (kept for research paper consistency)  
+**Alternate Names:** FarmBro, Farm-Connect, Farm Connect
 
 ---
 
@@ -35,27 +48,33 @@
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json" />
 
-  <!-- Favicons - Cache-busted for Google Search (v2 forces re-download) -->
-  <link rel="icon" type="image/png" sizes="192x192" href="/farmconnect-icon-v2.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <!-- FAVICON SETUP - Optimized for Google Search -->
+  <!-- Primary favicon for Google Search (48x48 minimum recommended) -->
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+  <!-- Standard sizes for browsers -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <!-- Fallback for older browsers -->
   <link rel="icon" href="/favicon.ico" />
+  <!-- Apple devices -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <!-- PWA/Android (for app installs, not search) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
 
   <meta property="og:site_name" content="FarmConnect" />
   <meta property="og:title" content="FarmConnect - AI Smart Agriculture Platform & Farm Solutions" />
   <meta property="og:description"
     content="FarmConnect is a comprehensive AI-powered agriculture platform offering crop disease detection, machinery rentals, and real-time weather insights." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://farm-connnect.vercel.app/screenshot-desktop.png" />
+  <meta property="og:image" content="https://farmbro.vercel.app/screenshot-desktop.png" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@FarmConnect" />
   <meta name="twitter:title" content="FarmConnect - AI Smart Agriculture Platform & Farm Solutions" />
   <meta name="twitter:description"
     content="FarmConnect is a comprehensive AI-powered agriculture platform offering crop disease detection, machinery rentals, and real-time weather insights." />
-  <meta name="twitter:image" content="https://farm-connnect.vercel.app/screenshot-desktop.png" />
+  <meta name="twitter:image" content="https://farmbro.vercel.app/screenshot-desktop.png" />
 
   <!-- Structured Data: WebSite (for site name in search results) -->
   <script type="application/ld+json">
@@ -63,20 +82,30 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "FarmConnect",
-      "alternateName": ["Farm-Connect", "Farm Connect"],
-      "url": "https://farm-connnect.vercel.app/"
+      "alternateName": ["FarmBro", "Farm-Connect", "Farm Connect"],
+      "url": "https://farmbro.vercel.app/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://farmbro.vercel.app/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     }
   </script>
 
-  <!-- Structured Data: Organization (reinforces brand name) -->
+  <!-- Structured Data: Organization (reinforces brand name + sameAs for validation) -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "FarmConnect",
-      "url": "https://farm-connnect.vercel.app/",
-      "logo": "https://farm-connnect.vercel.app/farmconnect-icon-v2.png",
-      "description": "AI-powered agriculture platform for farmers"
+      "url": "https://farmbro.vercel.app/",
+      "logo": "https://farmbro.vercel.app/favicon-48x48.png",
+      "description": "AI-powered agriculture platform for farmers",
+      "sameAs": [
+        "https://twitter.com/FarmConnect",
+        "https://facebook.com/FarmConnect",
+        "https://linkedin.com/company/farmconnect"
+      ]
     }
   </script>
 
@@ -86,7 +115,7 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "FarmConnect",
-      "url": "https://farm-connnect.vercel.app/",
+      "url": "https://farmbro.vercel.app/",
       "description": "Smart Agriculture Platform for farmers with machinery rental, disease detection, and weather insights.",
       "applicationCategory": "AgricultureApplication",
       "operatingSystem": "Web"
@@ -137,7 +166,7 @@ export default function SEO({
     name = "FarmConnect",
     type = "website",
     url,
-    image = "https://farm-connnect.vercel.app/screenshot-desktop.png"
+    image = "https://farmbro.vercel.app/screenshot-desktop.png"
 }: SEOProps) {
     return (
         <Helmet>
@@ -181,14 +210,10 @@ export default function SEO({
   "background_color": "#f0f4f1",
   "theme_color": "#4a7c59",
   "orientation": "portrait-primary",
-  "categories": [
-    "agriculture",
-    "productivity",
-    "education"
-  ],
+  "categories": ["agriculture", "productivity", "education"],
   "icons": [
     {
-      "src": "/farmconnect-icon-v2.png",
+      "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
@@ -201,18 +226,8 @@ export default function SEO({
     }
   ],
   "screenshots": [
-    {
-      "src": "/screenshot-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
+    { "src": "/screenshot-mobile.png", "sizes": "390x844", "type": "image/png", "form_factor": "narrow" },
+    { "src": "/screenshot-desktop.png", "sizes": "1280x720", "type": "image/png", "form_factor": "wide" }
   ]
 }
 ```
@@ -225,37 +240,37 @@ export default function SEO({
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://farm-connnect.vercel.app/</loc>
+    <loc>https://farmbro.vercel.app/</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://farm-connnect.vercel.app/disease-detection</loc>
+    <loc>https://farmbro.vercel.app/disease-detection</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://farm-connnect.vercel.app/weather</loc>
+    <loc>https://farmbro.vercel.app/weather</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://farm-connnect.vercel.app/machinery</loc>
+    <loc>https://farmbro.vercel.app/machinery</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://farm-connnect.vercel.app/schemes</loc>
+    <loc>https://farmbro.vercel.app/schemes</loc>
     <lastmod>2026-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://farm-connnect.vercel.app/team</loc>
+    <loc>https://farmbro.vercel.app/team</loc>
     <lastmod>2026-01-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
@@ -271,122 +286,75 @@ export default function SEO({
 User-agent: *
 Allow: /
 
-Sitemap: https://farm-connnect.vercel.app/sitemap.xml
+# Explicitly allow favicon crawling
+Allow: /favicon*.png
+Allow: /favicon.ico
+
+Sitemap: https://farmbro.vercel.app/sitemap.xml
 ```
 
 ---
 
-## 6. Per-Page SEO Examples
+## 6. Per-Page SEO Implementation
 
-### HomePage.tsx
-```tsx
-<SEO 
-    title="FarmConnect - AI Smart Agriculture & Machinery Rental"
-    description="The #1 AI platform for farmers. Detect crop diseases, rent machinery, and get real-time weather insights."
-    url="https://farm-connnect.vercel.app/"
-/>
-```
-
-### Weather.tsx
-```tsx
-<SEO 
-    title="Farm Weather Insights - Real-time Rain & Forecast | FarmConnect"
-    description="Get accurate agricultural weather forecasts, rain predictions, and humidity levels for your farm."
-    url="https://farm-connnect.vercel.app/weather"
-/>
-```
-
-### DiseaseDetection.tsx
-```tsx
-<SEO 
-    title="AI Crop Disease Detection - Scan & Diagnose Plants | FarmConnect"
-    description="Upload a photo of your crop to instantly detect diseases using AI. Get treatment recommendations."
-    url="https://farm-connnect.vercel.app/disease-detection"
-/>
-```
-
-### MachineryMarketplace.tsx
-```tsx
-<SEO 
-    title="Farm Machinery Rental - Tractors, Harvesters & Tools | FarmConnect"
-    description="Rent affordable farm machinery or list your own equipment. Connect with local farmers."
-    url="https://farm-connnect.vercel.app/machinery"
-/>
-```
-
-### GovernmentSchemes.tsx
-```tsx
-<SEO 
-    title="Government Schemes for Farmers - PM-KISAN, PMFBY & More | FarmConnect"
-    description="Discover agricultural schemes and subsidies. PM-KISAN, Fasal Bima, Kisan Credit Card."
-    url="https://farm-connnect.vercel.app/schemes"
-/>
-```
-
-### Team.tsx
-```tsx
-<SEO 
-    title="Meet the Team - FarmConnect Developers & Contributors"
-    description="Meet the talented team behind FarmConnect from NIT Nagpur."
-    url="https://farm-connnect.vercel.app/team"
-/>
-```
-
-### UserProfile.tsx
-```tsx
-<SEO
-    title="My Profile - Dashboard & Settings | FarmConnect"
-    description="Manage your FarmConnect profile, bookings, and settings."
-    url="https://farm-connnect.vercel.app/profile"
-/>
-```
+| Page | Title | Canonical URL |
+|------|-------|---------------|
+| HomePage | FarmConnect - AI Smart Agriculture & Machinery Rental | `https://farmbro.vercel.app/` |
+| Weather | Farm Weather Insights - Real-time Rain & Forecast | `https://farmbro.vercel.app/weather` |
+| DiseaseDetection | AI Crop Disease Detection - Scan & Diagnose Plants | `https://farmbro.vercel.app/disease-detection` |
+| MachineryMarketplace | Farm Machinery Rental - Tractors, Harvesters & Tools | `https://farmbro.vercel.app/machinery` |
+| GovernmentSchemes | Government Schemes for Farmers - PM-KISAN, PMFBY & More | `https://farmbro.vercel.app/schemes` |
+| Credits/Team | Meet the Team - FarmConnect Developers & Contributors | `https://farmbro.vercel.app/team` |
+| UserProfile | My Profile - Dashboard & Settings | `https://farmbro.vercel.app/profile` |
+| OwnerDashboard | Owner Dashboard - Manage Your Machinery | `https://farmbro.vercel.app/owner/dashboard` |
+| BookingHistory | My Bookings - Machinery Rental History | `https://farmbro.vercel.app/bookings` |
 
 ---
 
-## 7. Icon Files in /public/
+## 7. Icon Files in /public/ (Optimized)
 
 | File | Size | Purpose |
 |------|------|---------|
-| `farmconnect-icon-v2.png` | **47KB** | Google Search favicon (cache-busted) |
-| `android-chrome-512x512.png` | 230KB | Android PWA |
-| `apple-touch-icon.png` | 42KB | iOS |
+| `favicon-48x48.png` | **10KB** | Google Search favicon (primary) |
 | `favicon-32x32.png` | 2.4KB | Browser tab |
 | `favicon-16x16.png` | 859B | Browser tab (small) |
 | `favicon.ico` | 15KB | Legacy browsers |
+| `apple-touch-icon.png` | **4KB** | iOS |
+| `android-chrome-192x192.png` | **4KB** | Android PWA |
+| `android-chrome-512x512.png` | **10KB** | Android PWA splash |
 
 ---
 
-## 8. Current Issue
+## 8. SEO Optimizations Implemented
 
-**Problem:** Google shows site name as "Vercel" instead of "FarmConnect"
+### ✅ Structured Data
+- **WebSite schema** with `potentialAction` (SearchAction)
+- **Organization schema** with `sameAs` for brand validation
+- **WebApplication schema** for app recognition
 
-**Google Search Result Currently Shows:**
-```
-Vercel
-https://farm-connnect.vercel.app
+### ✅ Favicon Optimization
+- 48x48 listed first (Google's recommended minimum)
+- All files under 10KB
+- Explicit `Allow` in robots.txt
 
-FarmConnect - AI Smart Agriculture - Vercel
-Farm-Connect: AI-powered platform for crop disease detection...
-```
+### ✅ Domain Strategy
+- Clean domain: `farmbro.vercel.app` (no typos)
+- Old domain redirects with 307
 
-**Competitor on same platform showing correct name:**
-```
-Farmers' Konnect
-https://farmerskonnect.vercel.app
-
-Farmers' Konnect - Transforming Farming through Contract...
-```
+### ✅ Canonical URLs
+- Every page has explicit canonical via SEO component
+- `url` prop is **required** in TypeScript
 
 ---
 
-## 9. Questions for Analysis
+## 9. Expected Google Search Result
 
-1. Why does "Farmers' Konnect" (also on vercel.app) show their custom name but we show "Vercel"?
+```
+FarmConnect
+https://farmbro.vercel.app
 
-2. Is there anything wrong with our WebSite/Organization structured data that's preventing Google from picking up our name?
+FarmConnect - AI Smart Agriculture Platform
+AI-powered platform for crop disease detection, machinery rentals...
+```
 
-3. Is the triple-n typo in our domain (farm-connnect) affecting how Google processes our schema?
-
-4. Any additional schema or meta tags we should add to force site name recognition?
-
-5. How long should we wait after re-indexing for the site name to update?
+**Timeline:** 2-4 weeks for site name + logo to update in Google Search

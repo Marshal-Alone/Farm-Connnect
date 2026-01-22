@@ -61,8 +61,12 @@ class GeminiAIService {
       return data.data;
 
     } catch (error) {
-      console.error('Gemini API proxy error:', error);
-      throw new Error('Could not get a diagnosis. Please check your connection and try again.');
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Gemini API proxy error:', errorMsg);
+      // Preserve specific error messages from the API
+      throw new Error(errorMsg.includes('400') || errorMsg.includes('invalid')
+        ? errorMsg
+        : 'Could not get a diagnosis. Please check your connection and try again.');
     }
   }
 

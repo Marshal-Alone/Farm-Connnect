@@ -187,15 +187,38 @@ export default function DiseaseDetection() {
     } catch (error) {
       console.error('Analysis error:', error);
 
-      // Fallback to mock result on error
-      const fallbackResult = mockResults[Math.floor(Math.random() * mockResults.length)];
-      setResult(fallbackResult);
+      // Parse error message for user-friendly display
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      // Determine error type and show appropriate notification
+      let title = 'Analysis Failed';
+      let description = 'Unable to analyze the image. Please try again.';
+
+      if (errorMessage.includes('API key')) {
+        title = 'API Key Error';
+        description = 'API key not configured. Please add your API key in Settings or contact support.';
+      } else if (errorMessage.includes('invalid image') || errorMessage.includes('400')) {
+        title = 'Invalid Image';
+        description = 'The image could not be processed. Please try a different image with clear plant/leaf visibility.';
+      } else if (errorMessage.includes('network') || errorMessage.includes('connection') || errorMessage.includes('fetch')) {
+        title = 'Connection Error';
+        description = 'Unable to connect to the AI service. Please check your internet connection.';
+      } else if (errorMessage.includes('500') || errorMessage.includes('server')) {
+        title = 'Server Error';
+        description = 'The AI service is temporarily unavailable. Please try again in a few minutes.';
+      } else if (errorMessage.includes('timeout')) {
+        title = 'Request Timeout';
+        description = 'The analysis took too long. Please try again with a smaller image.';
+      }
 
       toast({
-        title: "Analysis Error",
-        description: "Using fallback analysis. Please check your internet connection.",
+        title,
+        description,
         variant: "destructive"
       });
+
+      // Don't set any fallback result - let the user try again
+      setResult(null);
     } finally {
       setIsAnalyzing(false);
     }
