@@ -1,0 +1,1283 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Connect: Pathway to Progress - Major Project Presentation</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Calibri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Inter', Arial, sans-serif;
+            background: #2c2c2c;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            background: white;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        /* Header Section */
+        .slide-header {
+            background: linear-gradient(135deg, #1a5276 0%, #2874a6 100%);
+            color: white;
+            padding: 8px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .college-info {
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .college-name {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        /* Blue banner with title */
+        .title-banner {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            color: white;
+            padding: 15px 40px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px 50px;
+            height: calc(100vh - 160px);
+            overflow: auto;
+        }
+
+        /* Footer */
+        .slide-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            border-top: 3px solid #1a5276;
+            font-size: 12px;
+        }
+
+        .footer-dept {
+            color: #1a5276;
+            font-weight: 600;
+        }
+
+        .footer-url {
+            color: #666;
+        }
+
+        /* Title Slide Specific */
+        .title-slide {
+            background: linear-gradient(180deg, #1e3a5f 0%, #2c5282 60%, #3498db 100%);
+            color: white;
+        }
+
+        .title-slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-slide .title-header {
+            text-align: center;
+            padding: 30px 40px 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .title-slide .org-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .title-slide .college-main {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .title-slide .college-address {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .title-slide .title-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .title-slide .dept-name {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .title-slide .seminar-type {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .title-slide .project-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .title-slide .presented-by {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .title-slide .team-names {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .title-slide .title-footer {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+        }
+
+        /* Index/Content Slides */
+        .section-title {
+            font-size: 28px;
+            color: #1e3a5f;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .index-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .index-list li {
+            font-size: 20px;
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .index-list li::before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            color: #2874a6;
+        }
+
+        /* Bullet List */
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            font-size: 18px;
+            padding: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .bullet-list li::before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            color: #2874a6;
+            font-size: 12px;
+            top: 14px;
+        }
+
+        /* Numbered List */
+        .numbered-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: item;
+        }
+
+        .numbered-list li {
+            font-size: 16px;
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #333;
+            line-height: 1.5;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .numbered-list li::before {
+            counter-increment: item;
+            content: counter(item) ".";
+            position: absolute;
+            left: 0;
+            color: #2874a6;
+            font-weight: bold;
+        }
+
+        /* Two Column */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .column h3 {
+            font-size: 20px;
+            color: #1e3a5f;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2874a6;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            border-left: 4px solid #2874a6;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .feature-card h4 {
+            color: #1e3a5f;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .feature-card p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #1e3a5f;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        /* Challenge/Solution Box */
+        .challenge-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .challenge-list li {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .challenge-list li strong {
+            color: #c0392b;
+        }
+
+        .challenge-list li .solution {
+            display: block;
+            margin-top: 8px;
+            padding-left: 20px;
+            color: #27ae60;
+            border-left: 3px solid #27ae60;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #2874a6;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 20px;
+            width: 14px;
+            height: 14px;
+            background: #2874a6;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .timeline-item h4 {
+            color: #1e3a5f;
+            margin-bottom: 8px;
+        }
+
+        .timeline-item p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #1e3a5f, #2874a6);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Thank You Slide */
+        .thank-you-slide {
+            background: linear-gradient(180deg, #1e3a5f 0%, #2c5282 60%, #3498db 100%);
+            color: white;
+        }
+
+        .thank-you-slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .thank-you-slide h1 {
+            font-size: 72px;
+            margin-bottom: 30px;
+        }
+
+        .thank-you-slide p {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+
+        .thank-you-slide .footer-info {
+            position: absolute;
+            bottom: 40px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 15px;
+            border-radius: 25px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: #eee;
+        }
+
+        .slide-counter {
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 13px;
+        }
+
+        .keyboard-hint {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 12px;
+            border-radius: 15px;
+        }
+
+        kbd {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin: 0 2px;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .highlight-box.green {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .highlight-box h4 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box.green h4 {
+            color: #155724;
+        }
+
+        /* Screenshots */
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 10px 0 14px;
+        }
+
+        .shot-card {
+            background: #ffffff;
+            border: 1px solid #dce4ea;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .shot-card img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .shot-caption {
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e3a5f;
+            text-align: center;
+        }
+
+        .scope-note {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* Conclusion box */
+        .conclusion-section {
+            background: #e8f4f8;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .conclusion-section h3 {
+            color: #1e3a5f;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .future-section {
+            background: #f0fff0;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .future-section h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="presentation">
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide active title-slide" data-slide="1">
+            <div class="title-header">
+                <div class="org-name">Shri Sai Shikshan Sanstha's</div>
+                <div class="college-main">NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                <div class="college-address">Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+            </div>
+            <div class="title-content">
+                <div class="dept-name">Department of Computer Science and Engineering</div>
+                <div class="seminar-type">Project Progress Seminar – 2, on</div>
+                <div class="project-title">FARM CONNECT: PATHWAY TO PROGRESS</div>
+                <div class="presented-by">Presented By</div>
+                <div class="team-names">
+                    Marshal Alone, Vaishnavi Getme, Mrunali Umak, Sanskruti Patil, Aditya Kawale
+                </div>
+            </div>
+            <div class="title-footer">
+                <span>Department of CSE, NIT, Nagpur</span>
+                <span>https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Index -->
+        <div class="slide" data-slide="2">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">INDEX</div>
+            <div class="content-area">
+                <ul class="index-list">
+                    <li>Project Title & Group Details</li>
+                    <li>Problem Definition, Aim & Objectives</li>
+                    <li>Recap of Seminar–I Work</li>
+                    <li>Semester-7 Implementation Progress</li>
+                    <li>System Design / Developed Modules / Demo Screens</li>
+                    <li>Testing Status & Preliminary Results</li>
+                    <li>Challenges faced and Solutions implemented</li>
+                    <li>Semester-8 Pending Work & Timeline</li>
+                    <li>Budget Utilisation & Resource Requirements</li>
+                    <li>Conclusion & Future Scope</li>
+                </ul>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Project Title & Group Details -->
+        <div class="slide" data-slide="3">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Project Title & Group Details</div>
+            <div class="content-area" style="text-align: center; padding-top: 60px;">
+                <h1 style="font-size: 42px; color: #1e3a5f; margin-bottom: 15px;">FARM CONNECT: PATHWAY TO PROGRESS</h1>
+                <p style="font-size: 22px; color: #2874a6; margin-bottom: 60px;">Empowering Indian Farmers Through
+                    Innovation</p>
+
+                <p style="font-size: 18px; color: #666; margin-bottom: 20px;">Presented By</p>
+                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                    <div style="background: #f8f9fa; padding: 20px 30px; border-radius: 10px; min-width: 150px;">
+                        <strong style="color: #1e3a5f;">Marshal Alone</strong><br>
+                        <span style="font-size: 12px; color: #666;">Lead Developer</span>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 20px 30px; border-radius: 10px; min-width: 150px;">
+                        <strong style="color: #1e3a5f;">Vaishnavi Getme</strong><br>
+                        <span style="font-size: 12px; color: #666;">Systems Architect</span>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 20px 30px; border-radius: 10px; min-width: 150px;">
+                        <strong style="color: #1e3a5f;">Mrunali Umak</strong><br>
+                        <span style="font-size: 12px; color: #666;">UI/UX Designer</span>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 20px 30px; border-radius: 10px; min-width: 150px;">
+                        <strong style="color: #1e3a5f;">Sanskruti Patil</strong><br>
+                        <span style="font-size: 12px; color: #666;">Project Management</span>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 20px 30px; border-radius: 10px; min-width: 150px;">
+                        <strong style="color: #1e3a5f;">Aditya Kawale</strong><br>
+                        <span style="font-size: 12px; color: #666;">Core Developer</span>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 50px; padding: 20px; background: #e8f4f8; border-radius: 10px; display: inline-block;">
+                    <span style="color: #666;">Under the Guidance of</span><br>
+                    <strong style="font-size: 18px; color: #1e3a5f;">Prof. Tejas Dhule, Assistant Professor</strong>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Problem Definition -->
+        <div class="slide" data-slide="4">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Problem Definition</div>
+            <div class="content-area">
+                <table>
+                    <tr>
+                        <th style="width: 50%;">Problem</th>
+                        <th>Our Solution</th>
+                    </tr>
+                    <tr>
+                        <td>Information fragmented across multiple platforms</td>
+                        <td>Unified single-interface platform</td>
+                    </tr>
+                    <tr>
+                        <td>Delayed disease identification (15-25% crop losses annually)</td>
+                        <td>AI-powered instant crop disease detection</td>
+                    </tr>
+                    <tr>
+                        <td>Language barriers & low digital literacy among farmers</td>
+                        <td>Multilingual voice interface (5 regional languages)</td>
+                    </tr>
+                    <tr>
+                        <td>Limited access to government schemes & subsidies</td>
+                        <td>Searchable schemes portal with eligibility filters</td>
+                    </tr>
+                    <tr>
+                        <td>High cost of agricultural machinery</td>
+                        <td>Peer-to-peer machinery rental marketplace</td>
+                    </tr>
+                    <tr>
+                        <td>Weather vulnerability & unpredictable farming conditions</td>
+                        <td>Real-time weather dashboard with AI farming insights</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Aim & Objectives -->
+        <div class="slide" data-slide="5">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Aim & Objectives</div>
+            <div class="content-area">
+                <div class="highlight-box green" style="margin-bottom: 30px;">
+                    <p style="font-size: 16px; color: #155724; line-height: 1.6;">
+                        To develop a comprehensive, multi-functional Agriculture Support System that empowers farmers by
+                        providing real-time information, service access, early warnings, and easy access to schemes and
+                        machinery through a user-friendly interface that supports regional languages and
+                        voice inputs.
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🔄 Real-time Information</h4>
+                        <p>Providing instant, relevant data to farmers including weather, risk alerts, and advisories.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🛒 Enhanced Service Access</h4>
+                        <p>Connecting farmers with machinery owners through a rental marketplace with search and booking.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>⚠️ Early Warning Systems</h4>
+                        <p>Alerting farmers to potential threats like disease outbreaks through AI-powered detection.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📋 Access to Resources</h4>
+                        <p>Facilitating easier access to government schemes and agricultural machinery.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Recap of Seminar-I -->
+        <div class="slide" data-slide="6">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Recap of Seminar–I Work</div>
+            <div class="content-area">
+                <ul class="bullet-list">
+                    <li>Conducted planning and requirement analysis for the Agriculture Support System project.</li>
+                    <li>Defined project scope, aim, and objectives.</li>
+                    <li>Identified key challenges faced by farmers, machinery owners, and institutions.</li>
+                    <li>Gathered requirements through surveys, interviews, and literature review.</li>
+                    <li>Finalized the technology stack for app/web development.</li>
+                    <li>Prepared an initial project roadmap and module planning.</li>
+                    <li>Created a basic wireframe and concept design for the system.</li>
+                </ul>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Current Progress -->
+        <div class="slide" data-slide="7">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Current Progress Since Last Seminar (7th Semester)</div>
+            <div class="content-area">
+                <h3 style="color: #1e3a5f; margin-bottom: 20px;">Progress - September to January (Semester 7)</h3>
+                <ul class="bullet-list">
+                    <li>Completed UI/UX design, wireframes, and responsive frontend structure.</li>
+                    <li>Finalized stack: React.js, TypeScript, Node.js, Express.js, MongoDB, Tailwind CSS.</li>
+                    <li>Delivered working MVP for Disease Detection, Weather, Machinery Listing, and Schemes portal.</li>
+                    <li>Integrated AI providers (Groq default, Gemini optional) with image upload analysis flow.</li>
+                    <li>Implemented authentication, profile flow, and core REST API integration.</li>
+                    <li>Deployed live demo to Vercel with cloud database connectivity.</li>
+                    <li>Prepared technical documentation for architecture, API usage, and ML workflow.</li>
+                    <li>Kept non-functional hardening and full module closure for Semester 8 as planned scope.</li>
+                </ul>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: System Design -->
+        <div class="slide" data-slide="8">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">System Design / Developed Modules</div>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <h3>Technology Stack</h3>
+                        <table style="font-size: 14px;">
+                            <tr>
+                                <th>Layer</th>
+                                <th>Technologies</th>
+                            </tr>
+                            <tr>
+                                <td>Frontend</td>
+                                <td>React 18, TypeScript, Tailwind CSS, Vite</td>
+                            </tr>
+                            <tr>
+                                <td>Backend</td>
+                                <td>Node.js, Express.js, MongoDB</td>
+                            </tr>
+                            <tr>
+                                <td>AI Services</td>
+                                <td>Groq LLM, Google Gemini AI</td>
+                            </tr>
+                            <tr>
+                                <td>APIs</td>
+                                <td>WeatherAPI, Web Speech API</td>
+                            </tr>
+                            <tr>
+                                <td>DevOps</td>
+                                <td>Docker, Vercel, GitHub</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>Module Status (End of 7th Sem)</h3>
+                        <ul class="bullet-list" style="font-size: 15px;">
+                            <li><strong>Disease Detection:</strong> MVP complete (demo ready)</li>
+                            <li><strong>Weather Dashboard:</strong> Functional with live forecast</li>
+                            <li><strong>Government Schemes:</strong> Search and filter flow complete</li>
+                            <li><strong>Machinery Listing:</strong> Core listing and browse complete</li>
+                            <li><strong>Auth and Profile:</strong> Functional login/profile baseline</li>
+                            <li><strong>Booking workflow:</strong> Partial, final closure in Semester 8</li>
+                            <li><strong>Messaging, reviews, PWA:</strong> Planned for Semester 8</li>
+                        </ul>
+                        <div class="highlight-box" style="margin-top: 16px;">
+                            <h4>Semester Planning Note</h4>
+                            <p>Semester 7 delivered a working MVP. Semester 8 is reserved for full workflow completion,
+                                quality hardening, and final validation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Screenshots -->
+        <div class="slide" data-slide="9">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Implementation Screenshots</div>
+            <div class="content-area">
+                <div class="screenshot-grid">
+                    <div class="shot-card">
+                        <img src="ppt_assets/home.png" alt="Home and Voice Assistant">
+                        <div class="shot-caption">Home + Voice Assistant</div>
+                    </div>
+                    <div class="shot-card">
+                        <img src="ppt_assets/disease.png" alt="Disease Detection">
+                        <div class="shot-caption">Disease Detection Result</div>
+                    </div>
+                    <div class="shot-card">
+                        <img src="ppt_assets/weather.png" alt="Weather Dashboard">
+                        <div class="shot-caption">Weather Dashboard</div>
+                    </div>
+                    <div class="shot-card">
+                        <img src="ppt_assets/machinery.png" alt="Machinery Marketplace">
+                        <div class="shot-caption">Machinery Marketplace</div>
+                    </div>
+                    <div class="shot-card">
+                        <img src="ppt_assets/schemes.png" alt="Government Schemes Portal">
+                        <div class="shot-caption">Government Schemes Portal</div>
+                    </div>
+                </div>
+                <p style="text-align: center; color: #666; margin-top: 10px;">
+                    <strong>Live Demo:</strong> https://farmbro.vercel.app/
+                </p>
+                <p class="scope-note">Demo shows Semester-7 MVP. Semester-8 closure items are listed in roadmap slides.</p>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Testing & Results -->
+        <div class="slide" data-slide="10">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Testing & Results (Preliminary)</div>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <h3>Testing Performed (7th Semester)</h3>
+                        <ul class="bullet-list" style="font-size: 15px;">
+                            <li><strong>UI/UX testing:</strong> usability checks with peer users.</li>
+                            <li><strong>Feature testing:</strong> smoke tests for disease, weather, schemes, and machinery listing.</li>
+                            <li><strong>API testing:</strong> route-level manual checks and error-case verification.</li>
+                            <li><strong>Deployment testing:</strong> live demo stability checks on desktop and mobile.</li>
+                        </ul>
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #ffc107;">
+                            <strong style="color: #856404;">Planned for 8th Semester:</strong>
+                            <p style="font-size: 13px; color: #856404; margin-top: 5px;">security audit, load testing,
+                                full integration testing, multilingual voice validation, and UAT sign-off.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Preliminary Results</h3>
+                        <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                            <div class="stat-box">
+                                <div class="number">7/10</div>
+                                <div class="label">Major Scope Items at MVP Stage</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="number">15+</div>
+                                <div class="label">API Routes Smoke-Tested</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="number">2</div>
+                                <div class="label">AI Providers Integrated</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="number">70%</div>
+                                <div class="label">Overall Scope Completion</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 14px; color: #666; margin-top: 15px;">MVP is stable for demonstration and feedback.</p>
+                        <p style="font-size: 14px; color: #666;">Production-grade hardening is intentionally scheduled for Semester 8.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: Challenges & Solutions -->
+        <div class="slide" data-slide="11">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Challenges Faced and Solutions Implemented</div>
+            <div class="content-area" style="padding-top: 20px;">
+                <ul class="challenge-list">
+                    <li>
+                        <strong>Challenge:</strong> User registration was failing with 500 error and frontend JSON parse errors.
+                        <span class="solution"><strong>Solution:</strong> Fixed JWT payload serialization (`ObjectId` to string),
+                            added robust backend error responses, and improved frontend response parsing (`REGISTRATION_FIX.md`).</span>
+                    </li>
+                    <li>
+                        <strong>Challenge:</strong> Crop disease analysis broke due incompatible Gemini SDK usage.
+                        <span class="solution"><strong>Solution:</strong> Migrated to `@google/genai` and rewrote
+                            `src/lib/gemini.ts` with schema-based structured output handling (`CROP_DISEASE_FIX.md`).</span>
+                    </li>
+                    <li>
+                        <strong>Challenge:</strong> Securing AI API keys from frontend exposure.
+                        <span class="solution"><strong>Solution:</strong> Implemented backend proxy endpoints (`/api/ai/*`)
+                            with server `.env` keys and optional user keys, removing direct browser key exposure (`API_KEY_SECURITY.md`).</span>
+                    </li>
+                    <li>
+                        <strong>Challenge:</strong> Service worker caching caused stale/blank pages during development refresh.
+                        <span class="solution"><strong>Solution:</strong> Switched to network-first caching and added smart
+                            registration to disable SW in dev and clear old caches (`SERVICE_WORKER_FIX.md`).</span>
+                    </li>
+                    <li>
+                        <strong>Challenge:</strong> End-to-end machinery workflow had partial booking-status and messaging integration.
+                        <span class="solution"><strong>Solution:</strong> Verified core booking routes, documented partial endpoints,
+                            and moved full lifecycle closure to Semester 8 with integration testing (`API_INDEX.md`, `VERIFIED_ROUTES_QUICK_REF.txt`).</span>
+                    </li>
+                    <li>
+                        <strong>Challenge:</strong> Voice recognition quality varied by accent/noise conditions.
+                        <span class="solution"><strong>Solution:</strong> Added language-specific configurations, fallback text input,
+                            and planned deeper multilingual validation in Semester 8.</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: Remaining Work & Timeline -->
+        <div class="slide" data-slide="12">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Remaining Work & Timeline (8th Semester)</div>
+            <div class="content-area">
+                <div class="timeline">
+                    <div class="timeline-item" style="background: #d4edda;">
+                        <h4>7th Semester (Completed)</h4>
+                        <p>MVP architecture, core modules, cloud deployment, and baseline testing completed.</p>
+                    </div>
+                    <div class="timeline-item" style="background: #fff3cd;">
+                        <h4>8th Semester - Phase 1 (Feb - Mar 2026)</h4>
+                        <p>
+                            - Finalize machinery booking lifecycle (request, approval, status updates)<br>
+                            - Complete owner dashboard workflows and booking management<br>
+                            - Close messaging flow between renter and owner
+                        </p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>8th Semester - Phase 2 (Mar - Apr 2026)</h4>
+                        <p>
+                            - Integrate custom TFJS disease model as production option<br>
+                            - Add review/rating, PWA install/offline support, and notification handling<br>
+                            - Execute security, load, and full integration testing
+                        </p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Final Phase (May 2026)</h4>
+                        <p>Bug fixing, documentation freeze, demo video, viva preparation, and final submission.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: Budget & Resources -->
+        <div class="slide" data-slide="13">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Budget Utilisation & Resource Requirements</div>
+            <div class="content-area">
+                <h3 class="section-title">Resource Requirements</h3>
+                <table>
+                    <tr>
+                        <th>Resource</th>
+                        <th>Purpose</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Vercel Hosting</td>
+                        <td>Frontend & Backend deployment</td>
+                        <td style="color: green;">✓ Free tier used</td>
+                    </tr>
+                    <tr>
+                        <td>MongoDB Atlas</td>
+                        <td>Cloud database storage</td>
+                        <td style="color: green;">✓ Free tier used</td>
+                    </tr>
+                    <tr>
+                        <td>Groq API</td>
+                        <td>AI disease detection & chatbot</td>
+                        <td style="color: green;">✓ Free API key</td>
+                    </tr>
+                    <tr>
+                        <td>Google Gemini API</td>
+                        <td>Alternative AI provider</td>
+                        <td style="color: green;">✓ Free tier used</td>
+                    </tr>
+                    <tr>
+                        <td>WeatherAPI</td>
+                        <td>Weather data integration</td>
+                        <td style="color: green;">✓ Free tier used</td>
+                    </tr>
+                    <tr>
+                        <td>Development Devices</td>
+                        <td>Testing on multiple devices</td>
+                        <td style="color: green;">✓ Team devices</td>
+                    </tr>
+                </table>
+                <div class="highlight-box green" style="margin-top: 20px;">
+                    <h4>Cost-Effective Solution</h4>
+                    <p>The entire project is built using free-tier cloud services, making it cost-effective and easily
+                        deployable.</p>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: Conclusion & Future Scope -->
+        <div class="slide" data-slide="14">
+            <div class="slide-header">
+                <div class="college-info">
+                    <div class="college-name">Shri Sai Shikshan Sanstha's</div>
+                    <div>NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR</div>
+                    <div>Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501</div>
+                </div>
+            </div>
+            <div class="title-banner">Conclusion & Future Scope</div>
+            <div class="content-area">
+                <div class="conclusion-section">
+                    <h3>7th Semester Summary</h3>
+                    <ul class="bullet-list" style="font-size: 15px;">
+                        <li>Working MVP delivered ahead of final-semester timeline.</li>
+                        <li>Core architecture and cloud deployment validated with live demo.</li>
+                        <li>Primary user-facing modules are functional for external evaluation demo.</li>
+                        <li>Non-functional quality targets are intentionally deferred to Semester 8.</li>
+                    </ul>
+                </div>
+                <div class="future-section" style="background: #fff8e1; border-left: 4px solid #ff9800;">
+                    <h3 style="color: #e65100;">8th Semester Planned Closure</h3>
+                    <ul class="bullet-list" style="font-size: 15px;">
+                        <li>Complete pending workflows: booking lifecycle, messaging, and ratings.</li>
+                        <li>Finalize AI model options and confidence calibration for field reliability.</li>
+                        <li>Execute full QA matrix: integration, load, security, and UAT.</li>
+                        <li>Ship PWA reliability improvements and deployment hardening.</li>
+                        <li>Finish final report, user manual, and project submission package.</li>
+                    </ul>
+                </div>
+                <div class="highlight-box green" style="margin-top: 18px;">
+                    <h4>Positioning for Evaluation</h4>
+                    <p>Semester 7: functional MVP complete. Semester 8: quality completion, validation depth, and final academic deliverables.</p>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span class="footer-dept">Department of CSE, NIT, Nagpur</span>
+                <span class="footer-url">https://nit.edu.in/computer-science-engineering/</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: Thank You -->
+        <div class="slide thank-you-slide" data-slide="15">
+            <h1>THANK YOU</h1>
+            <p>Questions & Discussion</p>
+            <div class="footer-info">
+                <p>Department of CSE, NIT, Nagpur | https://nit.edu.in/computer-science-engineering/</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <button class="nav-btn" onclick="prevSlide()">←</button>
+        <div class="slide-counter"><span id="currentSlide">1</span> / 15</div>
+        <button class="nav-btn" onclick="nextSlide()">→</button>
+    </div>
+
+    <div class="keyboard-hint">
+        <kbd>←</kbd> <kbd>→</kbd> or <kbd>Space</kbd> to navigate
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 15;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+
+</html>
+

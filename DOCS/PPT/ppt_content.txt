@@ -1,0 +1,312 @@
+=== SLIDE 1 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+Department of Computer Science and Engineering
+
+Project Progress Seminar – 2, on
+FARM CONNECT: PATHWAY TO PROGRESS
+
+
+Presented By
+Marshal Alone, Vaishnavi Getme, Mrunali Umak, Sanskruti Patil, Aditya Kawale
+---
+
+=== SLIDE 2 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+INDEX
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+●Project Title & Group Details
+
+●Problem Definition, Aim & Objectives
+
+●Recap of Seminar–I Work
+
+●Current Progress since last seminar
+
+●System Design / Implementation screenshots / Developed Modules
+
+●Testing & Results
+
+●Challenges faced and Solutions implemented
+
+●Remaining Work & Timeline
+
+●Budget Utilisation & Resource Requirements
+
+●Conclusion & Future Scope
+---
+
+=== SLIDE 3 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Project Title & Group Details
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+FARM CONNECT: PATHWAY TO PROGRESS
+Empowering Indian Farmers Through Innovation
+
+
+Presented By
+Marshal Alone 
+Vaishnavi Getme 
+Mrunali Umak 
+Sanskruti Patil 
+Aditya Kawale
+---
+
+=== SLIDE 4 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Problem Definition
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+
+=== SLIDE 5 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Aim & Objectives
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+To develop a comprehensive, multi-functional Agriculture Support System that empowers farmers by providing real-time information, market access, early warnings, and easy access to schemes, loans, and machinery through a user-friendly interface that supports regional languages and voice inputs.
+
+Real-time Information
+Providing instant, relevant data to farmers.
+
+Enhanced Market Access
+Connecting farmers directly to buyers for fair prices.
+
+Early Warning Systems
+Alerting farmers to potential threats like disease outbreaks.
+
+Access to Resources
+Facilitating easier access to schemes, loans, and machinery.
+---
+
+=== SLIDE 6 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+.
+---
+Recap of Seminar–I Work
+---
+Conducted planning and requirement analysis for the Agriculture Support System project.
+Defined project scope, aim, and objectives.
+Identified key challenges faced by farmers, buyers, and institutions.
+Gathered requirements through surveys, interviews, and literature review.
+Finalized the technology stack for app/web development.
+Prepared an initial project roadmap and module planning.
+Created a basic wireframe and concept design for the system.
+---
+
+=== SLIDE 7 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+https://nit.edu.in/computer-science-engineering/
+---
+Department of CSE, NIT, Nagpur
+---
+Current Progress since last seminar
+---
+Progress – September 
+
+Completed UI/UX design and wireframing for the Agriculture Support System.
+
+Conducted user needs analysis for farmers, buyers, and institutions to define core requirements.
+
+Finalized the technology stack for app/web development.
+
+Designed app and web interfaces for each module with a focus on usability.
+
+Prepared user flow diagrams for all system modules to ensure seamless navigation.
+
+Developed voice interface layouts for multiple regional languages (Hindi, Marathi, etc.).
+---
+
+=== SLIDE 8 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+System Design / Implementation screenshots / Developed Modules
+---
+
+=== SLIDE 9 ===
+9
+---
+
+=== SLIDE 10 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+Testing & Results
+---
+UI/UX Testing: Conducted usability tests with a sample group of users to ensure intuitive design and smooth navigation.
+
+Functionality Testing: Verified working of core interface elements across different devices (mobile, tablet, desktop).
+
+Voice Interface Testing: Tested voice recognition accuracy for Hindi and Marathi inputs; achieved satisfactory recognition rate.
+
+Performance Testing: Assessed app responsiveness and load times for different modules.
+
+
+Preliminary Results:
+
+Positive user feedback on interface simplicity and accessibility.
+
+Voice input feature functioning with >85% accuracy in tested scenarios.
+
+App interfaces and flows validated for ease of use by target user groups.
+---
+
+=== SLIDE 11 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+Challenges faced and Solutions implemented
+---
+1.Challenge: Designing an intuitive UI for diverse user groups with varying technical skills.
+Solution: Created simple, icon-based navigation with minimal text and voice guidance for.           ease of use.
+
+2.Challenge: Ensuring accurate voice recognition for multiple regional languages (Hindi,   Marathi, etc.).
+Solution: Integrated advanced multilingual voice recognition APIs and tested extensively with native speakers.
+
+3.Challenge: Identifying comprehensive user needs across farmers, buyers, and institutions.
+Solution: Conducted surveys, interviews, and field visits to gather relevant requirements.
+
+4.Challenge:Balancing feature complexity with performance efficiency.
+Solution:Optimized code structure, selected a robust technology stack, and modularized system components.
+
+5.Challenge:Maintaining consistency in design across mobile and web interfaces.
+Solution:Developed standardized style guides and reusable UI components for cross-platform uniformity.
+---
+
+=== SLIDE 12 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+Remaining Work & Timeline
+---
+October
+Begin core module development for the Agriculture Support System.Develop advanced modules with planned functionality
+
+November 
+Implement crop disease prediction module (ML or rule-based).Develop government schemes recommender and loan eligibility checker.Create equipment rental system with calendar and location filters.Develop AI chatbot with multilingual and voice support.Begin backend database integration.
+
+December 
+Complete Integration of all modules.Conduct mid-level testing of integrated components.
+
+January 
+Perform final testing (UI, functional, usability, and security).Setup deployment environment and combine front-end and back-end modules. Integrate APIs: speech-to-text, weather data, UPI payments. 
+Deploy system on cloud platform (Firebase/AWS).Prepare for pilot demo with real users
+
+February 
+Complete documentation and prepare for demo presentation
+
+March 
+Conduct final presentation and project submission. Finalize user manuals and project report. 
+Create PPT and video demo. Submit complete project report.
+---
+
+=== SLIDE 13 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Budget Utilisation & Resource Requirements
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+Resource Requirements
+Cloud hosting account (Firebase/AWS).
+Voice recognition API subscriptions for multiple languagesTesting devices (smartphones, tablets, computers).
+Access to agricultural datasets for ML modules. 
+Skilled manpower for final testing and deployment.
+---
+
+=== SLIDE 14 ===
+Shri Sai Shikshan Sanstha’s
+NAGPUR INSTITUTE OF TECHNOLOGY, NAGPUR
+Survey No.13/2, Mahurzari, Near Fetri, Katol Road, Nagpur-441501
+---
+Department of CSE, NIT, Nagpur
+---
+https://nit.edu.in/computer-science-engineering/
+---
+Conclusion & Future Scope
+---
+Conclusion
+The Agriculture Support System is progressing as planned, with UI/UX design, voice interface layouts, and core module planning completed.
+Development of advanced modules and backend integration is underway, ensuring the project meets its aim of empowering farmers through a multi-functional, multilingual platform.
+Preliminary testing shows positive results, especially in usability and voice input accuracy.
+
+Future Scope
+Expand the system to include AI-based predictive analytics for crop yield and weather patterns.
+Integrate IoT-based sensors for real-time soil and crop health monitoring. 
+Enhance chatbot capabilities with deep learning for natural conversation in multiple regional languages.
+Scale platform for nationwide adoption with additional support for more languages and localized schemes. 
+Develop a mobile-first version optimized for rural internet connectivity and low-end devices.
+---
+
+=== SLIDE 15 ===
+THANK YOU
+---
+Department of CSE, NIT, Nagpur
+---
+
