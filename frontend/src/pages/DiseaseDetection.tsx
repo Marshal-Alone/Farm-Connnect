@@ -544,26 +544,7 @@ export default function DiseaseDetection() {
                     </CardContent>
                   </Card>
 
-                  {/* Quick Actions */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Quick Actions</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <Button variant="outline" className="w-full justify-start">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        Find Nearby Agricultural Store
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Clock className="w-4 h-4 mr-2" />
-                        Schedule Expert Consultation
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start" onClick={handleViewSimilarCases}>
-                        <Users className="w-4 h-4 mr-2" />
-                        View Similar Cases
-                      </Button>
-                    </CardContent>
-                  </Card>
+
                   {/* Similar Cases Modal/Section */}
                   {showSimilarCases && (
                     <Card className="mt-6">

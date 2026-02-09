@@ -38,7 +38,7 @@ const teamMembers = [
         id: "3",
         contribution: "Machinery marketplace engine, transaction states and system verification",
         icon: ShieldCheck,
-        image: "",
+        image: "/assets/team/Aditya.jpeg",
         color: "from-blue-500 to-indigo-600",
         glow: "rgba(59, 130, 246, 0.3)",
         textColor: "#3b82f6"
@@ -64,7 +64,7 @@ const teamMembers = [
         id: "5",
         contribution: "User interface design, animations and frontend excellence",
         icon: Database,
-        image: "",
+        image: "/assets/team/mrunali.jpeg",
         color: "from-cyan-500 to-teal-600",
         glow: "rgba(6, 182, 212, 0.3)",
         textColor: "#06b6d4"
