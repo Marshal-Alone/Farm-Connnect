@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '@/config/api';
+
 interface DetectionRecord {
   id: string;
   crop: string;
