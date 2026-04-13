@@ -87,8 +87,13 @@ self.addEventListener('fetch', (event) => {
           }
           // Return offline page for HTML requests
           if (event.request.headers.get('accept')?.includes('text/html')) {
-            return caches.match('/index.html');
+            return caches.match('/index.html') || new Response('Offline', { status: 503 });
           }
+          // Return offline response for API/other requests
+          return new Response(JSON.stringify({ error: 'Offline' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
         });
       })
   );

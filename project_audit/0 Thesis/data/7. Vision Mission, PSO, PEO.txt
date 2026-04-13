@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------------------------------------------------------------------------
+Department of Computer Science and Engineering
+-----------------------------------------------------------------------------------------------------
+Vision of the Institute: 
+Service to the Society by creating Technical & Skilled Manpower through value based Technical Education.
+Mission of the Institute:
+To provide quality technical Education to meet the requirement of industries and society.
+To equip students with need based technical skills through continual improvement in Teaching         Learning Processes and research activity. 
+To inculcate ethical values for overall holistic development of students.  
+Vision of the Department:
+
+To foster Computer Science and Engineering graduates by imparting quality technical education through need based technical skills with ethical values.
+Mission of the Department
+To provide quality technical education to meet the requirements of industries and society.
+To equip students with need based technical skills through continual improvements in Teaching Learning processes and research activities.
+To inculcate ethical values for overall holistic development of students.
+Program Specific Outcomes (PSO):
+PSO1. To demonstrate knowledge and understanding of CS engineering concepts and apply these to the industries.
+PSO2. The ability to understand, analyze and develop computer programs in the areas related to algorithms, system software, multimedia, web design, big data analytics, and networking for efficient design of computer-based systems of varying complexity.
+PSO3. The ability to employ modern computer languages, environments, and platforms in creating innovative career paths to be an entrepreneur, and a zest for higher studies. 
+Program Educational Objectives (PEO):
+PEO1. Graduates will pursue successful careers as software professionals, IT consultants and system administrators.
+PEO2. Graduates will adapt to the changing technologies, tools and societal requirements
+PEO3. To create and sustain a community of learning in which students acquire knowledge and apply in their concerned fields with due consideration for ethical, ecological, and economic issues.
+PEO4. To train students with good Computer Science & Engineering breadth, so as to comprehend, analyze, design and create innovative computing products and solutions for real life problems.

@@ -1,6 +1,5 @@
+import { API_BASE_URL } from '../../config/api';
 import { BookingSchema } from '../schemas/booking.schema';
-
-const API_BASE_URL = '/api';
 
 export interface CreateBookingData {
     machineryId: string;

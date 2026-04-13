@@ -1,0 +1,2252 @@
+﻿[
+    {
+        "path":  ".env.example",
+        "top":  ".env.example",
+        "ext":  ".example",
+        "bytes":  129,
+        "lines":  6,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  ".github/copilot-instructions.md",
+        "top":  ".github",
+        "ext":  ".md",
+        "bytes":  6825,
+        "lines":  109,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  ".gitignore",
+        "top":  ".gitignore",
+        "ext":  ".gitignore",
+        "bytes":  301,
+        "lines":  25,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/AI_CHAT/2026-01-14_ML_Model_Integration.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  6441,
+        "lines":  140,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/AI_CHAT/2026-01-XX_API_Key_Security.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  2479,
+        "lines":  48,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/AI_CHAT/2026-01-XX_Credits_Roles_Audit.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  6012,
+        "lines":  95,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/AI_CHAT/2026-01-XX_Registration_Error_Fix.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  1723,
+        "lines":  29,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/API/API_INDEX.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  9632,
+        "lines":  224,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/API/API_STATUS_SUMMARY.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  4173,
+        "lines":  84,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/API/API_TESTING_CHECKLIST.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  9136,
+        "lines":  225,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/API/API_TESTING_GUIDE.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  28981,
+        "lines":  828,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/API/API_VERIFICATION_COMPLETE.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  11919,
+        "lines":  289,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/API/API_VERIFICATION_GUIDE.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  8599,
+        "lines":  206,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/FIXES/CROP_DISEASE_FIX.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  4021,
+        "lines":  97,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/FIXES/DASHBOARD_FIXES.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  3829,
+        "lines":  88,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/FIXES/REGISTRATION_FIX.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  2019,
+        "lines":  36,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/FIXES/SERVICE_WORKER_FIX.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  4527,
+        "lines":  109,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/API_KEY_SECURITY.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  5086,
+        "lines":  109,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/DEPLOYMENT.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  5506,
+        "lines":  159,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/GROQ_VISION_IMPLEMENTATION.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  17147,
+        "lines":  437,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/LOGGING_SUMMARY.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  7690,
+        "lines":  193,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/MESSAGE REBUILD GUIDE.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  8530,
+        "lines":  195,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/MESSAGING_REBUILD_GUIDE.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  8530,
+        "lines":  195,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/VERIFICATION.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  10058,
+        "lines":  271,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/GUIDES/VERIFIED_ROUTES_QUICK_REF.txt",
+        "top":  "DOCS",
+        "ext":  ".txt",
+        "bytes":  10826,
+        "lines":  134,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/Hosting/Project_hosting_guide_by_ankush.pdf",
+        "top":  "DOCS",
+        "ext":  ".pdf",
+        "bytes":  273359,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/ML/CODE_EXPLANATION.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  7682,
+        "lines":  230,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/ML/README.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  11444,
+        "lines":  264,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/ML/TECHNICAL_DOCUMENTATION.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  44283,
+        "lines":  894,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/ML/TRAINING_GUIDE.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  6666,
+        "lines":  187,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/PPT/Major project ppt reference.pptx",
+        "top":  "DOCS",
+        "ext":  ".pptx",
+        "bytes":  824709,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PPT/ppt_content.txt",
+        "top":  "DOCS",
+        "ext":  ".txt",
+        "bytes":  10238,
+        "lines":  255,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/PRESENTATION/Farm_Connect_External_Evaluation_Presentation.pptx",
+        "top":  "DOCS",
+        "ext":  ".pptx",
+        "bytes":  2202061,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PRESENTATION/Farm_Connect_External_Evaluation_Presentation_20260210_010354.pptx",
+        "top":  "DOCS",
+        "ext":  ".pptx",
+        "bytes":  2202061,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PRESENTATION/ppt_assets/disease.png",
+        "top":  "DOCS",
+        "ext":  ".png",
+        "bytes":  424413,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PRESENTATION/ppt_assets/home.png",
+        "top":  "DOCS",
+        "ext":  ".png",
+        "bytes":  952235,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PRESENTATION/ppt_assets/machinery.png",
+        "top":  "DOCS",
+        "ext":  ".png",
+        "bytes":  580352,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PRESENTATION/ppt_assets/schemes.png",
+        "top":  "DOCS",
+        "ext":  ".png",
+        "bytes":  106317,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PRESENTATION/ppt_assets/weather.png",
+        "top":  "DOCS",
+        "ext":  ".png",
+        "bytes":  128385,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PRESENTATION/presentation.html",
+        "top":  "DOCS",
+        "ext":  ".html",
+        "bytes":  52434,
+        "lines":  1167,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/PROJECT/DOCUMENTATION.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  3913,
+        "lines":  89,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/PROJECT/Group 7 Project Synopsis-FINAL.pdf",
+        "top":  "DOCS",
+        "ext":  ".pdf",
+        "bytes":  1970214,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PROJECT/ROLES_AND_RESPONSIBILITIES copy.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  7991,
+        "lines":  111,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/PROJECT/ROLES_AND_RESPONSIBILITIES.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  10081,
+        "lines":  132,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/PROJECT/SYNOPSIS GROUP-7.pdf",
+        "top":  "DOCS",
+        "ext":  ".pdf",
+        "bytes":  908968,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PROJECT/SYNOPSIS.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  51775,
+        "lines":  673,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/PROJECT/Synopsis WORD FILE.docx",
+        "top":  "DOCS",
+        "ext":  ".docx",
+        "bytes":  1895549,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "DOCS/PROJECT/TODO.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  6254,
+        "lines":  155,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/README.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  5368,
+        "lines":  96,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/SEO/SEO-ANALYSIS-DOCUMENT.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  12691,
+        "lines":  304,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/VIDEO/INVESTOR_PITCH_SCRIPT.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  2830,
+        "lines":  59,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/VIDEO/NEF_Innovation_Awards_2025_Submission.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  1738,
+        "lines":  37,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/VIDEO/NES_VIDEO_RECORDING_GUIDE.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  6118,
+        "lines":  103,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "DOCS/VIDEO/NES_VIDEO_SCRIPT.md",
+        "top":  "DOCS",
+        "ext":  ".md",
+        "bytes":  3570,
+        "lines":  75,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "Dockerfile",
+        "top":  "Dockerfile",
+        "ext":  "",
+        "bytes":  917,
+        "lines":  31,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "README.md",
+        "top":  "README.md",
+        "ext":  ".md",
+        "bytes":  16231,
+        "lines":  434,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/ai.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  18312,
+        "lines":  401,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/bookings.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  15952,
+        "lines":  409,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/diseases.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  2599,
+        "lines":  70,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/machinery.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  10737,
+        "lines":  256,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/messages.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  10754,
+        "lines":  286,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/schemes.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  2514,
+        "lines":  63,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/users.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  7200,
+        "lines":  201,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/api/weather.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  2111,
+        "lines":  53,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/config/database.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  1263,
+        "lines":  42,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/index.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  6042,
+        "lines":  152,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/scripts/seedDemoMachinery.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  13503,
+        "lines":  293,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/scripts/seedDemoUsers.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  3435,
+        "lines":  82,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/scripts/test-auth.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  1297,
+        "lines":  37,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/tests/key-test.html",
+        "top":  "backend",
+        "ext":  ".html",
+        "bytes":  13977,
+        "lines":  346,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/tests/test-apis.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  7029,
+        "lines":  206,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "backend/tests/test-populate-data.js",
+        "top":  "backend",
+        "ext":  ".js",
+        "bytes":  13471,
+        "lines":  365,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "docker-compose.yml",
+        "top":  "docker-compose.yml",
+        "ext":  ".yml",
+        "bytes":  575,
+        "lines":  23,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/components.json",
+        "top":  "frontend",
+        "ext":  ".json",
+        "bytes":  432,
+        "lines":  20,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/eslint.config.js",
+        "top":  "frontend",
+        "ext":  ".js",
+        "bytes":  818,
+        "lines":  28,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/index.html",
+        "top":  "frontend",
+        "ext":  ".html",
+        "bytes":  7784,
+        "lines":  169,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/postcss.config.js",
+        "top":  "frontend",
+        "ext":  ".js",
+        "bytes":  86,
+        "lines":  6,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/android-chrome-192x192.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  4241,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/android-chrome-512x512.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  9534,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/apple-touch-icon.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  3913,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/claas-harvester.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  88812,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/john-deere-tractor.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  68620,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/mahindra-tractor.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  82407,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/rotavator.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  112137,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/seed-drill.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  91610,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/spray-drone.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  45821,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/team/Aditya.jpeg",
+        "top":  "frontend",
+        "ext":  ".jpeg",
+        "bytes":  137675,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/team/marshal.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  253272,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/team/mrunali.jpeg",
+        "top":  "frontend",
+        "ext":  ".jpeg",
+        "bytes":  28865,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/assets/team/vaishnavi.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  214787,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/backup logo/favicon 1.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  262672,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/backup logo/favicon.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  53571,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/backup logo/favicon2.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  553145,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/demo-images/bullock-cart.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  937381,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/demo-images/harvester.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  848806,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/demo-images/tractor.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  925546,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/farmconnect-icon-v2.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  4241,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/android-chrome-192x192.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  47747,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/android-chrome-512x512.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  230920,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/apple-touch-icon.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  42843,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/farmconnect-icon-v2.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  47747,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/favicon-16x16.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  859,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/favicon-32x32.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  2414,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/favicon-48x48.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  383335,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/favicon.ico",
+        "top":  "frontend",
+        "ext":  ".ico",
+        "bytes":  15406,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon files/site.webmanifest",
+        "top":  "frontend",
+        "ext":  ".webmanifest",
+        "bytes":  263,
+        "lines":  1,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/favicon-16x16.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  859,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon-32x32.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  2414,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon-48x48.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  9992,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/favicon.ico",
+        "top":  "frontend",
+        "ext":  ".ico",
+        "bytes":  15406,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/google8f43ddcd6bd4b600.html",
+        "top":  "frontend",
+        "ext":  ".html",
+        "bytes":  53,
+        "lines":  1,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/health.html",
+        "top":  "frontend",
+        "ext":  ".html",
+        "bytes":  24228,
+        "lines":  634,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/manifest.json",
+        "top":  "frontend",
+        "ext":  ".json",
+        "bytes":  1049,
+        "lines":  43,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/models/plant-disease/group1-shard1of3.bin",
+        "top":  "frontend",
+        "ext":  ".bin",
+        "bytes":  4194304,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/models/plant-disease/group1-shard2of3.bin",
+        "top":  "frontend",
+        "ext":  ".bin",
+        "bytes":  4194304,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/models/plant-disease/group1-shard3of3.bin",
+        "top":  "frontend",
+        "ext":  ".bin",
+        "bytes":  1818144,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/models/plant-disease/labels.json",
+        "top":  "frontend",
+        "ext":  ".json",
+        "bytes":  4316,
+        "lines":  192,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/models/plant-disease/model.json",
+        "top":  "frontend",
+        "ext":  ".json",
+        "bytes":  128035,
+        "lines":  1,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/placeholder.svg",
+        "top":  "frontend",
+        "ext":  ".svg",
+        "bytes":  3253,
+        "lines":  1,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/robots.txt",
+        "top":  "frontend",
+        "ext":  ".txt",
+        "bytes":  158,
+        "lines":  6,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/screenshot-desktop.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  91435,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/screenshot-mobile.png",
+        "top":  "frontend",
+        "ext":  ".png",
+        "bytes":  40332,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/public/sitemap.xml",
+        "top":  "frontend",
+        "ext":  ".xml",
+        "bytes":  1148,
+        "lines":  39,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/public/sw.js",
+        "top":  "frontend",
+        "ext":  ".js",
+        "bytes":  2804,
+        "lines":  87,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/App.css",
+        "top":  "frontend",
+        "ext":  ".css",
+        "bytes":  648,
+        "lines":  37,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/App.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  3464,
+        "lines":  78,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/assets/hero-farm.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  163476,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/src/assets/machinery.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  130061,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/src/assets/weather-dashboard.jpg",
+        "top":  "frontend",
+        "ext":  ".jpg",
+        "bytes":  131556,
+        "lines":  null,
+        "readable":  false,
+        "note":  "binary-hint"
+    },
+    {
+        "path":  "frontend/src/components/AIAnalyticsDashboard.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  15543,
+        "lines":  369,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/AdvancedFilters.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  11923,
+        "lines":  237,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/IndianFarmerWeatherDashboard.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  41668,
+        "lines":  871,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/Layout.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  8054,
+        "lines":  177,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/LoginModal.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  20041,
+        "lines":  519,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/NotificationSystem.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  9363,
+        "lines":  197,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/OfflineIndicator.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  531,
+        "lines":  15,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/PWAInstallPrompt.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  3019,
+        "lines":  84,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/PaymentGateway.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  11662,
+        "lines":  252,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/SEO.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1548,
+        "lines":  40,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/SmartWeatherDashboard.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  21025,
+        "lines":  556,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/UserProfile_WITH_DASHBOARD.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  54852,
+        "lines":  841,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/VoiceInterface.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  15575,
+        "lines":  351,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/homepage/AIInsights.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  12028,
+        "lines":  315,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/homepage/HeroSection.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  5047,
+        "lines":  102,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/homepage/MachineryRental.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  9031,
+        "lines":  233,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/homepage/QuickActions.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  6023,
+        "lines":  161,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/accordion.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2033,
+        "lines":  49,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/alert-dialog.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  4559,
+        "lines":  126,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/alert.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1643,
+        "lines":  53,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/aspect-ratio.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  145,
+        "lines":  3,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/avatar.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1453,
+        "lines":  43,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/badge.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1164,
+        "lines":  31,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/breadcrumb.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2816,
+        "lines":  105,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/button.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2518,
+        "lines":  55,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/calendar.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2695,
+        "lines":  65,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/card.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1956,
+        "lines":  71,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/carousel.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  6470,
+        "lines":  231,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/chart.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  10829,
+        "lines":  328,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/checkbox.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1084,
+        "lines":  25,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/collapsible.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  324,
+        "lines":  5,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/command.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  5032,
+        "lines":  136,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/context-menu.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  7444,
+        "lines":  181,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/dialog.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  3955,
+        "lines":  108,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/drawer.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  3123,
+        "lines":  104,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/dropdown-menu.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  7493,
+        "lines":  181,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/form.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  4261,
+        "lines":  152,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/hover-card.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1211,
+        "lines":  22,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/input-otp.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2223,
+        "lines":  62,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/input.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  813,
+        "lines":  19,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/label.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  734,
+        "lines":  20,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/menubar.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  8208,
+        "lines":  216,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/navigation-menu.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  5174,
+        "lines":  117,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/pagination.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2868,
+        "lines":  107,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/popover.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1259,
+        "lines":  24,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/progress.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  803,
+        "lines":  23,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/radio-group.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1509,
+        "lines":  38,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/resizable.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1752,
+        "lines":  38,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/scroll-area.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1688,
+        "lines":  42,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/select.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  5773,
+        "lines":  145,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/separator.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  785,
+        "lines":  26,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/sheet.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  4381,
+        "lines":  116,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/sidebar.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  24128,
+        "lines":  708,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/skeleton.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  276,
+        "lines":  13,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/slider.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1103,
+        "lines":  23,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/sonner.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  923,
+        "lines":  25,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/switch.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1166,
+        "lines":  24,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/table.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2882,
+        "lines":  107,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/tabs.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1936,
+        "lines":  47,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/textarea.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  796,
+        "lines":  20,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/toast.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  4972,
+        "lines":  115,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/toaster.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  805,
+        "lines":  31,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/toggle-group.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1798,
+        "lines":  51,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/toggle.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1478,
+        "lines":  38,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/tooltip.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  1173,
+        "lines":  22,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/components/ui/use-toast.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  85,
+        "lines":  2,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/contexts/AuthContext.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  4358,
+        "lines":  138,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/hooks/use-mobile.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  584,
+        "lines":  15,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/hooks/use-toast.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  4086,
+        "lines":  161,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/hooks/usePWA.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  1014,
+        "lines":  24,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/index.css",
+        "top":  "frontend",
+        "ext":  ".css",
+        "bytes":  3465,
+        "lines":  96,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/ai.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  12218,
+        "lines":  265,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/api/bookingService.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  6136,
+        "lines":  165,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/api/machineryService.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  5183,
+        "lines":  149,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/api/messageService.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  5430,
+        "lines":  151,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/customModel.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  20648,
+        "lines":  414,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/detections.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  4504,
+        "lines":  139,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/gemini.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  6447,
+        "lines":  156,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/groq.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  3803,
+        "lines":  85,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/otp.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  4030,
+        "lines":  116,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/payment/paymentService.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  6601,
+        "lines":  184,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/schemas/booking.schema.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  2489,
+        "lines":  90,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/schemas/machinery.schema.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  1667,
+        "lines":  67,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/schemas/message.schema.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  1938,
+        "lines":  64,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/utils.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  172,
+        "lines":  5,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/lib/weather.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  8269,
+        "lines":  255,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/main.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  409,
+        "lines":  12,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/BookingHistory.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  12818,
+        "lines":  226,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/Credits.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  17525,
+        "lines":  292,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/DiseaseDetection.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  27234,
+        "lines":  618,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/GovernmentSchemes.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  17500,
+        "lines":  413,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/HomePage.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  691,
+        "lines":  18,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/Index.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  483,
+        "lines":  12,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/KisanBazaar.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  17348,
+        "lines":  429,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/MachineryDetail.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  22309,
+        "lines":  425,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/MachineryForm.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  27673,
+        "lines":  525,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/MachineryMarketplace.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  12491,
+        "lines":  279,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/NotFound.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  3239,
+        "lines":  76,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/NotFoundPage.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  2538,
+        "lines":  44,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/OwnerDashboard.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  32999,
+        "lines":  548,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/UserProfile.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  81461,
+        "lines":  1538,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/pages/Weather.tsx",
+        "top":  "frontend",
+        "ext":  ".tsx",
+        "bytes":  560,
+        "lines":  14,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/registerSW.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  3020,
+        "lines":  78,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/utils/pwa.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  571,
+        "lines":  15,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/src/vite-env.d.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  39,
+        "lines":  1,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/tailwind.config.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  3136,
+        "lines":  118,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/tsconfig.app.json",
+        "top":  "frontend",
+        "ext":  ".json",
+        "bytes":  693,
+        "lines":  27,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/tsconfig.json",
+        "top":  "frontend",
+        "ext":  ".json",
+        "bytes":  413,
+        "lines":  19,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/tsconfig.node.json",
+        "top":  "frontend",
+        "ext":  ".json",
+        "bytes":  503,
+        "lines":  20,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "frontend/vite.config.ts",
+        "top":  "frontend",
+        "ext":  ".ts",
+        "bytes":  1178,
+        "lines":  45,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "ml/PlantDiseaseTraining.ipynb",
+        "top":  "ml",
+        "ext":  ".ipynb",
+        "bytes":  21288,
+        "lines":  550,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "ml/README.md",
+        "top":  "ml",
+        "ext":  ".md",
+        "bytes":  3798,
+        "lines":  104,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "ml/dataset.py",
+        "top":  "ml",
+        "ext":  ".py",
+        "bytes":  6720,
+        "lines":  199,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "ml/export.py",
+        "top":  "ml",
+        "ext":  ".py",
+        "bytes":  7033,
+        "lines":  221,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "ml/model.py",
+        "top":  "ml",
+        "ext":  ".py",
+        "bytes":  6625,
+        "lines":  183,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "ml/requirements.txt",
+        "top":  "ml",
+        "ext":  ".txt",
+        "bytes":  372,
+        "lines":  14,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "ml/train.py",
+        "top":  "ml",
+        "ext":  ".py",
+        "bytes":  7421,
+        "lines":  231,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "package-lock.json",
+        "top":  "package-lock.json",
+        "ext":  ".json",
+        "bytes":  365460,
+        "lines":  9916,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "package.json",
+        "top":  "package.json",
+        "ext":  ".json",
+        "bytes":  3592,
+        "lines":  103,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "scripts/update-domain.js",
+        "top":  "scripts",
+        "ext":  ".js",
+        "bytes":  2689,
+        "lines":  65,
+        "readable":  true,
+        "note":  ""
+    },
+    {
+        "path":  "vercel.json",
+        "top":  "vercel.json",
+        "ext":  ".json",
+        "bytes":  1189,
+        "lines":  41,
+        "readable":  true,
+        "note":  ""
+    }
+]

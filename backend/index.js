@@ -24,7 +24,7 @@ import aiRoutes from './api/ai.js';
 const app = express();
 const PORT = Number(process.env.PORT) || 4174;
 
-// Keep-alive tracking
+// Keep-alive tracking - DISABLED (was causing server issues)
 // const serverHealth = {
 //     startTime: Date.now(),
 //     lastPing: Date.now(),
@@ -90,64 +90,32 @@ function formatDuration(ms) {
     }
 }
 
-// Keep-alive ping endpoint
-app.post("/api/ping", (req, res) => {
-    serverHealth.lastPing = Date.now();
-    serverHealth.nextPing = Date.now() + serverHealth.pingInterval;
-    serverHealth.pingCount++;
-    serverHealth.status = 'active';
+// Keep-alive ping endpoint - DISABLED (was causing server issues)
+// app.post("/api/ping", (req, res) => {
+//     serverHealth.lastPing = Date.now();
+//     serverHealth.nextPing = Date.now() + serverHealth.pingInterval;
+//     serverHealth.pingCount++;
+//     serverHealth.status = 'active';
+//     console.log(`Keep-alive ping received (#${serverHealth.pingCount})`);
+//     res.status(200).json({
+//         message: "Pong",
+//         timestamp: serverHealth.lastPing,
+//         nextPing: serverHealth.nextPing
+//     });
+// });
 
-    console.log(`Keep-alive ping received (#${serverHealth.pingCount})`);
-
-    res.status(200).json({
-        message: "Pong",
-        timestamp: serverHealth.lastPing,
-        nextPing: serverHealth.nextPing
-    });
-});
-
-// Health dashboard endpoint
+// Health dashboard endpoint - SIMPLIFIED (keep-alive disabled)
 app.get("/api/health", (req, res) => {
-    const now = Date.now();
-    const uptime = now - serverHealth.startTime;
-    const timeSinceLastPing = now - serverHealth.lastPing;
-    const timeUntilNextPing = serverHealth.nextPing - now;
-
-    // Calculate uptime in a human-readable format
-    const uptimeSeconds = Math.floor(uptime / 1000);
-    const uptimeDays = Math.floor(uptimeSeconds / 86400);
-    const uptimeHours = Math.floor((uptimeSeconds % 86400) / 3600);
-    const uptimeMinutes = Math.floor((uptimeSeconds % 3600) / 60);
-    const uptimeSecsRemaining = uptimeSeconds % 60;
-
     res.status(200).json({
-        status: serverHealth.status,
-        uptime: {
-            milliseconds: uptime,
-            formatted: `${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSecsRemaining}s`
-        },
-        lastPing: {
-            timestamp: serverHealth.lastPing,
-            ago: timeSinceLastPing,
-            formatted: formatDuration(timeSinceLastPing)
-        },
-        nextPing: {
-            timestamp: serverHealth.nextPing,
-            in: Math.max(0, timeUntilNextPing),
-            formatted: formatDuration(Math.max(0, timeUntilNextPing))
-        },
-        pingCount: serverHealth.pingCount,
-        pingInterval: {
-            milliseconds: serverHealth.pingInterval,
-            formatted: formatDuration(serverHealth.pingInterval)
-        },
-        startTime: serverHealth.startTime,
+        status: 'healthy',
+        timestamp: Date.now(),
         apiEndpoints: {
             machinery: '/api/machinery',
             bookings: '/api/bookings',
             messages: '/api/messages',
             diseases: '/api/diseases',
-            schemes: '/api/schemes'
+            schemes: '/api/schemes',
+            auth: '/api/auth'
         }
     });
 });

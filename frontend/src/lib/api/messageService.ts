@@ -1,6 +1,5 @@
+import { API_BASE_URL } from '../../config/api';
 import { MessageSchema, ConversationSchema } from '../schemas/message.schema';
-
-const API_BASE_URL = '/api';
 
 export interface SendMessageData {
     senderId: string;

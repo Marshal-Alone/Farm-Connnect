@@ -1,0 +1,59 @@
+# Coverage Report
+
+- total_tracked_files: 250
+- processed_readable_files: 198
+- skipped_non_readable_files: 52
+
+## Skipped (Binary/Non-readable)
+- DOCS/Hosting/Project_hosting_guide_by_ankush.pdf
+- DOCS/PPT/Major project ppt reference.pptx
+- DOCS/PRESENTATION/Farm_Connect_External_Evaluation_Presentation.pptx
+- DOCS/PRESENTATION/Farm_Connect_External_Evaluation_Presentation_20260210_010354.pptx
+- DOCS/PRESENTATION/ppt_assets/disease.png
+- DOCS/PRESENTATION/ppt_assets/home.png
+- DOCS/PRESENTATION/ppt_assets/machinery.png
+- DOCS/PRESENTATION/ppt_assets/schemes.png
+- DOCS/PRESENTATION/ppt_assets/weather.png
+- DOCS/PROJECT/Group 7 Project Synopsis-FINAL.pdf
+- DOCS/PROJECT/SYNOPSIS GROUP-7.pdf
+- DOCS/PROJECT/Synopsis WORD FILE.docx
+- frontend/public/android-chrome-192x192.png
+- frontend/public/android-chrome-512x512.png
+- frontend/public/apple-touch-icon.png
+- frontend/public/assets/claas-harvester.jpg
+- frontend/public/assets/john-deere-tractor.jpg
+- frontend/public/assets/mahindra-tractor.jpg
+- frontend/public/assets/rotavator.jpg
+- frontend/public/assets/seed-drill.jpg
+- frontend/public/assets/spray-drone.jpg
+- frontend/public/assets/team/Aditya.jpeg
+- frontend/public/assets/team/marshal.png
+- frontend/public/assets/team/mrunali.jpeg
+- frontend/public/assets/team/vaishnavi.png
+- frontend/public/backup logo/favicon 1.png
+- frontend/public/backup logo/favicon.png
+- frontend/public/backup logo/favicon2.png
+- frontend/public/demo-images/bullock-cart.png
+- frontend/public/demo-images/harvester.png
+- frontend/public/demo-images/tractor.png
+- frontend/public/farmconnect-icon-v2.png
+- frontend/public/favicon files/android-chrome-192x192.png
+- frontend/public/favicon files/android-chrome-512x512.png
+- frontend/public/favicon files/apple-touch-icon.png
+- frontend/public/favicon files/farmconnect-icon-v2.png
+- frontend/public/favicon files/favicon-16x16.png
+- frontend/public/favicon files/favicon-32x32.png
+- frontend/public/favicon files/favicon-48x48.png
+- frontend/public/favicon files/favicon.ico
+- frontend/public/favicon-16x16.png
+- frontend/public/favicon-32x32.png
+- frontend/public/favicon-48x48.png
+- frontend/public/favicon.ico
+- frontend/public/models/plant-disease/group1-shard1of3.bin
+- frontend/public/models/plant-disease/group1-shard2of3.bin
+- frontend/public/models/plant-disease/group1-shard3of3.bin
+- frontend/public/screenshot-desktop.png
+- frontend/public/screenshot-mobile.png
+- frontend/src/assets/hero-farm.jpg
+- frontend/src/assets/machinery.jpg
+- frontend/src/assets/weather-dashboard.jpg
