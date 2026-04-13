@@ -1,8 +1,7 @@
 import { geminiAI, AICropAnalysis } from './gemini';
 import { groqAI } from './groq';
 import { customModelAI } from './customModel';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+import { API_BASE_URL } from '../config/api';
 
 /**
  * Model Provider Types
@@ -85,6 +84,21 @@ export const analyzeCropImage = async (imageBase64: string): Promise<AICropAnaly
     }
 };
 
+const normalizeDiseaseName = (name: string | undefined | null): string => {
+    if (!name) return '';
+    return name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+};
+
+const diseaseNamesMatch = (a: string | undefined | null, b: string | undefined | null): boolean => {
+    const aNorm = normalizeDiseaseName(a);
+    const bNorm = normalizeDiseaseName(b);
+    if (!aNorm || !bNorm) return false;
+    return aNorm === bNorm || aNorm.includes(bNorm) || bNorm.includes(aNorm);
+};
+
 /**
  * Hybrid analysis: Combines custom model speed with Groq accuracy
  * 
@@ -115,7 +129,7 @@ async function analyzeWithHybridMode(imageBase64: string): Promise<AICropAnalysi
             const userApiKey = localStorage.getItem('groq_api_key');
 
             // Use the secure backend proxy for Groq validation
-            const response = await fetch(`${API_BASE_URL}/api/ai/analyze-crop`, {
+            const response = await fetch(`${API_BASE_URL}/ai/analyze-crop`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -125,7 +139,10 @@ async function analyzeWithHybridMode(imageBase64: string): Promise<AICropAnalysi
                     userApiKey, // Pass user's key for the proxy
                     customPrediction: customResult ? {
                         disease: customResult.disease,
-                        confidence: customResult.confidence
+                        condition: (customResult as any).condition || null,
+                        confidence: customResult.confidence,
+                        crop: (customResult as any).crop || null,
+                        topPredictions: (customResult as any).topPredictions || null
                     } : null
                 }),
             });
@@ -139,25 +156,47 @@ async function analyzeWithHybridMode(imageBase64: string): Promise<AICropAnalysi
             }
 
             const groqResult = data.data;
+            const sameDiagnosis = diseaseNamesMatch(groqResult?.disease, customResult?.disease);
+
+            const customIsHighConfidence = !!customResult && customResult.confidence >= 88;
+            const groqIsLowConfidence = !groqResult?.confidence || groqResult.confidence < 75;
+            const customSaysHealthy = !!customResult && normalizeDiseaseName(customResult.disease).includes('healthy');
+            const groqSaysHealthy = normalizeDiseaseName(groqResult?.disease).includes('healthy');
+
+            // Conservative fusion:
+            // If local model is highly confident and Groq is uncertain + disagreeing, keep local.
+            const preferCustom =
+                !!customResult &&
+                (
+                    (!sameDiagnosis && customIsHighConfidence && groqIsLowConfidence) ||
+                    (customSaysHealthy && customResult.confidence >= 92 && !groqSaysHealthy && groqIsLowConfidence)
+                );
+
+            const primary = preferCustom ? customResult : groqResult;
+            const secondary = preferCustom ? groqResult : customResult;
 
             // Log the validation result
             if (customResult) {
-                if (groqResult.disease === customResult.disease) {
+                if (sameDiagnosis) {
                     console.log('✅ [Hybrid] Groq CONFIRMED custom model prediction!');
                 } else {
                     console.log(`🔄 [Hybrid] Groq CORRECTED prediction: ${customResult.disease} → ${groqResult.disease}`);
                 }
             }
 
+            if (preferCustom) {
+                console.log('🛡️ [Hybrid] Keeping custom model result due to higher confidence and disagreement');
+            }
+
             // Build final result matching AICropAnalysis interface
             const finalResult: AICropAnalysis = {
-                disease: groqResult.disease || customResult?.disease || 'Unknown',
-                confidence: groqResult.confidence || customResult?.confidence || 80,
-                severity: (groqResult.severity || customResult?.severity || 'Medium') as 'Low' | 'Medium' | 'High',
-                description: groqResult.description || customResult?.description || '',
-                treatment: groqResult.treatment || customResult?.treatment || [],
-                prevention: groqResult.prevention || customResult?.prevention || [],
-                affectedArea: groqResult.affectedArea || customResult?.affectedArea || 50
+                disease: primary?.disease || secondary?.disease || 'Unknown',
+                confidence: primary?.confidence || secondary?.confidence || 80,
+                severity: (primary?.severity || secondary?.severity || 'Medium') as 'Low' | 'Medium' | 'High',
+                description: primary?.description || secondary?.description || '',
+                treatment: primary?.treatment || secondary?.treatment || [],
+                prevention: primary?.prevention || secondary?.prevention || [],
+                affectedArea: primary?.affectedArea || secondary?.affectedArea || 50
             };
 
             console.log(`✓ [Hybrid] Final result: ${finalResult.disease} (${finalResult.confidence}%)`);
@@ -201,7 +240,7 @@ Example format: ["🌡️ High heat - water crops early morning", "💧 Good hum
     try {
         if (provider === 'groq') {
             // Use secure backend proxy for farming advice
-            const response = await fetch(`${API_BASE_URL}/api/ai/farming-advice`, {
+            const response = await fetch(`${API_BASE_URL}/ai/farming-advice`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -268,7 +307,7 @@ export const getAIInsights = async (prompt: string): Promise<string[]> => {
     try {
         if (provider === 'groq') {
             // Use secure backend proxy for AI insights
-            const response = await fetch(`${API_BASE_URL}/api/ai/farming-advice`, {
+            const response = await fetch(`${API_BASE_URL}/ai/farming-advice`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

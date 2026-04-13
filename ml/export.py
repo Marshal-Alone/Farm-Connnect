@@ -171,7 +171,7 @@ def create_model_metadata(output_dir='./tfjs_model'):
         "input": {
             "shape": [1, 224, 224, 3],
             "dtype": "float32",
-            "preprocessing": "Normalize to [0, 1] by dividing by 255"
+            "preprocessing": "Keep pixels in [0, 255]; MobileNetV2 preprocess_input is inside model graph"
         },
         "output": {
             "shape": [1, 38],

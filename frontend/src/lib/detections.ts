@@ -61,7 +61,7 @@ class DetectionStorageService {
 
     // Save to Backend for persistence
     try {
-      await fetch('/api/diseases', {
+      await fetch(`${API_BASE_URL}/diseases`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

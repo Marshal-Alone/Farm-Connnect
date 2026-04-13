@@ -26,12 +26,20 @@ const IMG_SIZE = 224;
 // Re-use the existing interface for compatibility
 export interface AICropAnalysis {
     disease: string;
+    condition?: string;
     confidence: number;
     severity: 'Low' | 'Medium' | 'High';
     description: string;
     treatment: string[];
     prevention: string[];
     affectedArea: number;
+    crop?: string;
+    topPredictions?: Array<{
+        disease: string;
+        condition?: string;
+        confidence: number;
+        crop: string;
+    }>;
 }
 
 // Label mapping for disease classes
@@ -219,19 +227,25 @@ class CustomModelService {
 
                 // Set flags to be more conservative with WebGL resources
                 tf.env().set('WEBGL_CPU_FORWARD', true);
+                tf.env().set('WEBGL_FORCE_F16_TEXTURES', true);
 
                 await tf.setBackend('webgl');
                 await tf.ready();
                 console.log('✓ Using WebGL backend');
             } catch (webglError) {
-                console.warn('⚠️ WebGL initialization failed, falling back to CPU:', webglError);
+                console.warn('⚠️ WebGL not available, falling back to CPU');
                 try {
+                    // Dispose any partial WebGL resources
+                    if (tf.memory().numTensors > 0) {
+                        tf.disposeVariables();
+                    }
+                    
                     await tf.setBackend('cpu');
                     await tf.ready();
-                    console.log('✓ Successfully fell back to CPU backend');
+                    console.log('✓ Using CPU backend (computations will be slower)');
                 } catch (cpuError) {
-                    console.error('❌ Even CPU backend failed:', cpuError);
-                    throw new Error('No valid AI backend (WebGL or CPU) could be initialized.');
+                    console.error('❌ CPU backend failed:', cpuError);
+                    throw cpuError;
                 }
             }
 
@@ -269,8 +283,8 @@ class CustomModelService {
      * Steps:
      * 1. Decode base64 to Image element
      * 2. Convert to tensor
-     * 3. Resize to 224x224
-     * 4. Normalize to [0, 1]
+     * 3. Resize with padding to preserve aspect ratio
+     * 4. Keep pixel range in [0, 255] (model handles MobileNetV2 preprocessing)
      * 5. Add batch dimension
      */
     private async preprocessImage(imageBase64: string): Promise<tf.Tensor4D> {
@@ -283,11 +297,8 @@ class CustomModelService {
                     // Convert image to tensor
                     let tensor = tf.browser.fromPixels(img);
 
-                    // Resize to 224x224
-                    tensor = tf.image.resizeBilinear(tensor, [IMG_SIZE, IMG_SIZE]);
-
-                    // Normalize to [0, 1]
-                    tensor = tensor.div(255.0);
+                    // Resize while keeping aspect ratio (less distortion)
+                    tensor = tf.image.resizeWithPad(tensor, IMG_SIZE, IMG_SIZE);
 
                     // Add batch dimension [1, 224, 224, 3]
                     const batched = tensor.expandDims(0) as tf.Tensor4D;
@@ -405,15 +416,23 @@ class CustomModelService {
             const predictions = this.model.execute(inputTensor) as tf.Tensor;
             const probabilities = await predictions.data();
 
-            // Find the class with highest probability
-            let maxIndex = 0;
-            let maxProb = 0;
-            for (let i = 0; i < probabilities.length; i++) {
-                if (probabilities[i] > maxProb) {
-                    maxProb = probabilities[i];
-                    maxIndex = i;
-                }
-            }
+            // Top-K ranking helps hybrid validation quality
+            const ranked = Array.from(probabilities)
+                .map((probability, index) => ({ index, probability }))
+                .sort((a, b) => b.probability - a.probability);
+
+            const topPrediction = ranked[0];
+            const maxIndex = topPrediction.index;
+            const maxProb = topPrediction.probability;
+            const topPredictions = ranked.slice(0, 3).map(({ index, probability }) => {
+                const topLabel = this.labels![String(index)];
+                return {
+                    disease: topLabel.name,
+                    condition: topLabel.condition,
+                    confidence: Math.round(probability * 100),
+                    crop: topLabel.crop
+                };
+            });
 
             // Get label information
             const label = this.labels[String(maxIndex)];
@@ -435,12 +454,15 @@ class CustomModelService {
 
             return {
                 disease: isHealthy ? 'Healthy Plant' : label.name,
+                condition: label.condition,
                 confidence,
                 severity,
                 description: diseaseInfo.description,
                 treatment: diseaseInfo.treatment,
                 prevention: diseaseInfo.prevention,
-                affectedArea
+                affectedArea,
+                crop: label.crop,
+                topPredictions
             };
 
         } catch (error) {

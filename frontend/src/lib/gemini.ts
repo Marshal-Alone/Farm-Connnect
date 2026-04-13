@@ -3,7 +3,7 @@
  * API calls route through backend, with user API key fallback from Settings
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+import { API_BASE_URL } from '../config/api';
 
 // Get user's API key from localStorage (set in Profile > Settings)
 const getUserApiKey = () => localStorage.getItem('gemini_api_key') || null;
@@ -38,7 +38,7 @@ class GeminiAIService {
     try {
       console.log('🔬 [Gemini] Sending image to secure backend proxy...');
 
-      const response = await fetch(`${API_BASE_URL}/api/ai/gemini/analyze-crop`, {
+      const response = await fetch(`${API_BASE_URL}/ai/gemini/analyze-crop`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -74,7 +74,7 @@ class GeminiAIService {
     try {
       console.log('💬 [Gemini] Sending query to secure backend proxy...');
 
-      const response = await fetch(`${API_BASE_URL}/api/ai/gemini/farming-advice`, {
+      const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -122,7 +122,7 @@ class GeminiAIService {
 
   async getWeatherAdvice(location: string = 'India'): Promise<string> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/ai/gemini/farming-advice`, {
+      const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -143,7 +143,7 @@ class GeminiAIService {
     try {
       const query = `Recommend crops for ${season} season in ${region}. ${soilType ? `Soil: ${soilType}` : ''}`;
 
-      const response = await fetch(`${API_BASE_URL}/api/ai/gemini/farming-advice`, {
+      const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, language: 'english', userApiKey: getUserApiKey() }),
@@ -164,7 +164,7 @@ export const geminiAI = new GeminiAIService();
 // General AI insights (also uses backend proxy with user key fallback)
 export const getAIInsights = async (prompt: string): Promise<string[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/ai/gemini/farming-advice`, {
+    const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: prompt, language: 'english', userApiKey: getUserApiKey() }),

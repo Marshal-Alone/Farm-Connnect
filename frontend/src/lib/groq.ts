@@ -3,7 +3,8 @@
  * API calls route through backend, with user API key fallback from Settings
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+import { API_BASE_URL } from '../config/api';
+import { customModelAI } from './customModel';
 
 // Get user's API key from localStorage (set in Profile > Settings)
 const getUserApiKey = () => localStorage.getItem('groq_api_key') || null;
@@ -19,6 +20,27 @@ export interface AICropAnalysis {
 }
 
 class GroqAIService {
+    private async getCustomHint(imageBase64: string) {
+        try {
+            const hint = await Promise.race([
+                customModelAI.analyzeCropImage(imageBase64),
+                new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500))
+            ]);
+
+            if (!hint) return null;
+
+            return {
+                disease: hint.disease,
+                condition: (hint as any).condition || null,
+                confidence: hint.confidence,
+                crop: (hint as any).crop || null,
+                topPredictions: (hint as any).topPredictions || null
+            };
+        } catch {
+            return null;
+        }
+    }
+
     updateAPIKey(apiKey: string) {
         localStorage.setItem('groq_api_key', apiKey);
     }
@@ -30,13 +52,15 @@ class GroqAIService {
     async analyzeCropImage(imageBase64: string): Promise<AICropAnalysis> {
         try {
             console.log('🔬 [Groq] Sending image to secure backend proxy...');
+            const customPrediction = await this.getCustomHint(imageBase64);
 
-            const response = await fetch(`${API_BASE_URL}/api/ai/analyze-crop`, {
+            const response = await fetch(`${API_BASE_URL}/ai/analyze-crop`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     imageBase64,
-                    userApiKey: getUserApiKey() // Send user's key as fallback
+                    userApiKey: getUserApiKey(), // Send user's key as fallback
+                    customPrediction
                 }),
             });
 
@@ -67,7 +91,7 @@ class GroqAIService {
         try {
             console.log('💬 [Groq] Sending query to secure backend proxy...');
 
-            const response = await fetch(`${API_BASE_URL}/api/ai/farming-advice`, {
+            const response = await fetch(`${API_BASE_URL}/ai/farming-advice`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -87,28 +87,61 @@ def preprocess_image(image, label):
     
     Steps:
     1. Resize to 224x224 (MobileNetV2 input size)
-    2. Normalize pixel values to [0, 1]
+    2. Keep pixel range in [0, 255] for MobileNetV2 preprocess_input
     """
     # Resize image
     image = tf.image.resize(image, [IMG_SIZE, IMG_SIZE])
     
-    # Normalize to [0, 1]
-    image = tf.cast(image, tf.float32) / 255.0
+    # Keep [0, 255] because model.py uses mobilenet_v2.preprocess_input
+    image = tf.cast(image, tf.float32)
     
     return image, label
 
 
-def load_plant_village_dataset(data_dir=None):
+def _compute_class_weights(train_ds, num_classes):
+    """
+    Compute inverse-frequency class weights for imbalanced classes.
+
+    Args:
+        train_ds: Batched dataset with one-hot labels
+        num_classes: Total class count
+
+    Returns:
+        Dict mapping class index -> weight
+    """
+    counts = [0] * num_classes
+
+    for _, labels in train_ds:
+        # Labels are one-hot in this project pipeline
+        label_indices = tf.argmax(labels, axis=1).numpy().tolist()
+        for idx in label_indices:
+            counts[int(idx)] += 1
+
+    total = sum(counts)
+    class_weights = {}
+
+    # Balanced weighting: total / (num_classes * class_count)
+    for class_idx, class_count in enumerate(counts):
+        safe_count = max(class_count, 1)
+        class_weights[class_idx] = total / (num_classes * safe_count)
+
+    return class_weights
+
+
+def load_plant_village_dataset(data_dir=None, compute_class_weights=True, batch_size=BATCH_SIZE):
     """
     Load the PlantVillage dataset.
     
     If data_dir is provided, loads from local directory.
     Otherwise, downloads from TensorFlow Datasets.
     
+    Args:
+        batch_size: Training batch size (lower if GPU memory is limited)
     Returns:
         train_dataset: Training data (80%)
         val_dataset: Validation data (20%)
         class_names: List of class labels
+        class_weights: Dict for class balancing during fit()
     """
     print("Loading PlantVillage dataset...")
     
@@ -122,7 +155,7 @@ def load_plant_village_dataset(data_dir=None):
             subset="training",
             seed=42,
             image_size=(IMG_SIZE, IMG_SIZE),
-            batch_size=BATCH_SIZE,
+            batch_size=batch_size,
             label_mode='categorical'
         )
         
@@ -132,23 +165,40 @@ def load_plant_village_dataset(data_dir=None):
             subset="validation",
             seed=42,
             image_size=(IMG_SIZE, IMG_SIZE),
-            batch_size=BATCH_SIZE,
+            batch_size=batch_size,
             label_mode='categorical'
         )
         
         class_names = train_ds.class_names
-        
+
+        # Keep pixel range as float32 [0, 255] to match MobileNetV2 preprocess_input
+        def cast_only(image, label):
+            return tf.cast(image, tf.float32), label
+
+        train_ds = train_ds.map(cast_only, num_parallel_calls=tf.data.AUTOTUNE)
+        val_ds = val_ds.map(cast_only, num_parallel_calls=tf.data.AUTOTUNE)
+
+        train_ds = train_ds.shuffle(10000, seed=42, reshuffle_each_iteration=True)
+
     else:
         # Download from TensorFlow Datasets
         print("Downloading PlantVillage dataset from TensorFlow Datasets...")
         
-        # Load dataset
-        (train_ds, val_ds), info = tfds.load(
+        # Load entire dataset, then make a deterministic shuffled 80/20 split
+        full_ds, info = tfds.load(
             'plant_village',
-            split=['train[:80%]', 'train[80%:]'],
+            split='train',
             with_info=True,
-            as_supervised=True
+            as_supervised=True,
+            shuffle_files=True
         )
+
+        total_examples = int(info.splits['train'].num_examples)
+        train_size = int(total_examples * 0.8)
+
+        full_ds = full_ds.shuffle(total_examples, seed=42, reshuffle_each_iteration=False)
+        train_ds = full_ds.take(train_size)
+        val_ds = full_ds.skip(train_size)
         
         class_names = CLASS_LABELS
         
@@ -163,8 +213,15 @@ def load_plant_village_dataset(data_dir=None):
         train_ds = train_ds.map(one_hot_encode)
         val_ds = val_ds.map(one_hot_encode)
         
-        train_ds = train_ds.batch(BATCH_SIZE)
-        val_ds = val_ds.batch(BATCH_SIZE)
+        train_ds = train_ds.batch(batch_size)
+        val_ds = val_ds.batch(batch_size)
+
+        train_ds = train_ds.shuffle(10000, seed=42, reshuffle_each_iteration=True)
+
+    class_weights = None
+    if compute_class_weights:
+        print("Computing class weights for imbalanced training...")
+        class_weights = _compute_class_weights(train_ds, len(class_names))
     
     # Optimize for performance
     train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
@@ -173,7 +230,7 @@ def load_plant_village_dataset(data_dir=None):
     print(f"Dataset loaded successfully!")
     print(f"Number of classes: {len(class_names)}")
     
-    return train_ds, val_ds, class_names
+    return train_ds, val_ds, class_names, class_weights
 
 
 def save_class_labels(output_path='class_labels.json'):
@@ -204,7 +261,7 @@ def save_class_labels(output_path='class_labels.json'):
 
 if __name__ == "__main__":
     # Test dataset loading
-    train_ds, val_ds, class_names = load_plant_village_dataset()
+    train_ds, val_ds, class_names, class_weights = load_plant_village_dataset()
     
     # Save class labels
     save_class_labels()
