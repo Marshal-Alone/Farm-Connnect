@@ -1,6 +1,5 @@
+import { API_BASE_URL } from '../../config/api';
 import { MachinerySchema } from '../schemas/machinery.schema';
-
-const API_BASE_URL = '/api';
 
 export interface MachineryFilters {
     type?: string;

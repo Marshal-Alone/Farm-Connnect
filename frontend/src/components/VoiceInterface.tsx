@@ -181,10 +181,18 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
   };
 
   const startListening = () => {
-    if (recognition) {
-      const currentLang = languages.find(lang => lang.code === selectedLanguage);
-      recognition.lang = currentLang?.locale || 'hi-IN';
-      recognition.start();
+    if (recognition && !isListening) {
+      try {
+        const currentLang = languages.find(lang => lang.code === selectedLanguage);
+        recognition.lang = currentLang?.locale || 'hi-IN';
+        recognition.start();
+      } catch (err) {
+        console.error('Error starting recognition:', err);
+        if ((err as any).name === 'InvalidStateError') {
+          // Recognition already started, just set listening state
+          setIsListening(true);
+        }
+      }
     }
   };
 

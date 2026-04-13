@@ -1,0 +1,9 @@
+--------------------------------------------------------------------------------------------------------------------------------------------
+Department of Computer Science and Engineering
+-----------------------------------------------------------------------------------------------------
+Cource Outcomes (UG)
+
+YEAR/SEM: IV/VIII                                                                      COURSE NAME: PROJECT
+COURSE CODE: BTCHCSE801T
+
+BTCHCSE801T	PROJECT			After studying the course, the students will be able to		CO1	To display the working knowledge and skills to the industry.		CO2	Deeper knowledge of methods in major field of study.		CO3	Collection to gain a consciousness of ethical aspects of research and development work.		CO4	Capability to plan and use adequate methods to conduct qualified tasks in given frameworks and evaluate the work.

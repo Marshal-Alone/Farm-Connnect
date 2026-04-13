@@ -1,0 +1,21 @@
+BTECHCSE801T Project Report
+On
+FARMCONNECT : cROP DISEASE DETECTION AND MACHINERY RENTAL PLATFORM
+Submitted to Rashtrasant Tukadoji Maharaj Nagpur University, Nagpur in partial fulfillment of requirement for the award of the degree of
+BACHELOR OF TECHNOLOGY
+in
+Computer Science and Engineering
+Submitted By
+
+| Marshal P. Alone | Vaishnavi D. Getme |
+| Mrunali Umak | Sanskruti Patil |
+|  | Aditya Kawle |
+
+Under the Guidance of
+Mr. Tejas Dhule
+Assistant Professor
+Department of Computer Science and Engineering
+NAGPUR INSTITUTE OF TECHNOLOGY
+Mahurzari, Katol Road Nagpur-441501
+Rashtrasant Tukadoji Maharaj Nagpur University, Nagpur
+2025-2026

@@ -1,0 +1,161 @@
+Chapter 1
+INTRODUCTION
+This chapter puts emphasis on the basic terminologies and the introductory concepts in graph matching. The chapter describes the basic definition of graph, types of graph that applies to the context, different types of graph matching methods and how graph matching can be used for matching images.
+• Information about Project
+A graph is a representation of a set of objects where some pairs of objects are connected by links. The interconnected objects are represented by mathematical abstractions called vertices, and the links that connect some pairs of vertices are called edges.Typically, a graph is depicted in diagrammatic form as a set of dots for the vertices, joined by lines or curves for the edges.
+A graph G = (V,E) in its basic form is composed of vertices and edges. V is the set of vertices(also called nodes or points) and E ⊆V × V (also known as arcs or lines) of graph G.
+In this dissertation, a graph is considered as a 4-tuple G = (V, E, A,B), where
+• V is the finite set of vertices.
+• E ⊆V × V is the set of edges.
+• A: V → L is a function assigning labels to the vertices.
+• B: E → L is a function assigning labels to the edges.
+Figure 1.1 gives an example of a basic graph.
+1
+5
+3
+V1
+6
+8
+5
+Figure 1.1: A basic graph represented as a 4-tuple G (V,E,A,B) where A and B are the functions assigning labels to the nodes and edges respectively
+1.1.1 Labelled Graph
+Graphs with labels attached to edges or vertices are more generally designated as labelled. The vertices of a graph, by their nature as elements of a set, are distinguishable. This kind of graph may be called vertex-labelled. Graphs with labelled edges are called edge-labelled graphs.Consequently, graphs in which vertices are indistinguishable and edges are indistinguishable are called unlabelled graph.
+1.1.2 Attributed Relational Graph
+An Attributed Relational Graph (ARG) is a graph where both the nodes and the edges are representedwith attributes. Node attributes describes the nodes by representing quantities such as shape, position, size and colour of an object whereas edge attributes define relationships between nodes like the distance between two points or dissimilarity between objects.
+• Information about Industry
+Graph matching is the process of comparing two graphs, in which the nodes and edges of one graph are mapped to the nodes and edges of another graph, to find an appropriate correspondence between the two graphs. The mapping of one graph to another must satisfy some constraints or optimality criteria,ensuring that similar substructures in one graph are mapped to similar substructures in the other.
+Graph matching methods can be divided into two broad categories [1]:
+• Exact matching
+• Inexact matching
+1.2.1 Exact Matching
+Exact matching method finds a strict correspondence between two graphs. In this method, the mapping between thenodes of the two graphs must be edge-preserving in the sense that if two nodesin the first graph are linked by an edge, they are mapped to two nodes in thesecond graph that are linked by an edge as well.For ARGs, the matching ensures that the attributes are also identical in both graphs.
+Exact matching problems can be divided into following types [2]:
+• Graph Isomorphism
+It is the most stringent form of exact matching, in which an exact structural correspondence must exist between the two graphs and the mapping must be bijective. That is, a one-to-one correspondence must be found between each node of the first graph and each node of the second graph. Example of graph isomorphism is shown in Figure 1.3.
+
+V1
+
+f: (V1,V3′) (V2,V1)(V3,V2′)
+Figure 1.3: Graph isomorphism.An example of two isomorphic graphs G and G′, each having three nodes and three edges.
+• Subgraph Isomorphism:
+It is a weaker form of matching. If nodes along with their corresponding edges are deleted from a graph G, a sub graph G′ denoted by G′ ⊆G is obtained. A sub graph isomorphism from G to G′ is an isomorphism from a graph G′ to a sub graph G′ of G. An example of subgraph isomorphism is shown in Figure 1.4.
+1.2.1.3Monomorphism
+It is a more relaxed type of matching than subgraph isomorphism in which, the nodes and edges of the first graph are mapped to the nodes and edges of the second graph; the second graph, however, may have both extra nodes and extra edges. Example of graph monomorphism is shown in Figure 1.5.
+• Homomorphism
+It is a still weaker form of matching, which drops the condition that nodes in the first graph are to be mapped to distinct nodes of the other; hence, the correspondence can be many-to-one.
+• Maximum Common Subgraph(MCS)
+An MCS of two graphs, G and G′, is a graph G″ that is a sub graph of both G and G′, such that it has the maximum number of nodes among all possible sub graphs of G and G′ i.e. itmaps a sub graph of the first graph to an isomorphic sub graph of the second one. The goal of the algorithm is to find the largest sub graph for which such a mapping exists. It can be used to measure the similarity of objects as, the larger the MCS, more will be the similarity.  MCS is demonstrated with the help of Figure 1.6.
+Chapter 2
+LITERATURE REVIEW
+This chapter presents the critical analysis of the existing literature which is relevant to the image collections and the mechanisms associated with the graph matching. Though, the literature consists of a lot many research contributions, but, here, we have analysed some of the research and review papers. The existing approaches are categorized based on the basic concepts involved in the mechanisms. Finally, the findings are summarized related to the scanned and analysed research papers. Chapter concludes with the motivation behind the identified problem.
+• Different Techniques
+2.1.1 Tree Search
+Most of the algorithms for exact graph matching are based on some form of tree search with backtracking.The basic idea is that a partial match (initially empty) is iteratively expanded by adding to its new pairs of matched nodes; the pair is chosen using some necessary conditions that ensure its compatibility with the constraints imposed by the matching type with respect to the nodes mapped so far, and usually using also some heuristic condition to prune as early as possible unfruitful search paths [1].
+Summary of the exact matching techniques based on tree search is given in Table 2.1 (a).
+Table 2.1(a): Exact matching techniques based on tree search
+
+| Authors / Reference no. | Concept used | Data-base used | Performance evaluation parameter | Claims by the  concerned author(s) | Our findings |
+| Ullman [4]. | Subgraph isomorphism, depth first tree search. | NA | Time. | Reduction in the time used for determining isomorphism. | Works more quickly on sparser graphs but slows down as the size of the graph increases. |
+| L. P. Cordella et al. [5]. | Subgraph isomorphism, Attributed relational graph. | NA | Time. | The authors claimed that their algorithm works significantly better than the Ullman’s algorithm. | Comparing semantic information may give better results than matching the topology of the graph. |
+| L. P. Cordella et al. [6]. | Graph isomorphism and subgraph isomorphism. | Own | Time and space. | Reduced computational complexity,  deals with large graphs | Less efficient for randomly connected graphs, which do not exhibit a regular structure. |
+
+Chapter 3
+IDENTIFICATION OF PROBLEM
+This chapter, firstly, discusses the analysis of the identified problem and latter presents the mathematical formulation of the identified problem of matching, graph construction for images.
+3.1 Problem Analysis
+Graph matching has application in various fields such as pattern recognition, image retrieval, case-based reasoning, machine learning, planning, semantic networks, conceptual graph, and monitoring of computer.
+Matching graph construction for images involves the creation of graphs for the images and latter, the development of the graph matching algorithm or approach. Representation of the image, by means of the graph, involves the setting up of the means to represent the images by nodes and edges. Here, the nodes and edges can be identified by identifying the image attributes such as the segmented regions, their properties, their connectivity strengths with neighbourhood regions, colours and texture properties of the region, etc.
+In this identified problem, the role aim is to identify the segmented regions and their attributes. Based on this, the graph is constructed. Latter, the graph matching mechanism is developed to match two different graphs.
+3.2 Objectives
+Chapter 4
+METHODOLOGY
+This chapter gives elaboration on the proposed approach. The discussion starts with the block schematic representation of the proposed approach, followed by the detailed discussion on the proposed approach, which involves the procedure for creation of the graph, pseudo code for matching the graphs and pseudo code for matching the graphs.
+4.1 Working Principle
+Matching graph construction for images involves the creation of graphs for the images and latter, the development of the graph matching algorithm or approach. Representation of the image, by means of the graph, involves the setting up of the means to represent the images by nodes and edges.
+4.2 Processes
+Figure 4.1 shows the schematic overview of the proposed approach. The working of the proposed approach is divided into two main steps, creation of graphs from images and matching graphs.
+
+Selecting database graph with lowest cost
+Image segmentation
+Query image
+Graph matching
+Graph based representation
+Online
+Offline
+Graph based representation
+Image segmentation
+Database images
+Figure 4.1: Block diagram of the proposed approach
+4.3 Components & Constructional Details
+Chapter 5
+CALCULATION AND SPECIFICATION
+This chapter discusses the results of the experimentation carried out in order to match the graphs of the images along with a brief summary on the MATLAB tool that has been used for the experimentation purpose. Further, a brief discussion is done on the obtained results.
+
+• Experimental Setup
+Experimentation is carried out by using a collection of 50 images. All the experiments are carried out in MATLAB tool. System configuration used for the experimentation is as follows:
+• Hardware Specification:
+• Processor: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz, 2300 Mhz, 2 Core(s), 4 Logical Processor(s)
+• RAM : 4GB
+• Motor :1hp
+• Capacitor:1F
+• Software Specification:
+• MS Windows 7
+• MATLAB R2013a version 8.0.1.604
+5.1.1 Introduction to MATLAB
+MATLAB is a high-performance language used for technical computing. It integrates computation, visualization, and programming in an easy-to-use environment where problems and solutions are expressed in familiar mathematical notation. Typical uses include:
+• Mathematical Computations
+• Algorithm development
+• Modelling, simulation, and prototyping
+Chapter 6
+RESULT & DISCUSSION
+This chapter discusses the results of the experimentation carried out in order to match the graphs of the images along with a brief summary on the MATLAB tool that has been used for the experimentation purpose. Further, a brief discussion is done on the obtained results.
+
+• Experimental Setup
+Experimentation is carried out by using a collection of 50 images. All the experiments are carried out in MATLAB tool. System configuration used for the experimentation is as follows:
+• Hardware Specification:
+• Processor: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz, 2300 Mhz, 2 Core(s), 4 Logical Processor(s)
+• RAM : 4GB
+• Software Specification:
+• MS Windows 7
+• MATLAB R2013a version 8.0.1.604
+5.1.1 Introduction to MATLAB
+MATLAB is a high-performance language used for technical computing. It integrates computation, visualization, and programming in an easy-to-use environment where problems and solutions are expressed in familiar mathematical notation. Typical uses include:
+• Mathematical Computations
+• Algorithm development
+• Modelling, simulation, and prototyping
+Chapter 7
+CONCLUSION AND FUTURE SCOPE
+This chapter presents the conclusion of this dissertation and the future work that can be carried out on the basis of the present work. The conclusion summarizes the overall work that has been carried out in this dissertation. The future scope provides the direction for extension of the presented work.
+7.1 Conclusion
+This section summarizes the conclusion based on the obtained results mentioned in chapter 5.
+• In this dissertation, we have developed an approach for determining similarity between images through graph-theoretic description and matching. A region-based graph-theoretic representation of images is proposed and a heuristic matching algorithm is employed.
+• The proposed approach facilitates the matching of images structurally similar to a given image. The proposed approach exploits the semantic information contained in an image rather than just matching the topology of the graphs.
+• Such an approach can be used for several applications where relevant and perfect matching of images is required.
+• The execution time depends on the size of the database.
+• The results may sometimes be a little less accurate subject to the distortion, transformation or scale changes in the image.
+
+7.2 Future Scope
+This section presents the possible future directions to extend the presented work.
+• In future the experimentations can be carried out by using the more number of attributes which can be considered for nodes and edges. For example, node attributes such as Euler number, solidity, convex area, orientation and edge attributes such as number of pixels on the common boundary can be considered.
+• A sparse connectivity can be employed between the nodes using graph representations such as nearest neighbour graphs.
+• Colour image segmentation can be employed to obtain the connected regions.
+REFERENCES
+1. Conte, Donatello, et al. "Thirty years of graph matching in pattern recognition."International journal of pattern recognition and artificial intelligence 18.03 (2004): 265-298.
+2. Bunke, Horst. "Recent developments in graph matching." Pattern Recognition, 2000. Proceedings. 15th International Conference on. 2 (2000) 117{124} IEEE.
+3. P. Dasigi, C. V. Jawahar. “Efficient Graph-based Image Matching for -Recognition and Retrieval”.Proceedings of National Conference on Computer Vision, Pattern recognition, Image Processing and Graphics, (2008).
+4. J. R. Ullman. “An algorithm for subgraph isomorphism”. J. Assoc. Comput. Mach. 23(1976) 31{42}.
+5. L. P. Cordella, P. Foggia, C. Sansone, F. Tortorella and M. Vento, “Graph matching: a fast algorithm and its evaluation”. In Proc. 14th Int. Conf. Pattern Recognition, 2(1998) 1582{1584}.
+6. L. P. Cordella, P. Foggia, C. Sansone and M. Vento, “An improved algorithm for matching large graphs”. In Proc. 3rd IAPR-TC15 Workshop Graph-Based Representations in Pattern Recognition,( 2001) 149{159}.
+7. J. J. McGregor. “Backtrack search algorithm and the maximal common sub graph problem”, Software | Practice and Experience, 12 (1982) 23{34}.
+8. Bunke, H., Foggia, P., Guidobaldi, C., Sansone, C., Vento, M. “A comparison of algorithms for maximum common subgraph on randomly connected graphs.” In: SSPR/SPR, (2002) 123{132}.
+9. HongtaoXie , Yongdong Zhang , Ke Gao , Sheng Tang , Kefu Xu , Li Guo , Jintao Li. “Robust common visual pattern discovery using graph matching.” J.VisualCommmunication and Image representation, 24(2013) 635{646}.
+10. B. D. McKay, “Practical graph isomorphism”,CongressusNumerantium, 30 (1981) 45{87}.
+11. B. T. Messmer and H. Bunke, “Efficient subgraph isomorphism detection: a decomposition approach”,IEEE Trans. Knowl. Data Eng., 12 (2000) 307{323}.
+WEBSITES VISITED
+1. http://en.wikipedia.org/wiki/Graph_(mathematics)
+2. http://en.wikipedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons.jpg
+3. http://en.wikipedia.org/wiki/Wikipedia:Featured_picture_candidates/Eiffel_Tower
+4. http://learningparis.weebly.com/what-does-the-eiffel-tower-stand-for.html
+5. http://lettersfromladygodiva.blogspot.in/2012/07/tiger-pictures-big-cats.html?m=0
+6. http://www.glogster.com/ejenio/lotus-eaters-the-odyssey/g-6maub5pbvtdf08qj20ka5a0
+ANNEXURE-A

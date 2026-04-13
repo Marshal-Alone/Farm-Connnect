@@ -1,0 +1,8 @@
+
+| DECLARATIONWe hereby declare that the Project Report entitled FARMCONNECT : CROP DISEASE DETECTION AND MACHINERY RENTAL PLATFORM submitted herein has been carried out by us in the Department of Computer Science and Engineering at Nagpur Institute of Technology, Nagpur. The presented work is original and has not been submitted earlier as a whole or in part for the award of any degree / diploma at this or any other Institution / University.We also hereby assign to the Department of Computer Science and Engineering of Nagpur Institute of Technology, Nagpur all rights under copyright that may exist in and to the above work and any revised or expanded derivatives works based on the work as mentioned. Other work copied from references, manuals etc. are disclaimed. 	Sr. No.Name of the StudentsSignature1Marshal P. Alone2Vaishnavi D. Getme3Mrunali Umak4Sanskruti Patil5Aditya KawaleDate: -     /      / 2026		    Department of Computer Science and EngineeringNAGPUR INSTITUTE OF TECHNOLOGYMahurzari, Katol Road Nagpur-441501Rashtrasant Tukadoji Maharaj Nagpur University, Nagpur2025-2026 | Sr. No. | Name of the Students | Signature | 1 | Marshal P. Alone |  | 2 | Vaishnavi D. Getme |  | 3 | Mrunali Umak |  | 4 | Sanskruti Patil |  | 5 | Aditya Kawale |  |
+| Sr. No. | Name of the Students | Signature |
+| 1 | Marshal P. Alone |  |
+| 2 | Vaishnavi D. Getme |  |
+| 3 | Mrunali Umak |  |
+| 4 | Sanskruti Patil |  |
+| 5 | Aditya Kawale |  |

@@ -1,0 +1,166 @@
+﻿{
+    "total_files":  250,
+    "readable_files":  198,
+    "non_readable_files":  52,
+    "total_readable_lines":  44026,
+    "top_level":  [
+                      {
+                          "name":  "frontend",
+                          "count":  166
+                      },
+                      {
+                          "name":  "DOCS",
+                          "count":  51
+                      },
+                      {
+                          "name":  "backend",
+                          "count":  16
+                      },
+                      {
+                          "name":  "ml",
+                          "count":  7
+                      },
+                      {
+                          "name":  "scripts",
+                          "count":  1
+                      },
+                      {
+                          "name":  "package-lock.json",
+                          "count":  1
+                      },
+                      {
+                          "name":  "vercel.json",
+                          "count":  1
+                      },
+                      {
+                          "name":  "package.json",
+                          "count":  1
+                      },
+                      {
+                          "name":  "Dockerfile",
+                          "count":  1
+                      },
+                      {
+                          "name":  ".gitignore",
+                          "count":  1
+                      },
+                      {
+                          "name":  ".github",
+                          "count":  1
+                      },
+                      {
+                          "name":  "docker-compose.yml",
+                          "count":  1
+                      },
+                      {
+                          "name":  ".env.example",
+                          "count":  1
+                      },
+                      {
+                          "name":  "README.md",
+                          "count":  1
+                      }
+                  ],
+    "extensions":  [
+                       {
+                           "ext":  ".tsx",
+                           "count":  84
+                       },
+                       {
+                           "ext":  ".md",
+                           "count":  39
+                       },
+                       {
+                           "ext":  ".png",
+                           "count":  29
+                       },
+                       {
+                           "ext":  ".ts",
+                           "count":  23
+                       },
+                       {
+                           "ext":  ".js",
+                           "count":  19
+                       },
+                       {
+                           "ext":  ".json",
+                           "count":  10
+                       },
+                       {
+                           "ext":  ".jpg",
+                           "count":  9
+                       },
+                       {
+                           "ext":  ".html",
+                           "count":  5
+                       },
+                       {
+                           "ext":  ".py",
+                           "count":  4
+                       },
+                       {
+                           "ext":  ".txt",
+                           "count":  4
+                       },
+                       {
+                           "ext":  ".pptx",
+                           "count":  3
+                       },
+                       {
+                           "ext":  ".pdf",
+                           "count":  3
+                       },
+                       {
+                           "ext":  ".bin",
+                           "count":  3
+                       },
+                       {
+                           "ext":  ".ico",
+                           "count":  2
+                       },
+                       {
+                           "ext":  ".jpeg",
+                           "count":  2
+                       },
+                       {
+                           "ext":  ".css",
+                           "count":  2
+                       },
+                       {
+                           "ext":  ".example",
+                           "count":  1
+                       },
+                       {
+                           "ext":  ".ipynb",
+                           "count":  1
+                       },
+                       {
+                           "ext":  ".gitignore",
+                           "count":  1
+                       },
+                       {
+                           "ext":  ".xml",
+                           "count":  1
+                       },
+                       {
+                           "ext":  ".docx",
+                           "count":  1
+                       },
+                       {
+                           "ext":  "",
+                           "count":  1
+                       },
+                       {
+                           "ext":  ".yml",
+                           "count":  1
+                       },
+                       {
+                           "ext":  ".svg",
+                           "count":  1
+                       },
+                       {
+                           "ext":  ".webmanifest",
+                           "count":  1
+                       }
+                   ]
+}

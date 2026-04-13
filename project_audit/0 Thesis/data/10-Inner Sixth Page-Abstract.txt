@@ -1,0 +1,21 @@
+ABSTRACT
+Here are the abstract guidelines for a three-paragraph abstract:
+Paragraph 1: Background behind the need of selection of this topic
+• Introduce the recent scenario
+• Clearly state the research question or problem
+• Provide a brief overview of the research & significance and relevance
+Paragraph 2: Introduction of project work with Methodology and Main Findings
+• Describe the research design, methods and procedures used
+• Summarize the main findings including any key results or trends
+• Highlight any innovative or unique aspects of the research
+Paragraph 3: Conclusion and Implications
+• Summarize the main conclusions and implications of the research
+• Discuss the contributions of the research to the field or industry
+• Suggest avenues for future research or potential applications
+Note: Keep each paragraph concise and focused, with a total abstract word count of around 250-
+300 words.
+Keywords in abstract:
+• Typically, 5-10 keywords are sufficient for an abstract.
+• Use a mix of:2-3 broad keywords (e.g., "vehicle safety", "road accidents")2-3 specific keywords (e.g., "breathalyzer sensor", "real-time alcohol detection")1-2 keywords related to the methodology or approach (e.g., "sensor integration", "software development")
+• Avoid repeating keywords excessively; aim for a balanced distribution.
+• Use keywords that are directly relevant to the content and focus of the abstract.

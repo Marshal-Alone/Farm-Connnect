@@ -1,0 +1,57 @@
+LIST OF ACRONYMS
+
+| Serial  No. | Acronym | Full Form |
+|  | G | Graph |
+|  | ARG | Attributed Relational Graph |
+|  | WGM | Weighted Graph Matching |
+|  | FGM | Fuzzy Graph Matching |
+|  | GAGM | Graduated Assignment Graph Matching |
+|  | MCS | Maximum Common Subgraph |
+|  | MC | Maximum Clique |
+|  | SIMD | Single-Instruction-Stream/Multiple-Data-Stream |
+
+LIST OF FIGURES
+
+| Figure No. | Title | Page No. |
+| 1.1 | A basic graph | 2 |
+| 1.2 | Attributed relational graph | 3 |
+| 1.3 | Graph isomorphism | 4 |
+| 1.4 | Subgraph isomorphism | 5 |
+| 1.5 | Monomorphism | 6 |
+| 1.6 | Maximum common subgraph | 7 |
+| 4.1 | Block diagram of the proposed appraoch | 23 |
+| 4.2 | Level 0 data flow diagram | 25 |
+| 4.3 | Pseudo code for creating graph | 29 |
+| 4.4 | Pseudo code for matching graph | 33 |
+| 5.1 | The image provided by the user | 36 |
+| 5.2 | The segmented image, obtained after Otsu thresholding. | 36 |
+| 5.3 | The figure shows the connected regions found in the input image. | 37 |
+| 5.4 | Some of the values of the node attribute, area. | 37 |
+| 5.5 | Some of the values for the node attribute, perimeter. | 38 |
+| 5.6 | The position of the centroids obtained for each connected region. | 38 |
+| 5.7 | Some of the values obtained for the edge attribute. | 39 |
+| 5.8 | Screenshot of the interactive mechanism. | 39 |
+| 5.9(a) | Sample images used for graph creation | 40 |
+| 5.9(b) | Sample images used for graph creation | 41 |
+| 5.10 | The query image. | 42 |
+| 5.11 | The segmented image obtained by applying Otsu thresholding | 43 |
+| 5.12 | The connected regions found in the query image. | 44 |
+| 5.13 | The position of the centroid obtained for each connected region in the query image. | 44 |
+| 5.14 | The matching image, for which minimum cost is attained, the time taken by the algorithm and the name of the corresponding graph. | 45 |
+| 5.15(a) | Results for the query images | 46 |
+| 5.15(b) | Results for the query images | 47 |
+
+LIST OF TABLES
+
+| Table No. | Title | Page No. |
+| 2.1(a) | Exact matching techniques based on tree search | 12 |
+| 2.1(b) | Exact matching techniques based on tree search | 13 |
+| 2.2 | Other exact matching techniques | 14 |
+| 2.3(a) | Inexact matching techniques based on tree search | 16 |
+| 2.3(b) | Inexact matching techniques based on tree search | 17 |
+| 2.4 | Techniques based on inexact matching using continuous optimization | 19 |
+
+LIST OF PUBLICATIONS
+
+| Sr. No. | Author(s) Name | Paper Title | Publication Detail | Status |
+| 1 |  | Matching Graph based Image Retrieval | International Journal of Image Processing and Vision Sciences, ISSN print- 2278-1110 | Communicated/ Accepted/ Published |

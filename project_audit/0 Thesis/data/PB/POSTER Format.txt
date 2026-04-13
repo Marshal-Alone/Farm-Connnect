@@ -1,0 +1,9 @@
+
+| SHRI SAI SHIKSHAN SANSTHA’S                               NAGPUR INSTITUTE OF TECHNOLOGY                            DEPARTMENT OF ELECTRICAL ENGINEERING                           SESION 2025-26 |
+
+
+| The main objective of this project is to design and build a smart electric vehicle (EV) that offers improved performance and efficiency by utilizing state-of-the-art technologies.INTRODUCTIONThe goal is to develop an electric bike that minimizes environmental effect, reduces dependency on fossil fuels, and offers great performance, low energy consumption, and a smooth riding experience overall.Real-time performance monitoring, integrated sensors, and mobile app connectivity are examples of smart technologies that will improve features like energy management, tracking, and remote diagnostics.With its high-capacity lithium-ion battery, the electric bike will have greater range and quicker charging periods. | OBJECTIVES | OBSERVATIONS/RESULTSBLOCK DIAGRAM | NOVELTY/ UNIQENESS |
+| METHEDOLOGY | HARDWARE MODEL |  | IMPACT & BENIFITS |
+| PROBLEM STATEMENTS | PROBLEM SOLUTIONS | ADDRESSABLE MARKETS | TEAM MEMBERS & GUIDED BY: |
+
+“DESIGN AND IMPLEMENTATION OF SMART ELECTRIC VEHICLE”
