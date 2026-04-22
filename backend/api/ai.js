@@ -1,6 +1,8 @@
 import express from 'express';
 import OpenAI from 'openai';
 import { GoogleGenAI, Type } from '@google/genai';
+import { getDatabase } from '../config/database.js';
+import { authenticateToken } from './users.js';
 
 const router = express.Router();
 
@@ -157,6 +159,61 @@ const logAIPrompt = (label, prompt, extra = {}) => {
     console.log(`================ ${label} (END) ==================\n`);
 };
 
+const buildServerFarmerContext = async (userId) => {
+    const db = await getDatabase();
+    const cropsCollection = db.collection('farmerCrops');
+    const actionsCollection = db.collection('cropActions');
+
+    const crops = await cropsCollection
+        .find({ userId })
+        .sort({ createdAt: -1 })
+        .limit(25)
+        .toArray();
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const actions = await actionsCollection
+        .find({
+            userId,
+            actionDate: { $gte: thirtyDaysAgo }
+        })
+        .sort({ actionDate: -1 })
+        .limit(40)
+        .toArray();
+
+    const cropNameById = new Map(crops.map((crop) => [String(crop._id), crop.cropName || 'Unknown Crop']));
+
+    const cropsText = crops.length
+        ? crops
+            .map((crop, index) => `${index + 1}. Crop: ${crop.cropName || 'Unknown'} | Variety: ${crop.variety || 'N/A'} | Status: ${crop.status || 'N/A'} | Area: ${crop.sowingArea || 0} ha`)
+            .join('\n')
+        : 'No crops tracked.';
+
+    const actionsText = actions.length
+        ? actions
+            .map((action, index) => {
+                const cropId = action.cropId ? String(action.cropId) : '';
+                const cropName = cropNameById.get(cropId) || 'Unknown Crop';
+                const date = action.actionDate ? new Date(action.actionDate).toDateString() : 'Unknown date';
+                return `${index + 1}. Action: ${action.actionType || 'N/A'} | Crop: ${cropName} | CropId: ${cropId || 'N/A'} | Date: ${date} | Details: ${action.details || 'N/A'} | Quantity: ${action.quantity ?? 'N/A'} ${action.quantityUnit || ''}`.trim();
+            })
+            .join('\n')
+        : 'No recent actions found.';
+
+    console.log('\n================ AI FARMER CONTEXT (SERVER) (START) ================');
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+    console.log(`User ID: ${userId}`);
+    console.log('Farmer context payload:', { crops, actions });
+    console.log('================ AI FARMER CONTEXT (SERVER) (END) ==================\n');
+
+    return `Farmer Crops:
+${cropsText}
+
+Farmer Recent Actions (what action, on which crop, when):
+${actionsText}`;
+};
+
 router.post('/analyze-crop', async (req, res) => {
     try {
         const { imageBase64, userApiKey, customPrediction } = req.body;
@@ -284,7 +341,7 @@ Local model hints (for validation, not blind copy):
     }
 });
 
-router.post('/farming-advice', async (req, res) => {
+router.post('/farming-advice', authenticateToken, async (req, res) => {
     try {
         const { query, language = 'english', userApiKey } = req.body;
         if (!query) {
@@ -300,10 +357,18 @@ router.post('/farming-advice', async (req, res) => {
             english: 'Respond in English.'
         };
 
+        const farmerContext = await buildServerFarmerContext(req.user.userId);
         const prompt = `You are a helpful farming assistant for Indian farmers.
 ${languagePrompts[language] || languagePrompts.english}
 Keep the answer concise (2-4 sentences), practical, and relevant.
-Question: ${query}`;
+Question: ${query}
+
+${farmerContext}
+
+Instructions:
+- Ground the response in the farmer's crops and recent actions.
+- Avoid repeating recently completed actions unless urgency is high.
+- Mention crop-specific guidance whenever possible.`;
 
         logAIPrompt('GROQ FARMING ADVICE PROMPT', prompt, {
             route: '/api/ai/farming-advice',
@@ -436,7 +501,7 @@ Return JSON only with actionable treatment and prevention.`;
     }
 });
 
-router.post('/gemini/farming-advice', async (req, res) => {
+router.post('/gemini/farming-advice', authenticateToken, async (req, res) => {
     try {
         const { query, language = 'english', userApiKey } = req.body;
         if (!query) {
@@ -452,10 +517,18 @@ router.post('/gemini/farming-advice', async (req, res) => {
             english: 'Respond in English.'
         };
 
+        const farmerContext = await buildServerFarmerContext(req.user.userId);
         const prompt = `You are an expert agricultural advisor for Indian farmers.
 Farmer question: "${query}"
 ${languageInstructions[language] || languageInstructions.english}
-Provide practical and actionable advice in 2-4 sentences.`;
+Provide practical and actionable advice in 2-4 sentences.
+
+${farmerContext}
+
+Instructions:
+- Use farmer crop and recent action context in the answer.
+- Mention exact crop names where relevant.
+- Avoid duplicating tasks that were done recently unless critical.`;
 
         logAIPrompt('GEMINI FARMING ADVICE PROMPT', prompt, {
             route: '/api/ai/gemini/farming-advice',

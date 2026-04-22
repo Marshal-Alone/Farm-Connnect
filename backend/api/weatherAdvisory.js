@@ -72,6 +72,34 @@ router.post('/', authenticateToken, async (req, res) => {
       .limit(20)
       .toArray();
 
+    console.log('\n================ WEATHER ADVISORY REQUEST PAYLOAD (START) ================');
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+    console.log(`User ID: ${req.user.userId}`);
+    console.log('Payload sent to advisory model:', {
+      weatherData,
+      crops: crops.map((crop) => ({
+        _id: crop._id,
+        cropName: crop.cropName,
+        variety: crop.variety,
+        sowDate: crop.sowDate,
+        sowingArea: crop.sowingArea,
+        status: crop.status,
+        expectedHarvestDate: crop.expectedHarvestDate,
+        fieldLocation: crop.fieldLocation,
+        notes: crop.notes
+      })),
+      recentActions: recentActions.map((action) => ({
+        _id: action._id,
+        cropId: action.cropId,
+        actionType: action.actionType,
+        actionDate: action.actionDate,
+        details: action.details,
+        quantity: action.quantity,
+        quantityUnit: action.quantityUnit
+      }))
+    });
+    console.log('================ WEATHER ADVISORY REQUEST PAYLOAD (END) ==================\n');
+
     // Initialize Groq API
     const groqApiKey = process.env.GROQ_API_KEY;
     if (!groqApiKey) {

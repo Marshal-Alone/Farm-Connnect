@@ -1,25 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Mic, MicOff, Volume2, VolumeX, MessageCircle, Brain, Loader2 } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, MessageCircle, Brain, Loader2, Sparkles, SendHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getFarmingAdvice } from '@/lib/ai';
 
 interface VoiceInterfaceProps {
   onVoiceQuery?: (query: string, language: string) => void;
+  variant?: 'compact' | 'full';
 }
 
-export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
+type ChatMessage = {
+  id: string;
+  role: 'user' | 'assistant';
+  text: string;
+};
+
+export default function VoiceInterface({ onVoiceQuery, variant = 'compact' }: VoiceInterfaceProps) {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('hindi');
-  const [transcript, setTranscript] = useState('');
-  const [response, setResponse] = useState('');
   const [chatInput, setChatInput] = useState('');
   const [recognition, setRecognition] = useState<any>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
 
   const languages = [
@@ -30,7 +37,6 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
     { code: 'english', name: 'English', nativeName: 'English', locale: 'en-IN' }
   ];
 
-  // Sample responses for different languages
   const sampleResponses = {
     hindi: {
       'मौसम': 'आज बारिश की संभावना है। अपनी फसल को सुरक्षित रखें।',
@@ -52,6 +58,14 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
     }
   };
 
+  const quickPrompts = useMemo(() => ({
+    hindi: ['आज मौसम के हिसाब से क्या करना चाहिए?', 'मेरी फसल में रोग से बचाव कैसे करूं?'],
+    marathi: ['आजच्या हवामानानुसार काय करावे?', 'माझ्या पिकासाठी योग्य खत कोणते?'],
+    malayalam: ['ഇന്നത്തെ കാലാവസ്ഥ അനുസരിച്ച് എന്ത് ചെയ്യണം?', 'വിള രോഗം തടയാൻ എന്ത് ചെയ്യാം?'],
+    punjabi: ['ਅੱਜ ਦੇ ਮੌਸਮ ਅਨੁਸਾਰ ਕੀ ਕਰੀਏ?', 'ਫਸਲ ਦੀ ਬਿਮਾਰੀ ਤੋਂ ਕਿਵੇਂ ਬਚੀਏ?'],
+    english: ['What should I do today based on weather?', 'How can I prevent disease in my crop?']
+  }), []);
+
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -70,7 +84,7 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
 
       recognitionInstance.onresult = (event) => {
         const speechResult = event.results[0][0].transcript;
-        setTranscript(speechResult);
+        setChatInput(speechResult);
         handleVoiceQuery(speechResult);
       };
 
@@ -101,16 +115,15 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
   const handleVoiceQuery = async (query: string) => {
     const currentLang = languages.find(lang => lang.code === selectedLanguage);
     setIsProcessing(true);
+    setMessages((prev) => [...prev, { id: `${Date.now()}-u`, role: 'user', text: query }]);
 
     try {
-      // Get AI-powered response using configured provider (Groq or Gemini)
       const aiAdvice = await getFarmingAdvice(query, selectedLanguage);
-      setResponse(aiAdvice.response);
+      setMessages((prev) => [...prev, { id: `${Date.now()}-a`, role: 'assistant', text: aiAdvice.response }]);
       speakResponse(aiAdvice.response, currentLang?.locale || 'en-IN');
     } catch (error) {
       console.error('Error getting AI advice:', error);
 
-      // Fallback to sample responses
       let aiResponse = '';
       const queryLower = query.toLowerCase();
 
@@ -146,7 +159,7 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
         }
       }
 
-      setResponse(aiResponse);
+      setMessages((prev) => [...prev, { id: `${Date.now()}-a`, role: 'assistant', text: aiResponse }]);
       speakResponse(aiResponse, currentLang?.locale || 'en-IN');
     } finally {
       setIsProcessing(false);
@@ -160,7 +173,6 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
 
   const handleTextQuery = () => {
     if (!chatInput.trim()) return;
-    setTranscript(chatInput);
     handleVoiceQuery(chatInput);
     setChatInput('');
   };
@@ -210,27 +222,41 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
     setIsSpeaking(false);
   };
 
+  const compact = variant === 'compact';
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, isProcessing]);
+
+  const placeholder = selectedLanguage === 'hindi'
+    ? 'अपना सवाल टाइप करें...'
+    : selectedLanguage === 'marathi'
+      ? 'तुमचा प्रश्न टाइप करा...'
+      : 'Type your question...';
+
   return (
-    <Card className="w-full max-w-lg mx-auto">
-      <CardContent className="p-4 space-y-3">
-        <div className="text-center">
-          <div className="flex items-center justify-center mb-2">
-            <Brain className="w-5 h-5 mr-2 text-primary" />
-            <h3 className="text-lg font-semibold">AI Voice Assistant</h3>
+    <Card className={`w-full mx-auto border-primary/20 shadow-xl ${compact ? 'max-w-xl' : 'max-w-4xl h-full flex flex-col'}`}>
+      <CardHeader className={`border-b bg-gradient-to-r from-primary/10 via-emerald-500/10 to-teal-500/10 ${compact ? 'pb-3' : 'pb-4'}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle className={`${compact ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'} flex items-center gap-2`}>
+              <Brain className="h-5 w-5 text-primary" />
+              Farm AI Assistant
+            </CardTitle>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+              Ask in your language with voice or text. Context-aware crop advice.
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Ask me anything about farming in your preferred language
-          </p>
-          <Badge variant="outline" className="mt-2">
-            Powered by AI Analysis
+          <Badge variant="secondary" className="text-[10px] sm:text-xs">
+            <Sparkles className="h-3 w-3 mr-1" />
+            Smart
           </Badge>
         </div>
+      </CardHeader>
 
-        {/* Language Selection */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Select Language</label>
+      <CardContent className={`${compact ? 'p-3 sm:p-4' : 'p-3 sm:p-5 md:p-6'} ${compact ? 'space-y-3 sm:space-y-4' : 'flex flex-1 min-h-0 flex-col gap-3 sm:gap-4'}`}>
+        <div className={`grid gap-2 ${compact ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-[1fr_auto_auto]'}`}>
           <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-            <SelectTrigger>
+            <SelectTrigger className="h-10">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -241,143 +267,111 @@ export default function VoiceInterface({ onVoiceQuery }: VoiceInterfaceProps) {
               ))}
             </SelectContent>
           </Select>
-        </div>
 
-        {/* Voice Controls */}
-        <div className="flex justify-center space-x-4">
           <Button
             onClick={isListening ? stopListening : startListening}
-            variant={isListening ? "destructive" : "default"}
-            size="lg"
-            className="relative"
+            variant={isListening ? 'destructive' : 'default'}
+            className="h-10"
           >
-            {isListening ? (
-              <>
-                <MicOff className="h-5 w-5 mr-2" />
-                Stop
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-              </>
-            ) : (
-              <>
-                <Mic className="h-5 w-5 mr-2" />
-                Speak
-              </>
-            )}
+            {isListening ? <MicOff className="h-4 w-4 mr-2" /> : <Mic className="h-4 w-4 mr-2" />}
+            {isListening ? 'Stop' : 'Speak'}
           </Button>
 
           <Button
             onClick={isSpeaking ? stopSpeaking : () => { }}
-            variant={isSpeaking ? "destructive" : "outline"}
-            size="lg"
+            variant="outline"
+            className="h-10"
             disabled={!isSpeaking}
           >
-            {isSpeaking ? (
-              <>
-                <VolumeX className="h-5 w-5 mr-2" />
-                Stop
-              </>
-            ) : (
-              <>
-                <Volume2 className="h-5 w-5 mr-2" />
-                Audio
-              </>
-            )}
+            {isSpeaking ? <VolumeX className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />}
+            Audio
           </Button>
         </div>
 
-        {/* Text Chat Input */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {(quickPrompts[selectedLanguage as keyof typeof quickPrompts] || quickPrompts.english).map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => {
+                setChatInput(prompt);
+                handleVoiceQuery(prompt);
+              }}
+              className="rounded-full border px-3 py-1 text-[11px] sm:text-xs hover:bg-muted transition-colors"
+              disabled={isProcessing}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+
+        <div className={`rounded-xl border bg-muted/30 overflow-y-auto ${compact ? 'h-48 sm:h-56' : 'flex-1 min-h-[180px]'}`}>
+          <div className="p-3 sm:p-4 space-y-3">
+            {messages.length === 0 && (
+              <div className="text-center py-8 text-xs sm:text-sm text-muted-foreground">
+                Ask your first farming question to start chat.
+              </div>
+            )}
+            {messages.map((msg) => (
+              <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`max-w-[88%] sm:max-w-[80%] rounded-2xl px-3 py-2 text-xs sm:text-sm ${
+                    msg.role === 'user'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-background border'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {isProcessing && (
+              <div className="flex justify-start">
+                <div className="rounded-2xl px-3 py-2 text-xs sm:text-sm bg-background border inline-flex items-center gap-2">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Thinking...
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
           <input
             type="text"
-            placeholder={selectedLanguage === 'hindi' ? 'अपना सवाल टाइप करें...' :
-              selectedLanguage === 'marathi' ? 'तुमचा प्रश्न टाइप करा...' :
-                'Type your question...'}
+            placeholder={placeholder}
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && chatInput.trim() && handleTextQuery()}
-            className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 h-10 rounded-lg border px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             disabled={isProcessing}
           />
           <Button
             onClick={handleTextQuery}
             disabled={!chatInput.trim() || isProcessing}
-            size="default"
+            className="h-10 px-3 sm:px-4"
           >
-            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
+            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <SendHorizontal className="h-4 w-4" />}
           </Button>
         </div>
 
-        {/* Status */}
-        <div className="text-center">
+        <div className="flex flex-wrap gap-2">
           {isListening && (
-            <Badge variant="default" className="animate-pulse">
-              <Mic className="h-3 w-3 mr-1" />
-              Listening...
-            </Badge>
-          )}
-          {isProcessing && (
-            <Badge variant="secondary" className="animate-pulse">
-              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-              AI Thinking...
+            <Badge variant="default" className="animate-pulse text-[10px] sm:text-xs">
+              <Mic className="h-3 w-3 mr-1" /> Listening
             </Badge>
           )}
           {isSpeaking && (
-            <Badge variant="secondary" className="animate-pulse">
-              <Volume2 className="h-3 w-3 mr-1" />
-              Speaking...
+            <Badge variant="secondary" className="animate-pulse text-[10px] sm:text-xs">
+              <Volume2 className="h-3 w-3 mr-1" /> Speaking
             </Badge>
           )}
-        </div>
-
-        {/* Transcript */}
-        {transcript && (
-          <div className="bg-secondary/20 p-3 rounded-lg">
-            <div className="flex items-start space-x-2">
-              <MessageCircle className="h-4 w-4 mt-1 text-primary" />
-              <div>
-                <p className="text-sm font-medium">You said:</p>
-                <p className="text-sm text-muted-foreground">{transcript}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Response */}
-        {response && (
-          <div className="bg-primary/10 p-3 rounded-lg max-h-32 overflow-y-auto">
-            <div className="flex items-start space-x-2">
-              <Volume2 className="h-4 w-4 mt-1 text-primary flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium">AI Assistant:</p>
-                <p className="text-sm">{response}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Sample Queries */}
-        <div className="text-center hidden">
-          <p className="text-xs text-muted-foreground mb-2">Try asking:</p>
-          <div className="flex flex-wrap gap-1 justify-center">
-            {selectedLanguage === 'hindi' && (
-              <>
-                <Badge variant="outline" className="text-xs">"मौसम कैसा है?"</Badge>
-                <Badge variant="outline" className="text-xs">"फसल की जांच करो"</Badge>
-              </>
-            )}
-            {selectedLanguage === 'english' && (
-              <>
-                <Badge variant="outline" className="text-xs">"How's the weather?"</Badge>
-                <Badge variant="outline" className="text-xs">"Check my crops"</Badge>
-              </>
-            )}
-            {selectedLanguage === 'marathi' && (
-              <>
-                <Badge variant="outline" className="text-xs">"मौसम कसे आहे?"</Badge>
-                <Badge variant="outline" className="text-xs">"पिकांची तपासणी करा"</Badge>
-              </>
-            )}
-          </div>
+          {!isListening && !isSpeaking && (
+            <Badge variant="outline" className="text-[10px] sm:text-xs">
+              <MessageCircle className="h-3 w-3 mr-1" /> Multilingual text + voice
+            </Badge>
+          )}
         </div>
       </CardContent>
     </Card>

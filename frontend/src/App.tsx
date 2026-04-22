@@ -22,6 +22,7 @@ import GovernmentSchemes from "./pages/GovernmentSchemes";
 import UserProfile from "./pages/UserProfile";
 import KisanBazaar from "./pages/KisanBazaar";
 import Team from "./pages/Credits";
+import AssistantPage from "./pages/Assistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => {
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/bazaar" element={<KisanBazaar />} />
                 <Route path="/team" element={<Team />} />
+                <Route path="/assistant" element={<AssistantPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>

@@ -7,6 +7,7 @@ import { API_BASE_URL } from '../config/api';
 
 // Get user's API key from localStorage (set in Profile > Settings)
 const getUserApiKey = () => localStorage.getItem('gemini_api_key') || null;
+const getAuthToken = () => localStorage.getItem('FarmConnect_token') || '';
 
 export interface AICropAnalysis {
   disease: string;
@@ -76,7 +77,10 @@ class GeminiAIService {
 
       const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
         body: JSON.stringify({
           query,
           language,
@@ -124,7 +128,10 @@ class GeminiAIService {
     try {
       const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
         body: JSON.stringify({
           query: `Provide agricultural weather advice for farmers in ${location}.`,
           language: 'english',
@@ -145,7 +152,10 @@ class GeminiAIService {
 
       const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
         body: JSON.stringify({ query, language: 'english', userApiKey: getUserApiKey() }),
       });
 
@@ -166,7 +176,10 @@ export const getAIInsights = async (prompt: string): Promise<string[]> => {
   try {
     const response = await fetch(`${API_BASE_URL}/ai/gemini/farming-advice`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAuthToken()}`
+      },
       body: JSON.stringify({ query: prompt, language: 'english', userApiKey: getUserApiKey() }),
     });
 

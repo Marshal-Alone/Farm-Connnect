@@ -17,7 +17,7 @@ export default function HeroSection() {
   const { user } = useAuth();
 
   return (
-    <section className="relative overflow-hidden flex items-center min-h-screen md:min-h-[90vh]">
+    <section className="relative overflow-x-hidden flex items-center min-h-[calc(100dvh-56px)] sm:min-h-[calc(100dvh-64px)]">
       {/* Animated Background */}
       <div className="absolute inset-0 z-0">
         <img
@@ -25,13 +25,10 @@ export default function HeroSection() {
           alt="Smart farming technology"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-green-950/95 via-green-900/90 to-emerald-900/80" />
-        
-        {/* Animated Gradient Orbs */}
-        <div className="absolute top-20 right-20 w-72 h-72 bg-green-500 opacity-20 blur-3xl animate-pulse" />
+        <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      <div className="container relative z-10 px-4 sm:px-6 py-6 md:py-10">
+      <div className="container relative z-10 px-4 sm:px-6 py-4 md:py-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
           {/* LEFT: Content */}
           <div className="space-y-6 animate-in slide-in-from-left duration-700">
@@ -117,16 +114,13 @@ export default function HeroSection() {
 
           {/* RIGHT: Visual Demo */}
           <div className="animate-in slide-in-from-right duration-700 delay-200 relative hidden lg:block">
-            {/* Glow Effect */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-green-500/30 to-blue-500/30 blur-2xl rounded-full opacity-50" />
-
-            <div className="relative bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-6 border border-white/20 shadow-2xl">
+            <div className="relative bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-5 border border-white/20 shadow-2xl">
               <div className="absolute -top-6 -right-6 bg-yellow-400 text-black px-3 sm:px-4 py-2 rounded-full font-bold shadow-lg transform rotate-12 text-xs sm:text-sm z-20">
                 <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
                 Try Voice Input
               </div>
 
-              <VoiceInterface onVoiceQuery={() => {}} />
+              <VoiceInterface onVoiceQuery={() => {}} variant="compact" />
             </div>
           </div>
         </div>

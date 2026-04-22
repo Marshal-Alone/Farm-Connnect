@@ -8,6 +8,7 @@ import { customModelAI } from './customModel';
 
 // Get user's API key from localStorage (set in Profile > Settings)
 const getUserApiKey = () => localStorage.getItem('groq_api_key') || null;
+const getAuthToken = () => localStorage.getItem('FarmConnect_token') || '';
 
 export interface AICropAnalysis {
     disease: string;
@@ -89,11 +90,17 @@ class GroqAIService {
 
     async getFarmingAdvice(query: string, language: string = 'english'): Promise<{ response: string; category: string }> {
         try {
+            if (!getAuthToken()) {
+                throw new Error('Access token required. Please log in to use Groq assistant.');
+            }
             console.log('💬 [Groq] Sending query to secure backend proxy...');
 
             const response = await fetch(`${API_BASE_URL}/ai/farming-advice`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAuthToken()}`
+                },
                 body: JSON.stringify({
                     query,
                     language,

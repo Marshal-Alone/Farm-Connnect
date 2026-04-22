@@ -67,6 +67,11 @@ class WeatherAdvisoryService {
         };
       }
 
+      console.log('[AI Weather Advisory] Payload sent from frontend:', {
+        route: '/api/weather-advice',
+        weatherData
+      });
+
       const response = await fetch(`${this.baseURL}/weather-advice`, {
         method: 'POST',
         headers: {

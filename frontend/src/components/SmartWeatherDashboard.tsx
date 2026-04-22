@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import { getAIInsights } from '@/lib/ai';
 import { useToast } from '@/hooks/use-toast';
+import { cropService } from '@/lib/api/cropService';
+import { actionService } from '@/lib/api/actionService';
 import {
   getCurrentWeather,
   getCurrentLocation,
@@ -197,6 +199,42 @@ export default function SmartWeatherDashboard() {
 
     setLoading(true);
     try {
+      const [cropsRes, actionsRes] = await Promise.all([
+        cropService.getCrops(),
+        actionService.getRecentActions()
+      ]);
+
+      const crops = cropsRes.success && cropsRes.data ? cropsRes.data : [];
+      const recentActions = actionsRes.success && actionsRes.data ? actionsRes.data : [];
+      const cropNameById = new Map(
+        crops.map((crop) => [String(crop._id), crop.cropName || 'Unknown Crop'])
+      );
+
+      const cropsContext = crops.length
+        ? crops
+            .map((crop, index) => {
+              return `${index + 1}. Crop: ${crop.cropName || 'Unknown'} | Variety: ${crop.variety || 'N/A'} | Status: ${crop.status || 'N/A'} | Area: ${crop.sowingArea || 0} ha | Sown: ${crop.sowDate ? new Date(crop.sowDate).toDateString() : 'N/A'}`;
+            })
+            .join('\n')
+        : 'No crops tracked by this farmer.';
+
+      const actionsContext = recentActions.length
+        ? recentActions
+            .map((action, index) => {
+              const cropId = action.cropId ? String(action.cropId) : '';
+              const cropName = cropNameById.get(cropId) || 'Unknown Crop';
+              const actionDate = action.actionDate ? new Date(action.actionDate).toDateString() : 'Unknown date';
+              return `${index + 1}. Action: ${action.actionType || 'N/A'} | Crop: ${cropName} | CropId: ${cropId || 'N/A'} | Date: ${actionDate} | Details: ${action.details || 'N/A'} | Quantity: ${action.quantity ?? 'N/A'} ${action.quantityUnit || ''}`.trim();
+            })
+            .join('\n')
+        : 'No recent farmer actions found.';
+
+      console.log('[AI Weather Analysis] Full prompt context payload:', {
+        weather: weatherData,
+        crops,
+        recentActions
+      });
+
       const prompt = `As an agricultural expert, analyze this weather data and provide 3-4 specific, actionable farming recommendations:
       
       Location: ${weatherData.location}
@@ -207,12 +245,20 @@ export default function SmartWeatherDashboard() {
       Precipitation: ${weatherData.precipitation}mm
       Pressure: ${weatherData.pressure} hPa
       Visibility: ${weatherData.visibility} km
+
+      Farmer crops:
+      ${cropsContext}
+
+      Farmer recent actions (what action, on which crop, when):
+      ${actionsContext}
       
       Focus on:
       1. Immediate actions farmers should take
       2. Crop protection measures
       3. Irrigation recommendations
       4. Disease prevention strategies
+      5. Do not suggest actions already recently completed unless needed urgently
+      6. Mention crop-specific advice using the crop names above
       
       Provide practical, region-specific advice.`;
 

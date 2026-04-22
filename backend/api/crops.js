@@ -306,8 +306,39 @@ router.post('/:cropId/actions', authenticateToken, async (req, res) => {
 });
 
 /**
- * DELETE /api/actions/:actionId - Delete an action
+ * DELETE /api/crops/actions/:actionId - Delete an action
  */
+router.delete('/actions/:actionId', authenticateToken, async (req, res) => {
+  try {
+    const db = await getDatabase();
+    const actionsCollection = db.collection(COLLECTIONS.ACTIONS);
+
+    const result = await actionsCollection.deleteOne({
+      _id: new ObjectId(req.params.actionId),
+      userId: req.user.userId
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Action not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Action deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting action:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete action'
+    });
+  }
+});
+
+// Backward-compatible endpoint for older clients
 router.delete('/:actionId/delete', authenticateToken, async (req, res) => {
   try {
     const db = await getDatabase();

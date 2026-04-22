@@ -4,7 +4,7 @@
 
 import { CropAction } from '@/lib/schemas/cropSchema';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = '/api/crops';
 
 export class ActionService {
   /**
@@ -12,7 +12,7 @@ export class ActionService {
    */
   static async getActions(cropId: string): Promise<{ success: boolean; data?: CropAction[]; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/crops/${cropId}/actions`, {
+      const response = await fetch(`${API_BASE_URL}/${cropId}/actions`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export class ActionService {
     actionData: Omit<CropAction, '_id' | 'userId' | 'cropId' | 'createdAt'>
   ): Promise<{ success: boolean; data?: CropAction; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/crops/${cropId}/actions`, {
+      const response = await fetch(`${API_BASE_URL}/${cropId}/actions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

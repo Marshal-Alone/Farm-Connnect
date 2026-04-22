@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   Menu,
   Leaf,
@@ -13,7 +13,8 @@ import {
   FileText,
   User,
   LogIn,
-  Users
+  Users,
+  Bot
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginModal from "@/components/LoginModal";
@@ -24,6 +25,7 @@ const navItems = [
   { name: "Disease Detection", href: "/disease-detection", icon: Camera },
   { name: "Crops", href: "/crops", icon: Leaf },
   { name: "Weather", href: "/weather", icon: Cloud },
+  { name: "Assistant", href: "/assistant", icon: Bot },
   { name: "Machinery", href: "/machinery", icon: Tractor },
   { name: "Schemes", href: "/schemes", icon: FileText },
   { name: "Profile", href: "/profile", icon: User },
@@ -37,6 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
 
   const isActive = (href: string) => location.pathname === href;
+  const isAssistantPage = location.pathname === "/assistant";
 
   // Listen for login modal open events
   React.useEffect(() => {
@@ -63,7 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
+          <nav className="hidden xl:flex items-center space-x-4 2xl:space-x-6">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -96,12 +99,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Mobile Menu Button */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild className="md:hidden">
+            <SheetTrigger asChild className="xl:hidden">
               <Button variant="ghost" size="icon" className="tap-target">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[88vw] max-w-sm px-4">
+              <SheetTitle className="sr-only">Navigation menu</SheetTitle>
               <div className="mt-8 flex flex-col space-y-3">
                 {navItems.map((item) => {
                   const Icon = item.icon;
@@ -142,6 +146,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main className="flex-1">
         {children}
       </main>
+
+      {!isAssistantPage && (
+        <Link
+          to="/assistant"
+          className="fixed bottom-4 right-4 z-50 flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary/90 sm:bottom-5 sm:right-5 sm:h-14 sm:px-5"
+          aria-label="Open AI Assistant"
+        >
+          <Bot className="h-5 w-5" />
+          <span className="hidden sm:inline">Ask AI</span>
+        </Link>
+      )}
 
       {/* Footer */}
       <footer className="border-t bg-muted/30">
