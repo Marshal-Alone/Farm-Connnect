@@ -1,18 +1,34 @@
 import HeroSection from "@/components/homepage/HeroSection";
-import QuickActions from "@/components/homepage/QuickActions";
+import WhatWeBuilt from "@/components/homepage/WhatWeBuilt";
+import ImpactMetrics from "@/components/homepage/ImpactMetrics";
+import FeaturesWithTech from "@/components/homepage/FeaturesWithTech";
+import EasyAccess from "@/components/homepage/EasyAccess";
+import HowItWorks from "@/components/homepage/HowItWorks";
+import TechStack from "@/components/homepage/TechStack";
+import ProblemSolution from "@/components/homepage/ProblemSolution";
+import CTASection from "@/components/homepage/CTASection";
+import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 
 export default function HomePage() {
     return (
         <>
             <SEO
-                title="Farm-Connect - AI Smart Agriculture"
-                description="The #1 AI platform for farmers. Detect crop diseases, rent machinery, and get real-time weather insights. Join FarmConnect today."
+                title="FarmConnect - AI-Powered Smart Farming Ecosystem"
+                description="Complete AI agriculture platform: disease detection, weather insights, machinery rental, government schemes, and PWA for farmers"
                 url="https://farmbro.vercel.app/"
             />
             <div className="min-h-screen">
                 <HeroSection />
-                <QuickActions />
+                <FeaturesWithTech />
+                <WhatWeBuilt />
+                <HowItWorks />
+                <TechStack />
+                <ProblemSolution />
+                <ImpactMetrics />
+                <EasyAccess />
+                <CTASection />
+                <Footer />
             </div>
         </>
     );

@@ -262,30 +262,31 @@ class CustomModelService {
             // Try to use WebGL, fallback to CPU if not available
             if (this.supportsWebGL()) {
                 try {
-                // Pre-check for WebGL support to avoid some internal TFJS crashes
-                console.log('🧠 [CustomModel] Checking for WebGL support...');
+                    // Pre-check for WebGL support to avoid some internal TFJS crashes
+                    console.log('🧠 [CustomModel] Checking for WebGL support...');
 
-                // Set flags to be more conservative with WebGL resources
-                tf.env().set('WEBGL_CPU_FORWARD', true);
-                tf.env().set('WEBGL_FORCE_F16_TEXTURES', true);
+                    // Set flags to be more conservative with WebGL resources
+                    tf.env().set('WEBGL_CPU_FORWARD', true);
+                    tf.env().set('WEBGL_FORCE_F16_TEXTURES', true);
 
-                await tf.setBackend('webgl');
-                await tf.ready();
-                console.log('✓ Using WebGL backend');
-            } catch (webglError) {
-                console.warn('⚠️ WebGL not available, falling back to CPU');
-                try {
-                    // Dispose any partial WebGL resources
-                    if (tf.memory().numTensors > 0) {
-                        tf.disposeVariables();
-                    }
-                    
-                    await tf.setBackend('cpu');
+                    await tf.setBackend('webgl');
                     await tf.ready();
-                    console.log('✓ Using CPU backend (computations will be slower)');
-                } catch (cpuError) {
-                    console.error('❌ CPU backend failed:', cpuError);
-                    throw cpuError;
+                    console.log('✓ Using WebGL backend');
+                } catch (webglError) {
+                    console.warn('⚠️ WebGL not available, falling back to CPU');
+                    try {
+                        // Dispose any partial WebGL resources
+                        if (tf.memory().numTensors > 0) {
+                            tf.disposeVariables();
+                        }
+                        
+                        await tf.setBackend('cpu');
+                        await tf.ready();
+                        console.log('✓ Using CPU backend (computations will be slower)');
+                    } catch (cpuError) {
+                        console.error('❌ CPU backend failed:', cpuError);
+                        throw cpuError;
+                    }
                 }
             } else {
                 console.warn('⚠️ WebGL not supported by browser/device, using CPU backend');
