@@ -223,7 +223,7 @@ export default function BookingHistory() {
                                                 View Machinery
                                             </Button>
 
-                                            {booking.status === 'confirmed' && (
+                                            {(booking.status === 'pending' || booking.status === 'confirmed') && (
                                                 <Button
                                                     variant="outline"
                                                     size="sm"

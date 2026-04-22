@@ -38,6 +38,15 @@ interface DetectionResult {
   affectedArea: number;
 }
 
+interface ContextualPlan {
+  urgency: 'Immediate' | 'High' | 'Moderate' | 'Routine';
+  explanation: string;
+  rationale: string[];
+  immediateActions: string[];
+  next72hChecks: string[];
+  escalationTriggers: string[];
+}
+
 export default function DiseaseDetection() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -255,6 +264,111 @@ export default function DiseaseDetection() {
     }
   };
 
+  const buildContextualPlan = (detection: DetectionResult): ContextualPlan => {
+    const isHealthy = detection.disease.toLowerCase().includes('healthy');
+    if (isHealthy) {
+      return {
+        urgency: 'Routine',
+        explanation: 'No strong disease signal was detected. Focus on prevention and periodic monitoring.',
+        rationale: [
+          'Detected condition is classified as healthy or near-healthy.',
+          `Model confidence is ${detection.confidence}%, so no urgent intervention is indicated.`,
+          `Estimated affected area is ${detection.affectedArea}%, which suggests low current spread.`
+        ],
+        immediateActions: [
+          'Continue current irrigation and nutrition schedule.',
+          'Inspect lower leaves and stem junctions every 2-3 days for early symptoms.'
+        ],
+        next72hChecks: [
+          'Watch for sudden yellowing, spots, or curling after rain or humidity spikes.',
+          'Check soil moisture before watering to avoid over-irrigation.'
+        ],
+        escalationTriggers: [
+          'If visible lesions appear on multiple leaves in 24-48 hours, run a fresh scan.',
+          'If growth slows unexpectedly, consult local agriculture expert.'
+        ]
+      };
+    }
+
+    const highRisk = detection.severity === 'High' || detection.confidence >= 90 || detection.affectedArea >= 40;
+    const mediumRisk = detection.severity === 'Medium' || detection.affectedArea >= 20;
+
+    if (highRisk) {
+      return {
+        urgency: 'Immediate',
+        explanation: 'The model indicates a strong disease signal. Fast action helps prevent spread and yield loss.',
+        rationale: [
+          `Disease identified: ${detection.disease}.`,
+          `Severity level is ${detection.severity}, indicating elevated risk.`,
+          `Confidence is ${detection.confidence}%, so recommendation confidence is strong.`,
+          `Affected area is ${detection.affectedArea}%, suggesting active spread risk.`
+        ],
+        immediateActions: [
+          'Isolate and remove heavily infected leaves/parts first.',
+          'Start recommended treatment today and record product + dosage used.',
+          'Avoid overhead watering until symptoms stabilize.'
+        ],
+        next72hChecks: [
+          'Track whether lesion spread is reducing after first treatment cycle.',
+          'Re-check nearby plants for cross-infection symptoms.',
+          'Capture another image in 2-3 days to compare progression.'
+        ],
+        escalationTriggers: [
+          'If symptoms continue spreading after treatment cycle, escalate to local agronomist.',
+          'If affected area increases significantly, consider field-level intervention.'
+        ]
+      };
+    }
+
+    if (mediumRisk) {
+      return {
+        urgency: 'High',
+        explanation: 'The detection suggests moderate risk. Early and consistent treatment can control progression.',
+        rationale: [
+          `Disease identified: ${detection.disease}.`,
+          `Severity level is ${detection.severity}.`,
+          `Confidence is ${detection.confidence}%, enough to start controlled intervention.`,
+          `Affected area is ${detection.affectedArea}%, so early containment is useful.`
+        ],
+        immediateActions: [
+          'Apply recommended treatment in the next 24 hours.',
+          'Remove visibly affected foliage where practical.',
+          'Improve air movement between plants to reduce moisture retention.'
+        ],
+        next72hChecks: [
+          'Check if new spots are appearing on upper canopy leaves.',
+          'Monitor humidity/rain events and avoid stress irrigation.'
+        ],
+        escalationTriggers: [
+          'If confidence remains high on repeat scans, intensify treatment protocol.',
+          'If neighboring rows show symptoms, move from plant-level to plot-level control.'
+        ]
+      };
+    }
+
+    return {
+      urgency: 'Moderate',
+      explanation: 'Current detection is lower confidence or limited spread. Monitor closely and apply preventive control.',
+      rationale: [
+        `Disease candidate: ${detection.disease}.`,
+        `Confidence is ${detection.confidence}%, so this is treated as a watchlist scenario.`,
+        `Affected area is ${detection.affectedArea}%, indicating limited visible impact at present.`
+      ],
+      immediateActions: [
+        'Apply preventive treatment as per guidance.',
+        'Tag this plant area and monitor daily for worsening.'
+      ],
+      next72hChecks: [
+        'Repeat scan with clearer close-up leaf image.',
+        'Track whether spots are static, improving, or spreading.'
+      ],
+      escalationTriggers: [
+        'If spread accelerates, shift to full treatment plan.',
+        'If uncertain after repeat scans, consult expert diagnosis.'
+      ]
+    };
+  };
+
   return (
     <>
       <SEO
@@ -458,6 +572,8 @@ export default function DiseaseDetection() {
             <div className="space-y-6">
               {result ? (
                 <>
+                  
+
                   {/* Detection Result */}
                   <Card>
                     <CardHeader>
@@ -505,6 +621,72 @@ export default function DiseaseDetection() {
                       </div>
                     </CardContent>
                   </Card>
+
+                  {(() => {
+                    const contextualPlan = buildContextualPlan(result);
+                    return (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center justify-between">
+                            <span className="flex items-center">
+                              <Clock className="w-5 h-5 mr-2" />
+                              Action Plan
+                            </span>
+                            <Badge variant={contextualPlan.urgency === 'Immediate' ? 'destructive' : 'outline'}>
+                              {contextualPlan.urgency} Priority
+                            </Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <p className="text-sm text-muted-foreground">{contextualPlan.explanation}</p>
+                          <div>
+                            <h4 className="font-semibold mb-2">Why This Recommendation?</h4>
+                            <ul className="space-y-2 text-sm">
+                              {contextualPlan.rationale.map((item, idx) => (
+                                <li key={`why-${idx}`} className="flex items-start">
+                                  <Brain className="w-4 h-4 mr-2 mt-0.5 text-primary" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-2">Do Now</h4>
+                            <ul className="space-y-2 text-sm">
+                              {contextualPlan.immediateActions.map((item, idx) => (
+                                <li key={`now-${idx}`} className="flex items-start">
+                                  <CheckCircle className="w-4 h-4 mr-2 mt-0.5 text-success" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-2">Monitor in Next 72 Hours</h4>
+                            <ul className="space-y-2 text-sm">
+                              {contextualPlan.next72hChecks.map((item, idx) => (
+                                <li key={`monitor-${idx}`} className="flex items-start">
+                                  <TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-primary" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-2">Escalate If</h4>
+                            <ul className="space-y-2 text-sm">
+                              {contextualPlan.escalationTriggers.map((item, idx) => (
+                                <li key={`escalate-${idx}`} className="flex items-start">
+                                  <AlertTriangle className="w-4 h-4 mr-2 mt-0.5 text-warning" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })()}
 
                   {/* Treatment & Prevention */}
                   <Card>
@@ -597,6 +779,8 @@ export default function DiseaseDetection() {
                       </CardContent>
                     </Card>
                   )}
+
+                  
                 </>
               ) : (
                 <Card className="text-center py-12">

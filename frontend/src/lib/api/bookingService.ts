@@ -43,6 +43,13 @@ export interface PaymentData {
 }
 
 class BookingService {
+    private getAuthHeaders(): Record<string, string> {
+        const token = localStorage.getItem('FarmConnect_token');
+        return token
+            ? { Authorization: `Bearer ${token}` }
+            : {};
+    }
+
     // Create new booking
     async createBooking(bookingData: CreateBookingData): Promise<SingleBookingResponse> {
         try {
@@ -50,6 +57,7 @@ class BookingService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...this.getAuthHeaders()
                 },
                 body: JSON.stringify(bookingData),
             });
@@ -70,7 +78,11 @@ class BookingService {
             const queryParams = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
             if (status) queryParams.append('status', status);
 
-            const response = await fetch(`${API_BASE_URL}/bookings/user/${userId}?${queryParams}`);
+            const response = await fetch(`${API_BASE_URL}/bookings/user/${userId}?${queryParams}`, {
+                headers: {
+                    ...this.getAuthHeaders()
+                }
+            });
             return await response.json();
         } catch (error) {
             console.error('Error fetching user bookings:', error);
@@ -88,7 +100,11 @@ class BookingService {
             const queryParams = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
             if (status) queryParams.append('status', status);
 
-            const response = await fetch(`${API_BASE_URL}/bookings/owner/${ownerId}?${queryParams}`);
+            const response = await fetch(`${API_BASE_URL}/bookings/owner/${ownerId}?${queryParams}`, {
+                headers: {
+                    ...this.getAuthHeaders()
+                }
+            });
             return await response.json();
         } catch (error) {
             console.error('Error fetching owner bookings:', error);
@@ -103,7 +119,11 @@ class BookingService {
     // Get single booking
     async getBookingById(id: string): Promise<SingleBookingResponse> {
         try {
-            const response = await fetch(`${API_BASE_URL}/bookings/${id}`);
+            const response = await fetch(`${API_BASE_URL}/bookings/${id}`, {
+                headers: {
+                    ...this.getAuthHeaders()
+                }
+            });
             return await response.json();
         } catch (error) {
             console.error('Error fetching booking:', error);
@@ -122,6 +142,7 @@ class BookingService {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...this.getAuthHeaders()
                 },
                 body: JSON.stringify({ status, reason }),
             });
@@ -142,6 +163,7 @@ class BookingService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...this.getAuthHeaders()
                 },
                 body: JSON.stringify(paymentData),
             });
@@ -162,6 +184,7 @@ class BookingService {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...this.getAuthHeaders()
                 },
                 body: JSON.stringify({ reason, cancelledBy }),
             });

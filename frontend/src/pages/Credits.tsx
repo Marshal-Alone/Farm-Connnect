@@ -51,7 +51,7 @@ const teamMembers = [
         id: "4",
         contribution: "Technical feature research, data management and comprehensive project documentation",
         icon: Code,
-        image: "",
+        image: "/assets/team/sanskruti.png",
         color: "from-orange-500 to-amber-600",
         glow: "rgba(245, 158, 11, 0.3)",
         textColor: "#f59e0b"

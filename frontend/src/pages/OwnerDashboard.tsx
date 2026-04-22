@@ -411,7 +411,7 @@ export default function OwnerDashboard() {
                                                 </div>
                                             </div>
 
-                                            {booking.status === 'pending' && (
+                                            {booking.status === 'pending' && booking.paymentStatus === 'paid' && (
                                                 <div className="flex gap-2">
                                                     <Button
                                                         size="sm"
@@ -429,6 +429,13 @@ export default function OwnerDashboard() {
                                                     >
                                                         <XCircle className="h-4 w-4 mr-2" />
                                                         Reject
+                                                    </Button>
+                                                </div>
+                                            )}
+                                            {booking.status === 'pending' && booking.paymentStatus !== 'paid' && (
+                                                <div className="flex gap-2">
+                                                    <Button size="sm" variant="outline" disabled>
+                                                        Awaiting Renter Payment
                                                     </Button>
                                                 </div>
                                             )}

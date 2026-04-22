@@ -31,6 +31,8 @@ export default function MachineryDetail() {
     });
     const [bookingLoading, setBookingLoading] = useState(false);
     const [showBookingForm, setShowBookingForm] = useState(false);
+    const [createdBooking, setCreatedBooking] = useState<any | null>(null);
+    const [paymentLoading, setPaymentLoading] = useState(false);
 
     // User info (in real app, get from auth context)
     const [userInfo, setUserInfo] = useState({
@@ -44,6 +46,11 @@ export default function MachineryDetail() {
     useEffect(() => {
         fetchMachineryDetails();
     }, [id]);
+
+    useEffect(() => {
+        // Any date change invalidates previous booking quote/request preview
+        setCreatedBooking(null);
+    }, [selectedDates.from, selectedDates.to]);
 
     const fetchMachineryDetails = async () => {
         if (!id) return;
@@ -133,15 +140,11 @@ export default function MachineryDetail() {
             });
 
             if (response.success) {
+                setCreatedBooking(response.data);
                 toast({
-                    title: "Booking Request Submitted! ✅",
-                    description: `Your booking request (${response.data.bookingNumber}) is pending owner approval.`,
+                    title: "Booking Request Created",
+                    description: `Booking ${response.data.bookingNumber} created. Complete payment to confirm.`,
                 });
-
-                // Navigate to bookings page after 2 seconds
-                setTimeout(() => {
-                    navigate('/bookings');
-                }, 2000);
             } else {
                 toast({
                     title: "Booking Failed",
@@ -158,6 +161,41 @@ export default function MachineryDetail() {
             });
         } finally {
             setBookingLoading(false);
+        }
+    };
+
+    const handlePayAndConfirm = async () => {
+        if (!createdBooking?._id) return;
+        setPaymentLoading(true);
+        try {
+            const paymentResponse = await bookingService.processPayment(createdBooking._id, {
+                paymentMode: 'demo',
+                amount: createdBooking.finalAmount
+            });
+
+            if (paymentResponse.success) {
+                toast({
+                    title: "Payment Successful ✅",
+                    description: "Your booking is now confirmed.",
+                });
+                setTimeout(() => {
+                    navigate('/bookings');
+                }, 1200);
+            } else {
+                toast({
+                    title: "Payment Failed",
+                    description: paymentResponse.error || "Unable to complete payment",
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Payment Error",
+                description: "Failed to complete payment",
+                variant: "destructive"
+            });
+        } finally {
+            setPaymentLoading(false);
         }
     };
 
@@ -427,22 +465,45 @@ export default function MachineryDetail() {
                                     </div>
                                 )}
 
-                                {/* Book Button */}
-                                <Button
-                                    className="w-full bg-green-600 hover:bg-green-700"
-                                    size="lg"
-                                    onClick={handleBookNow}
-                                    disabled={!machinery.available || !selectedDates.from || !selectedDates.to || bookingLoading}
-                                >
-                                    {bookingLoading ? (
-                                        <>
-                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                            Processing...
-                                        </>
-                                    ) : (
-                                        'Confirm Booking (Demo Mode)'
-                                    )}
-                                </Button>
+                                {/* Book/Pay Buttons */}
+                                {!createdBooking ? (
+                                    <Button
+                                        className="w-full bg-green-600 hover:bg-green-700"
+                                        size="lg"
+                                        onClick={handleBookNow}
+                                        disabled={!machinery.available || !selectedDates.from || !selectedDates.to || bookingLoading}
+                                    >
+                                        {bookingLoading ? (
+                                            <>
+                                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                Creating booking...
+                                            </>
+                                        ) : (
+                                            'Step 1: Create Booking Request'
+                                        )}
+                                    </Button>
+                                ) : (
+                                    <div className="space-y-2">
+                                        <div className="text-xs text-muted-foreground bg-secondary/30 p-2 rounded">
+                                            Booking {createdBooking.bookingNumber} created. Proceed to payment.
+                                        </div>
+                                        <Button
+                                            className="w-full bg-primary hover:bg-primary/90"
+                                            size="lg"
+                                            onClick={handlePayAndConfirm}
+                                            disabled={paymentLoading}
+                                        >
+                                            {paymentLoading ? (
+                                                <>
+                                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                    Processing payment...
+                                                </>
+                                            ) : (
+                                                'Step 2: Pay & Confirm Booking (Demo)'
+                                            )}
+                                        </Button>
+                                    </div>
+                                )}
 
                                 {machinery.cancellationPolicy && (
                                     <p className="text-xs text-muted-foreground text-center">

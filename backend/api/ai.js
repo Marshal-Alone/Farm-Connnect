@@ -146,6 +146,17 @@ const normalizeDiagnosis = (raw, fallbackDisease = 'Unknown') => {
     };
 };
 
+const logAIPrompt = (label, prompt, extra = {}) => {
+    console.log(`\n================ ${label} (START) ================`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+    if (Object.keys(extra).length > 0) {
+        console.log('Metadata:', extra);
+    }
+    console.log('Prompt sent to AI:');
+    console.log(prompt);
+    console.log(`================ ${label} (END) ==================\n`);
+};
+
 router.post('/analyze-crop', async (req, res) => {
     try {
         const { imageBase64, userApiKey, customPrediction } = req.body;
@@ -197,6 +208,12 @@ Local model hints (for validation, not blind copy):
         ${top1ConditionHint}
         ${cropHint}
         ${topPredictionsHint ? `Top candidates:\n${topPredictionsHint}` : ''}`;
+
+        logAIPrompt('GROQ CROP ANALYZE PROMPT', prompt, {
+            route: '/api/ai/analyze-crop',
+            hasCustomPrediction: !!customPrediction,
+            hasUserApiKey: !!userApiKey
+        });
 
         const response = await client.chat.completions.create({
             model: 'meta-llama/llama-4-scout-17b-16e-instruct',
@@ -288,6 +305,11 @@ ${languagePrompts[language] || languagePrompts.english}
 Keep the answer concise (2-4 sentences), practical, and relevant.
 Question: ${query}`;
 
+        logAIPrompt('GROQ FARMING ADVICE PROMPT', prompt, {
+            route: '/api/ai/farming-advice',
+            language
+        });
+
         const completion = await client.chat.completions.create({
             model: 'llama-3.3-70b-versatile',
             messages: [
@@ -352,6 +374,12 @@ router.post('/gemini/analyze-crop', async (req, res) => {
 If image is not a plant, set isPlant=false.
 If healthy, set disease='Healthy Plant' and hasDisease=false.
 Return JSON only with actionable treatment and prevention.`;
+
+        logAIPrompt('GEMINI CROP ANALYZE PROMPT', prompt, {
+            route: '/api/ai/gemini/analyze-crop',
+            mimeType,
+            hasUserApiKey: !!userApiKey
+        });
 
         const response = await genAI.models.generateContent({
             model: 'gemini-1.5-flash',
@@ -428,6 +456,11 @@ router.post('/gemini/farming-advice', async (req, res) => {
 Farmer question: "${query}"
 ${languageInstructions[language] || languageInstructions.english}
 Provide practical and actionable advice in 2-4 sentences.`;
+
+        logAIPrompt('GEMINI FARMING ADVICE PROMPT', prompt, {
+            route: '/api/ai/gemini/farming-advice',
+            language
+        });
 
         const result = await genAI.models.generateContent({
             model: 'gemini-1.5-flash',

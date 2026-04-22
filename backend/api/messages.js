@@ -30,10 +30,17 @@ router.post('/', async (req, res) => {
             relatedMachineryId
         } = req.body;
 
-        if (!senderId || !receiverId || !content) {
+        const normalizedContent = typeof content === 'string' ? content.trim() : '';
+        if (!senderId || !receiverId || !normalizedContent) {
             return res.status(400).json({
                 success: false,
                 error: 'Missing required fields'
+            });
+        }
+        if (senderId === receiverId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Sender and receiver cannot be the same user'
             });
         }
 
@@ -43,11 +50,11 @@ router.post('/', async (req, res) => {
         const messageData = {
             conversationId,
             senderId,
-            senderName,
+            senderName: senderName || 'User',
             receiverId,
-            receiverName,
+            receiverName: receiverName || 'User',
             messageType,
-            content,
+            content: normalizedContent,
             attachments: attachments || [],
             relatedBookingId: relatedBookingId || null,
             relatedMachineryId: relatedMachineryId || null,

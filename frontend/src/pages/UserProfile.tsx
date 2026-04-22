@@ -72,6 +72,9 @@ export default function UserProfile() {
 
   const ownerId = user?._id || user?.id || '';
 
+  const getOtherParticipant = (conversation: any) =>
+    conversation?.participants?.find((p: any) => p.userId !== ownerId);
+
   // Fetch Data
   useEffect(() => {
     if (user) {
@@ -100,7 +103,7 @@ export default function UserProfile() {
     setIsMessagesLoading(true);
     try {
       // Find the other participant's ID
-      const otherParticipant = conversation.participants.find((p: any) => p.userId !== ownerId);
+      const otherParticipant = getOtherParticipant(conversation);
       if (otherParticipant) {
         const response = await messageService.getConversation(ownerId, otherParticipant.userId);
         if (response.success) {
@@ -130,7 +133,7 @@ export default function UserProfile() {
   const handleSendMessage = async () => {
     if (!messageText.trim() || !selectedConversation || !user) return;
 
-    const otherParticipant = selectedConversation.participants.find((p: any) => p.userId !== ownerId);
+    const otherParticipant = getOtherParticipant(selectedConversation);
     if (!otherParticipant) return;
 
     try {
@@ -171,10 +174,20 @@ export default function UserProfile() {
 
     if (tab === 'messages') {
       setActiveTab('messages');
-      if (otherId && conversations.length > 0) {
+      if (otherId) {
         const conv = conversations.find(c => c.participants.some((p: any) => p.userId === otherId));
         if (conv) {
           handleSelectConversation(conv);
+        } else if (ownerId) {
+          // Ensure composer appears even when first message is initiated via deep-link
+          setSelectedConversation({
+            conversationId: 'temp',
+            participants: [
+              { userId: ownerId, userName: user?.name || 'You' },
+              { userId: otherId, userName: 'Farmer/Owner' }
+            ]
+          });
+          setConversationMessages([]);
         }
       }
     }
@@ -194,7 +207,7 @@ export default function UserProfile() {
 
         // If a conversation is selected, refresh its messages too
         if (selectedConversation) {
-          const otherParticipant = selectedConversation.participants.find((p: any) => p.userId !== ownerId);
+          const otherParticipant = getOtherParticipant(selectedConversation);
           if (otherParticipant && selectedConversation.conversationId !== 'temp') {
             messageService.getConversation(ownerId, otherParticipant.userId).then(res => {
               if (res.success && res.data.length > 0) {
@@ -293,6 +306,7 @@ export default function UserProfile() {
   // Booking Actions
   const handleSelectBooking = async (booking: BookingSchema) => {
     const otherUserId = booking.renterId === ownerId ? booking.ownerId : booking.renterId;
+    const otherUserName = booking.renterId === ownerId ? booking.ownerName : booking.renterName;
 
     // Switch to messages tab
     setActiveTab('messages');
@@ -305,21 +319,22 @@ export default function UserProfile() {
     if (existingConversation) {
       handleSelectConversation(existingConversation);
     } else {
-      // If no conversation exists, we'll need to fetch it or wait for the list to update
-      // For now, let's just fetch messages directly with that user
+      // Always set a temp conversation immediately so input/send stays visible
+      setSelectedConversation({
+        conversationId: 'temp',
+        participants: [
+          { userId: ownerId, userName: user?.name || 'You' },
+          { userId: otherUserId, userName: otherUserName }
+        ]
+      });
+      setConversationMessages([]);
+
+      // Then try fetching existing history (if any)
       setIsMessagesLoading(true);
       try {
         const response = await messageService.getConversation(ownerId, otherUserId);
         if (response.success) {
           setConversationMessages(response.data);
-          // Create a "virtual" selected conversation for the UI
-          setSelectedConversation({
-            conversationId: 'temp',
-            participants: [
-              { userId: ownerId, userName: user?.name },
-              { userId: otherUserId, userName: booking.renterId === ownerId ? booking.ownerName : booking.renterName }
-            ]
-          });
         }
       } catch (error) {
         console.error('Error selecting booking conversation:', error);
@@ -350,7 +365,7 @@ export default function UserProfile() {
 
   const handleRejectBooking = async (bookingId: string) => {
     try {
-      const response = await bookingService.updateBookingStatus(bookingId, 'cancelled');
+      const response = await bookingService.updateBookingStatus(bookingId, 'rejected', 'Rejected by owner');
       if (response.success) {
         toast({ title: 'Success', description: 'Booking rejected' });
         fetchUserData();
@@ -1451,7 +1466,7 @@ export default function UserProfile() {
                       <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                         <MessageSquare className="w-8 h-8 opacity-20" />
                       </div>
-                      <h4 className="font-semibold text-foreground">AgriSmart Messaging</h4>
+                      <h4 className="font-semibold text-foreground">FarmConnect Messaging</h4>
                       <p className="max-w-xs text-sm mt-1">Select a conversation to view history and send messages.</p>
                     </div>
                   )}

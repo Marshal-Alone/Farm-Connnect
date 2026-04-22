@@ -31,6 +31,15 @@ export class CropAdvisoryService {
 
       const prompt = this.buildPrompt(cropContext, weatherContext);
 
+      // Verbose prompt logging for viva/debug visibility
+      console.log('\n================ WEATHER ADVISORY AI PROMPT (START) ================');
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      console.log(`Crops Count: ${Array.isArray(crops) ? crops.length : 0}`);
+      console.log(`Recent Actions Count: ${Array.isArray(cropActions) ? cropActions.length : 0}`);
+      console.log('Prompt sent to Groq:');
+      console.log(prompt);
+      console.log('================ WEATHER ADVISORY AI PROMPT (END) ==================\n');
+
       console.log('Calling Groq for crop advisory...');
 
       const message = await this.client.chat.completions.create({
@@ -112,6 +121,17 @@ export class CropAdvisoryService {
     }
 
     let context = 'Current & Forecast Weather:\n';
+
+    if (weatherData.location) {
+      context += `\nLocation:
+  - Name: ${weatherData.location.name || 'unknown'}
+  - Region: ${weatherData.location.region || 'unknown'}
+  - Country: ${weatherData.location.country || 'unknown'}
+  - Latitude: ${weatherData.location.lat ?? 'unknown'}
+  - Longitude: ${weatherData.location.lon ?? 'unknown'}
+  - Timezone: ${weatherData.location.timezone || 'unknown'}
+  - Local Time: ${weatherData.location.localtime || 'unknown'}`;
+    }
 
     if (weatherData.current) {
       context += `\nCurrent Conditions:

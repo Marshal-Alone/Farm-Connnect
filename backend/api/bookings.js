@@ -1,8 +1,20 @@
 import express from 'express';
 import { getDatabase, collections } from '../config/database.js';
 import { ObjectId } from 'mongodb';
+import { authenticateToken } from './users.js';
 
 const router = express.Router();
+
+const ALLOWED_PAYMENT_MODES = new Set(['demo', 'razorpay', 'cash']);
+const ALLOWED_STATUSES = new Set(['pending', 'confirmed', 'rejected', 'in-progress', 'completed', 'cancelled']);
+const TRANSITIONS = {
+    pending: new Set(['confirmed', 'rejected', 'cancelled']),
+    confirmed: new Set(['in-progress', 'cancelled']),
+    'in-progress': new Set(['completed', 'cancelled']),
+    completed: new Set([]),
+    rejected: new Set([]),
+    cancelled: new Set([])
+};
 
 // Helper function to generate booking number
 function generateBookingNumber() {
@@ -20,9 +32,25 @@ function calculateDays(startDate, endDate) {
     return diffDays || 1; // Minimum 1 day
 }
 
+function toDateSafe(value) {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function overlapCondition(start, end) {
+    return {
+        startDate: { $lte: end },
+        endDate: { $gte: start }
+    };
+}
+
+function assertObjectId(value) {
+    return typeof value === 'string' && ObjectId.isValid(value);
+}
+
 // POST /api/bookings - Create new booking
-router.post('/', async (req, res) => {
-    console.log('📋 [POST /api/bookings] Request received', { machineryId: req.body.machineryId, renterId: req.body.renterId, startDate: req.body.startDate, endDate: req.body.endDate, timestamp: new Date().toISOString() });
+router.post('/', authenticateToken, async (req, res) => {
+    console.log('📋 [POST /api/bookings] Request received', { machineryId: req.body.machineryId, renterIdFromToken: req.user?.userId, startDate: req.body.startDate, endDate: req.body.endDate, timestamp: new Date().toISOString() });
     try {
         const db = await getDatabase();
         const bookingsCollection = db.collection(collections.bookings);
@@ -30,7 +58,6 @@ router.post('/', async (req, res) => {
 
         const {
             machineryId,
-            renterId,
             renterName,
             renterPhone,
             renterEmail,
@@ -44,12 +71,50 @@ router.post('/', async (req, res) => {
         } = req.body;
 
         // Validate required fields
-        if (!machineryId || !renterId || !startDate || !endDate) {
+        if (!machineryId || !startDate || !endDate) {
             return res.status(400).json({
                 success: false,
                 error: 'Missing required fields'
             });
         }
+
+        if (!assertObjectId(machineryId)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid machinery ID'
+            });
+        }
+
+        const requestStart = toDateSafe(startDate);
+        const requestEnd = toDateSafe(endDate);
+        if (!requestStart || !requestEnd) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid startDate or endDate'
+            });
+        }
+        if (requestEnd < requestStart) {
+            return res.status(400).json({
+                success: false,
+                error: 'End date must be greater than or equal to start date'
+            });
+        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (requestStart < today) {
+            return res.status(400).json({
+                success: false,
+                error: 'Start date cannot be in the past'
+            });
+        }
+        if (!ALLOWED_PAYMENT_MODES.has(paymentMode)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid payment mode'
+            });
+        }
+
+        const renterId = req.user.userId;
 
         // Get machinery details
         const machinery = await machineryCollection.findOne({
@@ -70,23 +135,6 @@ router.post('/', async (req, res) => {
             });
         }
 
-        // Check date availability
-        const requestStart = new Date(startDate);
-        const requestEnd = new Date(endDate);
-
-        const isBooked = machinery.bookedDates.some(booking => {
-            const bookingStart = new Date(booking.startDate);
-            const bookingEnd = new Date(booking.endDate);
-            return (requestStart <= bookingEnd && requestEnd >= bookingStart);
-        });
-
-        if (isBooked) {
-            return res.status(400).json({
-                success: false,
-                error: 'Machinery is already booked for selected dates'
-            });
-        }
-
         // Calculate pricing
         const totalDays = calculateDays(startDate, endDate);
         const totalAmount = machinery.pricePerDay * totalDays;
@@ -98,6 +146,37 @@ router.post('/', async (req, res) => {
         const finalAmount = totalAmount + deliveryCharge + securityDeposit - discount;
 
         // Create booking
+        const bookingId = new ObjectId();
+        const bookedSlot = {
+            startDate: requestStart,
+            endDate: requestEnd,
+            bookingId: bookingId.toString()
+        };
+
+        // Reserve slot using atomic conditional update to avoid race overlap
+        const reserveResult = await machineryCollection.updateOne(
+            {
+                _id: new ObjectId(machineryId),
+                available: true,
+                $or: [
+                    { bookedDates: { $exists: false } },
+                    { bookedDates: { $size: 0 } },
+                    { bookedDates: { $not: { $elemMatch: overlapCondition(requestStart, requestEnd) } } }
+                ]
+            },
+            {
+                $push: { bookedDates: bookedSlot },
+                $inc: { totalBookings: 1 }
+            }
+        );
+
+        if (reserveResult.matchedCount === 0 || reserveResult.modifiedCount === 0) {
+            return res.status(409).json({
+                success: false,
+                error: 'Machinery is already booked for selected dates'
+            });
+        }
+
         const bookingData = {
             bookingNumber: generateBookingNumber(),
             machineryId: machineryId,
@@ -109,8 +188,8 @@ router.post('/', async (req, res) => {
             renterName,
             renterPhone,
             renterEmail,
-            startDate: new Date(startDate),
-            endDate: new Date(endDate),
+            startDate: requestStart,
+            endDate: requestEnd,
             totalDays,
             pricePerDay: machinery.pricePerDay,
             totalAmount,
@@ -122,10 +201,10 @@ router.post('/', async (req, res) => {
             deliveryAddress: deliveryAddress || null,
             pickupRequired: false,
             status: 'pending', // Always start as pending for owner approval
-            paymentStatus: paymentMode === 'demo' ? 'paid' : 'pending',
+            paymentStatus: 'pending',
             paymentMode,
-            paidAmount: paymentMode === 'demo' ? finalAmount : 0,
-            pendingAmount: paymentMode === 'demo' ? 0 : finalAmount,
+            paidAmount: 0,
+            pendingAmount: finalAmount,
             purpose: purpose || null,
             specialRequirements: specialRequirements || null,
             createdAt: new Date(),
@@ -133,30 +212,30 @@ router.post('/', async (req, res) => {
             reviewSubmitted: false
         };
 
-        // Note: Removed auto-confirmation - owner must approve all bookings
+        // Note: owner approval + payment confirmation happen in subsequent steps
 
-        const result = await bookingsCollection.insertOne(bookingData);
+        try {
+            await bookingsCollection.insertOne({
+                _id: bookingId,
+                ...bookingData
+            });
+        } catch (insertError) {
+            // Rollback reserved slot if booking document creation fails
+            await machineryCollection.updateOne(
+                { _id: new ObjectId(machineryId) },
+                {
+                    $pull: { bookedDates: { bookingId: bookingId.toString() } },
+                    $inc: { totalBookings: -1 }
+                }
+            );
+            throw insertError;
+        }
 
-        // Update machinery booked dates
-        await machineryCollection.updateOne(
-            { _id: new ObjectId(machineryId) },
-            {
-                $push: {
-                    bookedDates: {
-                        startDate: new Date(startDate),
-                        endDate: new Date(endDate),
-                        bookingId: result.insertedId.toString()
-                    }
-                },
-                $inc: { totalBookings: 1 }
-            }
-        );
-
-        console.log('✅ [POST /api/bookings] Success', { bookingId: result.insertedId, bookingNumber: bookingData.bookingNumber, machineryId: machineryId, finalAmount: bookingData.finalAmount, timestamp: new Date().toISOString() });
+        console.log('✅ [POST /api/bookings] Success', { bookingId: bookingId, bookingNumber: bookingData.bookingNumber, machineryId: machineryId, finalAmount: bookingData.finalAmount, timestamp: new Date().toISOString() });
         res.status(201).json({
             success: true,
             data: {
-                _id: result.insertedId,
+                _id: bookingId,
                 ...bookingData
             }
         });
@@ -167,7 +246,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/bookings/user/:userId - Get user's bookings
-router.get('/user/:userId', async (req, res) => {
+router.get('/user/:userId', authenticateToken, async (req, res) => {
     try {
         const { userId } = req.params;
         const { status, page = 1, limit = 10 } = req.query;
@@ -177,6 +256,13 @@ router.get('/user/:userId', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: 'User ID is required'
+            });
+        }
+
+        if (req.user.userId !== userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Unauthorized to view these bookings'
             });
         }
 
@@ -216,10 +302,17 @@ router.get('/user/:userId', async (req, res) => {
 });
 
 // GET /api/bookings/owner/:ownerId - Get owner's booking requests
-router.get('/owner/:ownerId', async (req, res) => {
+router.get('/owner/:ownerId', authenticateToken, async (req, res) => {
     try {
         const { ownerId } = req.params;
         const { status, page = 1, limit = 10 } = req.query;
+
+        if (req.user.userId !== ownerId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Unauthorized to view these bookings'
+            });
+        }
 
         const db = await getDatabase();
         const bookingsCollection = db.collection(collections.bookings);
@@ -257,11 +350,18 @@ router.get('/owner/:ownerId', async (req, res) => {
 });
 
 // GET /api/bookings/:id - Get single booking
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const db = await getDatabase();
         const bookingsCollection = db.collection(collections.bookings);
+
+        if (!assertObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid booking ID'
+            });
+        }
 
         const booking = await bookingsCollection.findOne({
             _id: new ObjectId(id)
@@ -271,6 +371,13 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Booking not found'
+            });
+        }
+
+        if (booking.ownerId !== req.user.userId && booking.renterId !== req.user.userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Unauthorized to view this booking'
             });
         }
 
@@ -285,14 +392,75 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT /api/bookings/:id/status - Update booking status
-router.put('/:id/status', async (req, res) => {
+router.put('/:id/status', authenticateToken, async (req, res) => {
     console.log('📋 [PUT /api/bookings/:id/status] Request received', { bookingId: req.params.id, newStatus: req.body.status, timestamp: new Date().toISOString() });
     try {
         const { id } = req.params;
         const { status, reason } = req.body;
+        if (!assertObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid booking ID'
+            });
+        }
+        if (!ALLOWED_STATUSES.has(status)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid booking status'
+            });
+        }
 
         const db = await getDatabase();
         const bookingsCollection = db.collection(collections.bookings);
+        const machineryCollection = db.collection(collections.machinery);
+
+        const booking = await bookingsCollection.findOne({ _id: new ObjectId(id) });
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                error: 'Booking not found'
+            });
+        }
+
+        // Ownership/role guards
+        const isOwner = booking.ownerId === req.user.userId;
+        const isRenter = booking.renterId === req.user.userId;
+        if (!isOwner && !isRenter) {
+            return res.status(403).json({
+                success: false,
+                error: 'Unauthorized to update this booking'
+            });
+        }
+
+        // Owner controls approve/reject/start/complete; renter can only cancel own booking
+        if ((status === 'confirmed' || status === 'rejected' || status === 'in-progress' || status === 'completed') && !isOwner) {
+            return res.status(403).json({
+                success: false,
+                error: 'Only owner can perform this status update'
+            });
+        }
+        if (status === 'cancelled' && !isOwner && !isRenter) {
+            return res.status(403).json({
+                success: false,
+                error: 'Only owner or renter can cancel this booking'
+            });
+        }
+
+        // Payment constraint: only paid booking can become confirmed
+        if (status === 'confirmed' && booking.paymentStatus !== 'paid') {
+            return res.status(400).json({
+                success: false,
+                error: 'Booking cannot be confirmed before payment is completed'
+            });
+        }
+
+        // Transition guard
+        if (!TRANSITIONS[booking.status]?.has(status)) {
+            return res.status(400).json({
+                success: false,
+                error: `Invalid status transition: ${booking.status} -> ${status}`
+            });
+        }
 
         const updateData = {
             status,
@@ -316,11 +484,15 @@ router.put('/:id/status', async (req, res) => {
             { $set: updateData }
         );
 
-        if (result.matchedCount === 0) {
-            return res.status(404).json({
-                success: false,
-                error: 'Booking not found'
-            });
+        // Release reserved slot on cancellation/rejection
+        if (status === 'cancelled' || status === 'rejected') {
+            await machineryCollection.updateOne(
+                { _id: new ObjectId(booking.machineryId) },
+                {
+                    $pull: { bookedDates: { bookingId: id } },
+                    $inc: { totalBookings: -1 }
+                }
+            );
         }
 
         console.log('✅ [PUT /api/bookings/:id/status] Success', { bookingId: id, newStatus: status, modifiedCount: result.modifiedCount, timestamp: new Date().toISOString() });
@@ -335,7 +507,7 @@ router.put('/:id/status', async (req, res) => {
 });
 
 // POST /api/bookings/:id/payment - Process payment
-router.post('/:id/payment', async (req, res) => {
+router.post('/:id/payment', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const {
@@ -345,6 +517,19 @@ router.post('/:id/payment', async (req, res) => {
             razorpaySignature,
             amount
         } = req.body;
+
+        if (!assertObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid booking ID'
+            });
+        }
+        if (!ALLOWED_PAYMENT_MODES.has(paymentMode)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid payment mode'
+            });
+        }
 
         const db = await getDatabase();
         const bookingsCollection = db.collection(collections.bookings);
@@ -357,6 +542,24 @@ router.post('/:id/payment', async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Booking not found'
+            });
+        }
+        if (booking.renterId !== req.user.userId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Only renter can process this payment'
+            });
+        }
+        if (booking.paymentStatus === 'paid') {
+            return res.status(400).json({
+                success: false,
+                error: 'Payment already completed for this booking'
+            });
+        }
+        if (booking.status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                error: 'Payment can only be processed for pending bookings'
             });
         }
 
@@ -378,7 +581,7 @@ router.post('/:id/payment', async (req, res) => {
 
             return res.json({
                 success: true,
-                message: 'Payment processed successfully (Demo mode)'
+                message: 'Payment processed successfully (Demo mode). Booking confirmed.'
             });
         }
 
@@ -392,8 +595,8 @@ router.post('/:id/payment', async (req, res) => {
                     razorpayOrderId,
                     razorpayPaymentId,
                     razorpaySignature,
-                    paidAmount: amount,
-                    pendingAmount: booking.finalAmount - amount,
+                    paidAmount: amount || booking.finalAmount,
+                    pendingAmount: Math.max(0, booking.finalAmount - (amount || booking.finalAmount)),
                     status: 'confirmed',
                     confirmedAt: new Date(),
                     updatedAt: new Date()
@@ -412,10 +615,16 @@ router.post('/:id/payment', async (req, res) => {
 });
 
 // DELETE /api/bookings/:id - Cancel booking
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { reason, cancelledBy } = req.body;
+        if (!assertObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid booking ID'
+            });
+        }
 
         const db = await getDatabase();
         const bookingsCollection = db.collection(collections.bookings);
@@ -431,6 +640,20 @@ router.delete('/:id', async (req, res) => {
                 error: 'Booking not found'
             });
         }
+        const isOwner = booking.ownerId === req.user.userId;
+        const isRenter = booking.renterId === req.user.userId;
+        if (!isOwner && !isRenter) {
+            return res.status(403).json({
+                success: false,
+                error: 'Unauthorized to cancel this booking'
+            });
+        }
+        if (!['pending', 'confirmed'].includes(booking.status)) {
+            return res.status(400).json({
+                success: false,
+                error: `Cannot cancel booking in ${booking.status} state`
+            });
+        }
 
         // Update booking status
         await bookingsCollection.updateOne(
@@ -438,8 +661,8 @@ router.delete('/:id', async (req, res) => {
             {
                 $set: {
                     status: 'cancelled',
-                    cancellationReason: reason,
-                    cancelledBy,
+                    cancellationReason: reason || 'Cancelled by user',
+                    cancelledBy: cancelledBy || (isOwner ? 'owner' : 'renter'),
                     cancelledAt: new Date(),
                     updatedAt: new Date()
                 }
@@ -452,7 +675,8 @@ router.delete('/:id', async (req, res) => {
             {
                 $pull: {
                     bookedDates: { bookingId: id }
-                }
+                },
+                $inc: { totalBookings: -1 }
             }
         );
 
