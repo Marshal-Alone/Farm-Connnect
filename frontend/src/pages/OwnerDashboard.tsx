@@ -230,15 +230,15 @@ export default function OwnerDashboard() {
                 url="https://farmbro.vercel.app/owner/dashboard"
             />
             <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
-                <div className="container mx-auto px-4 py-8">
-                    <div className="flex items-center justify-between mb-8">
+                <div className="container mx-auto py-6 sm:py-8">
+                    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h1 className="text-4xl font-bold">Owner Dashboard</h1>
+                            <h1 className="mobile-title">Owner Dashboard</h1>
                             <p className="text-muted-foreground mt-2">Manage your machinery and bookings</p>
                         </div>
                         <Button
                             onClick={() => navigate('/machinery/add')}
-                            className="bg-green-600 hover:bg-green-700"
+                            className="tap-target bg-green-600 hover:bg-green-700"
                         >
                             <Plus className="h-4 w-4 mr-2" />
                             Add Machinery
@@ -298,7 +298,7 @@ export default function OwnerDashboard() {
 
                     {/* Tabs */}
                     <Tabs defaultValue="machinery" className="space-y-6">
-                        <TabsList>
+                        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
                             <TabsTrigger value="machinery">My Machinery</TabsTrigger>
                             <TabsTrigger value="bookings">Booking Requests</TabsTrigger>
                             <TabsTrigger value="messages">Messages</TabsTrigger>

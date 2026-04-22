@@ -10,6 +10,7 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, '..', '.env') });
 
 import cors from 'cors';
+import { initializeCollections } from './config/database.js';
 
 // Import API routes
 import machineryRoutes from './api/machinery.js';
@@ -20,6 +21,8 @@ import weatherRoutes from './api/weather.js';
 import diseasesRoutes from './api/diseases.js';
 import schemesRoutes from './api/schemes.js';
 import aiRoutes from './api/ai.js';
+import cropsRoutes from './api/crops.js';
+import weatherAdvisoryRoutes from './api/weatherAdvisory.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 4174;
@@ -68,6 +71,8 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/diseases', diseasesRoutes);
 app.use('/api/schemes', schemesRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/crops', cropsRoutes);
+app.use('/api/weather-advice', weatherAdvisoryRoutes);
 
 // Serve static files from frontend/dist directory
 app.use(express.static(join(__dirname, '..', 'frontend', 'dist')));
@@ -134,12 +139,20 @@ app.get('*', (req, res) => {
     res.sendFile(join(__dirname, '..', 'frontend', 'dist', 'index.html'));
 });
 
-app.listen(PORT, () => {
-    console.log(`✅ Server running on port ${PORT}`);
-    console.log(`📊 Health endpoint: http://localhost:${PORT}/api/health`);
-    console.log(`💓 Ping endpoint: http://localhost:${PORT}/api/ping`);
-    console.log(`🚜 Machinery API: http://localhost:${PORT}/api/machinery`);
-    console.log(`📅 Bookings API: http://localhost:${PORT}/api/bookings`);
-    console.log(`💬 Messages API: http://localhost:${PORT}/api/messages`);
+app.listen(PORT, async () => {
+    try {
+        // Initialize database collections and indexes
+        await initializeCollections();
+        
+        console.log(`✅ Server running on port ${PORT}`);
+        console.log(`📊 Health endpoint: http://localhost:${PORT}/api/health`);
+        console.log(`💓 Ping endpoint: http://localhost:${PORT}/api/ping`);
+        console.log(`🚜 Machinery API: http://localhost:${PORT}/api/machinery`);
+        console.log(`📅 Bookings API: http://localhost:${PORT}/api/bookings`);
+        console.log(`💬 Messages API: http://localhost:${PORT}/api/messages`);
+    } catch (error) {
+        console.error('Failed to initialize database:', error);
+        process.exit(1);
+    }
 });
 

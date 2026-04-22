@@ -124,6 +124,40 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  [role="button"],
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+}
+
+@layer components {
+  .mobile-page {
+    @apply min-h-screen px-4 py-6 sm:px-6 sm:py-8;
+  }
+
+  .mobile-section {
+    @apply rounded-xl border bg-card p-4 sm:p-6;
+  }
+
+  .mobile-title {
+    @apply text-2xl font-bold leading-tight sm:text-3xl md:text-4xl;
+  }
+
+  .mobile-subtitle {
+    @apply text-sm text-muted-foreground sm:text-base;
+  }
+
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

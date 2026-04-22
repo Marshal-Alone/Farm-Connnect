@@ -4,12 +4,14 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Wind, Droplets, Sun, Eye, Sunrise, Sunset,
   RefreshCw, Globe, Search, MapPin, Star, X, ChevronDown,
-  Bug, AlertTriangle, CheckCircle
+  Bug, AlertTriangle, CheckCircle, Leaf, ArrowRight
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AIWeatherAdvisory } from '@/components/AIWeatherAdvisory';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -598,6 +600,7 @@ function useMultipleWeather(locations: { name: string; lat: number; lon: number 
 const DEFAULT_LOCATION = { name: 'Delhi', lat: 28.6139, lon: 77.209, admin1: 'Delhi', country: 'India' };
 
 export default function IndianFarmerWeatherDashboard() {
+  const navigate = useNavigate();
   const { preferences, loaded, setLanguage, saveLocation, removeLocation, setLastLocation } = useLocalStorage();
   const [currentLocation, setCurrentLocation] = useState(preferences.lastLocation || DEFAULT_LOCATION);
   const [searchQuery, setSearchQuery] = useState('');
@@ -743,7 +746,7 @@ export default function IndianFarmerWeatherDashboard() {
 
         {/* Main Content */}
         {data && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
             {/* Left Column */}
             <div className="space-y-4">
@@ -805,7 +808,7 @@ export default function IndianFarmerWeatherDashboard() {
             </div>
 
             {/* Right Column */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="space-y-4 lg:col-span-2">
 
               {/* Today's Highlights */}
               <Card>
@@ -900,45 +903,29 @@ export default function IndianFarmerWeatherDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Farming Advisory */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Crop Advisory */}
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-green-100 rounded-lg">
-                      <CheckCircle size={16} className="text-green-600" />
-                    </div>
-                    <span className="font-medium text-sm">{t.cropAdvisory}</span>
-                  </div>
-                  <p className="text-sm text-green-700">{t.sowingAdvice}</p>
-                </div>
+              {/* Farming Advisory - Now AI-Powered */}
+              <AIWeatherAdvisory weatherData={data} />
 
-                {/* Irrigation */}
-                <div className={`${data.daily[0]?.precipitationProbability > 50 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'} border rounded-lg p-3`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-1.5 ${data.daily[0]?.precipitationProbability > 50 ? 'bg-blue-100' : 'bg-orange-100'} rounded-lg`}>
-                      <Droplets size={16} className={data.daily[0]?.precipitationProbability > 50 ? 'text-blue-600' : 'text-orange-600'} />
+              {/* Crop Management Link */}
+              <Card className="bg-gradient-to-r from-green-50 to-green-100 border border-green-300 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/crops')}>
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-green-500 rounded-lg flex-shrink-0">
+                      <Leaf className="text-white" size={24} />
                     </div>
-                    <span className="font-medium text-sm">{t.irrigationAlert}</span>
-                  </div>
-                  <p className={`text-sm ${data.daily[0]?.precipitationProbability > 50 ? 'text-blue-700' : 'text-orange-700'}`}>
-                    {data.daily[0]?.precipitationProbability > 50 ? t.skipIrrigation : t.waterToday}
-                  </p>
-                </div>
-
-                {/* Pest Alert */}
-                <div className={`${data.current.humidity > 80 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'} border rounded-lg p-3`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-1.5 ${data.current.humidity > 80 ? 'bg-red-100' : 'bg-green-100'} rounded-lg`}>
-                      <Bug size={16} className={data.current.humidity > 80 ? 'text-red-600' : 'text-green-600'} />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 text-lg mb-1">Manage Your Crops</h3>
+                      <p className="text-gray-700 text-sm mb-3">
+                        Track your crop lifecycle, log farming actions, and get AI-powered recommendations based on weather and crop data.
+                      </p>
+                      <div className="flex items-center gap-2 text-green-600 font-semibold text-sm group">
+                        Go to Crop Management
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
-                    <span className="font-medium text-sm">{t.pestAlert}</span>
                   </div>
-                  <p className={`text-sm ${data.current.humidity > 80 ? 'text-red-700' : 'text-green-700'}`}>
-                    {data.current.humidity > 80 ? t.fungalRisk : t.noPestRisk}
-                  </p>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         )}

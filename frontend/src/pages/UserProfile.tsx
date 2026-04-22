@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +24,7 @@ import { getModelConfig, saveModelConfig, ModelConfig } from '@/lib/ai';
 import SEO from '@/components/SEO';
 
 export default function UserProfile() {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { toast } = useToast();
 
@@ -285,8 +287,7 @@ export default function UserProfile() {
   };
 
   const handleEditMachinery = (machineryId: string) => {
-    // Navigate to edit page - using window.location for now
-    window.location.href = `/machinery/edit/${machineryId}`;
+    navigate(`/machinery/edit/${machineryId}`);
   };
 
   // Booking Actions
@@ -413,7 +414,7 @@ export default function UserProfile() {
               <CardDescription>Please log in to access your profile</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" size="lg" onClick={() => window.location.href = '/'}>
+              <Button className="w-full" size="lg" onClick={() => navigate('/')}>
                 <User className="w-4 h-4 mr-2" />
                 Go to Login
               </Button>
@@ -574,7 +575,7 @@ export default function UserProfile() {
                         <p className="text-sm text-muted-foreground">The amazing people behind FarmConnect</p>
                       </div>
                     </div>
-                    <Button onClick={() => window.location.href = '/team'} className="w-full md:w-auto">
+                    <Button onClick={() => navigate('/team')} className="w-full md:w-auto">
                       <Globe className="w-4 h-4 mr-2" />
                       View Team
                     </Button>
@@ -805,7 +806,7 @@ export default function UserProfile() {
                         : `No ${bookingFilter} bookings found`}
                     </p>
                     {bookingFilter === 'all' && (
-                      <Button onClick={() => window.location.href = '/machinery'}>
+                      <Button onClick={() => navigate('/machinery')}>
                         <Plus className="w-4 h-4 mr-2" />
                         Browse Machinery
                       </Button>
@@ -983,7 +984,7 @@ export default function UserProfile() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={(e) => { e.stopPropagation(); window.location.href = `/machinery/${booking.machineryId}`; }}
+                              onClick={(e) => { e.stopPropagation(); navigate(`/machinery/${booking.machineryId}`); }}
                             >
                               <Package className="w-4 h-4 mr-1" />
                               View Machinery
@@ -1050,7 +1051,7 @@ export default function UserProfile() {
                       <h2 className="text-2xl font-bold">My Machinery</h2>
                       <p className="text-muted-foreground">Manage your equipment listings</p>
                     </div>
-                    <Button onClick={() => window.location.href = '/machinery/add'}>
+                    <Button onClick={() => navigate('/machinery/add')}>
                       <Plus className="w-4 h-4 mr-2" />
                       Add Machinery
                     </Button>
@@ -1062,7 +1063,7 @@ export default function UserProfile() {
                         <Package className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
                         <h3 className="text-lg font-medium mb-2">No Machinery Listed</h3>
                         <p className="text-muted-foreground mb-6">Start earning by listing your equipment</p>
-                        <Button onClick={() => window.location.href = '/machinery/add'}>
+                        <Button onClick={() => navigate('/machinery/add')}>
                           <Plus className="w-4 h-4 mr-2" />
                           Add Your First Equipment
                         </Button>
@@ -1132,7 +1133,7 @@ export default function UserProfile() {
                     </div>
                     <Button
                       className="gap-2 bg-primary hover:bg-primary/90"
-                      onClick={() => window.location.href = '/owner/dashboard'}
+                      onClick={() => navigate('/owner/dashboard')}
                     >
                       <BarChart3 className="w-4 h-4" />
                       Open Full Dashboard
@@ -1322,7 +1323,7 @@ export default function UserProfile() {
             </TabsContent>
 
             {/* Unified Messaging Tab */}
-            <TabsContent value="messages" className="space-y-0 h-[600px] border rounded-xl overflow-hidden bg-card shadow-sm">
+            <TabsContent value="messages" className="space-y-0 min-h-[65vh] border rounded-xl overflow-hidden bg-card shadow-sm md:h-[600px]">
               <div className="grid grid-cols-1 md:grid-cols-12 h-full">
                 {/* Conversations List */}
                 <div className={`md:col-span-4 border-r bg-muted/20 flex flex-col h-full ${selectedConversation ? 'hidden md:flex' : 'flex'}`}>

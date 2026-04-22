@@ -175,13 +175,13 @@ export default function KisanBazaar() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto py-6 sm:py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+          <h1 className="mobile-title mb-3 text-foreground">
             🛒 Kisan Bazaar
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="mobile-subtitle mx-auto max-w-2xl">
             Direct farmer-to-farmer marketplace for agricultural products
           </p>
         </div>
@@ -219,7 +219,7 @@ export default function KisanBazaar() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <TabsList className="grid w-full max-w-md grid-cols-3">
               <TabsTrigger value="buy">Buy Products</TabsTrigger>
               <TabsTrigger value="sell">Sell Products</TabsTrigger>
@@ -227,7 +227,7 @@ export default function KisanBazaar() {
             </TabsList>
             
             {user && (
-              <Button>
+              <Button className="tap-target">
                 <Plus className="h-4 w-4 mr-2" />
                 List Product
               </Button>

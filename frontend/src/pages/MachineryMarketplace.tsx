@@ -90,19 +90,19 @@ export default function MachineryMarketplace() {
         url="https://farmbro.vercel.app/machinery"
       />
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto py-6 sm:py-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
+            <h1 className="mobile-title mb-3 text-foreground">
               🚜 Machinery Marketplace
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="mobile-subtitle mx-auto max-w-2xl">
               Rent agricultural machinery from fellow farmers in your area
             </p>
           </div>
 
           {/* Search and Filters */}
-          <div className="bg-card rounded-lg shadow-sm border p-6 mb-8">
+          <div className="mobile-section mb-8 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -158,11 +158,11 @@ export default function MachineryMarketplace() {
 
               <Button
                 variant="outline"
-                className="w-full"
-                onClick={() => navigate('/machinery/calendar')}
+                className="w-full tap-target"
+                onClick={() => navigate('/bookings')}
               >
                 <Calendar className="h-4 w-4 mr-2" />
-                Select Dates
+                View My Bookings
               </Button>
             </div>
           </div>

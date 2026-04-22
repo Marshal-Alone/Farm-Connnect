@@ -115,14 +115,14 @@ export default function BookingHistory() {
                 url="https://farmbro.vercel.app/bookings"
             />
             <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
-                <div className="container mx-auto px-4 py-8">
+                <div className="container mx-auto py-6 sm:py-8">
                     <div className="mb-8">
-                        <h1 className="text-4xl font-bold mb-2">My Bookings</h1>
+                        <h1 className="mobile-title mb-2">My Bookings</h1>
                         <p className="text-muted-foreground">View and manage your machinery rental bookings</p>
                     </div>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-                        <TabsList>
+                        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
                             <TabsTrigger value="all">All</TabsTrigger>
                             <TabsTrigger value="pending">Pending</TabsTrigger>
                             <TabsTrigger value="confirmed">Confirmed</TabsTrigger>

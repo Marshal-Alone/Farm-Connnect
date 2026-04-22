@@ -7,7 +7,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Layout from "@/components/Layout";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import OfflineIndicator from "@/components/OfflineIndicator";
-import { useEffect } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import HomePage from "./pages/HomePage";
@@ -16,7 +15,7 @@ import MachineryDetail from "./pages/MachineryDetail";
 import BookingHistory from "./pages/BookingHistory";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import MachineryForm from "./pages/MachineryForm";
-
+import CropManagement from "./pages/CropManagement";
 import Weather from "./pages/Weather";
 import MachineryMarketplace from "./pages/MachineryMarketplace";
 import GovernmentSchemes from "./pages/GovernmentSchemes";
@@ -28,22 +27,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        const swUrl = `${window.location.origin}/sw.js`;
-        navigator.serviceWorker
-          .register(swUrl)
-          .then((registration) => {
-            console.log('SW registered: ', registration);
-          })
-          .catch((registrationError) => {
-            console.log('SW registration failed: ', registrationError);
-          });
-      });
-    }
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -57,7 +40,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/disease-detection" element={<DiseaseDetection />} />
-
+                <Route path="/crops" element={<CropManagement />} />
                 <Route path="/weather" element={<Weather />} />
                 <Route path="/machinery" element={<MachineryMarketplace />} />
                 <Route path="/machinery/:id" element={<MachineryDetail />} />

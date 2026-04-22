@@ -8,23 +8,47 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+const PROMPT_DISMISS_KEY = "farmconnect_install_prompt_dismissed_at";
+const PROMPT_COOLDOWN_MS = 1000 * 60 * 60 * 24 * 3;
+
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [showIosHint, setShowIosHint] = useState(false);
+
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const dismissedAt = Number(localStorage.getItem(PROMPT_DISMISS_KEY) || 0);
+  const canShowPrompt = Date.now() - dismissedAt > PROMPT_COOLDOWN_MS;
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowPrompt(true);
+      if (canShowPrompt && !isStandalone) {
+        setShowPrompt(true);
+      }
+    };
+
+    const handleAppInstalled = () => {
+      setShowPrompt(false);
+      setShowIosHint(false);
+      setDeferredPrompt(null);
+      localStorage.removeItem(PROMPT_DISMISS_KEY);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    if (!isStandalone && isIos && canShowPrompt) {
+      setShowIosHint(true);
+    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, []);
+  }, [canShowPrompt, isIos, isStandalone]);
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
@@ -39,12 +63,12 @@ export default function PWAInstallPrompt() {
   };
 
   const handleDismiss = () => {
+    localStorage.setItem(PROMPT_DISMISS_KEY, Date.now().toString());
     setShowPrompt(false);
+    setShowIosHint(false);
   };
 
-  if (!showPrompt || !deferredPrompt) {
-    return null;
-  }
+  if (!showPrompt && !showIosHint) return null;
 
   return (
     <Card className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-sm bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90 border shadow-lg md:left-auto md:right-4 md:max-w-xs">
@@ -56,7 +80,9 @@ export default function PWAInstallPrompt() {
             </div>
             <div>
               <h3 className="font-semibold text-sm">Install App</h3>
-              <p className="text-xs text-muted-foreground">Add to home screen</p>
+              <p className="text-xs text-muted-foreground">
+                {showIosHint ? "Use Safari Share > Add to Home Screen" : "Add to home screen"}
+              </p>
             </div>
           </div>
           <Button
@@ -69,16 +95,27 @@ export default function PWAInstallPrompt() {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          Install FarmConnect for quick access and offline features.
+          Install FarmConnect for quick access, better mobile performance, and offline use.
         </p>
         <div className="flex space-x-2">
-          <Button
-            onClick={handleInstall}
-            size="sm"
-            className="flex-1 text-xs"
-          >
-            Install
-          </Button>
+          {!showIosHint && deferredPrompt ? (
+            <Button
+              onClick={handleInstall}
+              size="sm"
+              className="flex-1 text-xs"
+            >
+              Install
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="flex-1 text-xs"
+              onClick={() => setShowIosHint(false)}
+            >
+              Got it
+            </Button>
+          )}
           <Button
             onClick={handleDismiss}
             variant="outline"

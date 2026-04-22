@@ -7,7 +7,6 @@ import HowItWorks from "@/components/homepage/HowItWorks";
 import TechStack from "@/components/homepage/TechStack";
 import ProblemSolution from "@/components/homepage/ProblemSolution";
 import CTASection from "@/components/homepage/CTASection";
-import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 
 export default function HomePage() {
@@ -28,7 +27,6 @@ export default function HomePage() {
                 <ImpactMetrics />
                 <EasyAccess />
                 <CTASection />
-                <Footer />
             </div>
         </>
     );

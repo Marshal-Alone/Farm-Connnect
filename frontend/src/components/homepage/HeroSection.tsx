@@ -59,19 +59,31 @@ export default function HeroSection() {
             </div>
 
             {/* 3 Quick Badges */}
-            <div className="flex flex-wrap gap-3 sm:gap-4 py-4">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 sm:px-4 py-2 rounded-lg border border-white/20">
+            <div className="grid grid-cols-2 gap-3 py-4 sm:flex sm:flex-wrap sm:gap-4">
+              <button
+                type="button"
+                onClick={() => navigate("/disease-detection")}
+                className="tap-target flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-left backdrop-blur-md transition hover:bg-white/20"
+              >
                 <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
                 <span className="text-xs sm:text-sm text-white font-medium">AI Disease Detection</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 sm:px-4 py-2 rounded-lg border border-white/20">
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/weather")}
+                className="tap-target flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-left backdrop-blur-md transition hover:bg-white/20"
+              >
                 <Cloud className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 <span className="text-xs sm:text-sm text-white font-medium">Weather + Advisory</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 sm:px-4 py-2 rounded-lg border border-white/20">
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/machinery")}
+                className="tap-target col-span-2 flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-left backdrop-blur-md transition hover:bg-white/20 sm:col-auto sm:justify-start"
+              >
                 <Tractor className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" />
                 <span className="text-xs sm:text-sm text-white font-medium">Machinery Marketplace</span>
-              </div>
+              </button>
             </div>
 
             {/* CTA Button */}

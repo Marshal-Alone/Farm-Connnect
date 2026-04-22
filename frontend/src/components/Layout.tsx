@@ -22,7 +22,7 @@ import React from "react";
 const navItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "Disease Detection", href: "/disease-detection", icon: Camera },
-
+  { name: "Crops", href: "/crops", icon: Leaf },
   { name: "Weather", href: "/weather", icon: Cloud },
   { name: "Machinery", href: "/machinery", icon: Tractor },
   { name: "Schemes", href: "/schemes", icon: FileText },
@@ -53,13 +53,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
+        <div className="container flex h-14 items-center justify-between sm:h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
               <Leaf className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-primary">FarmConnect</span>
+            <span className="text-lg font-bold text-primary sm:text-xl">FarmConnect</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -97,12 +97,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Mobile Menu Button */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="tap-target">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80">
-              <div className="flex flex-col space-y-4 mt-8">
+            <SheetContent side="right" className="w-[88vw] max-w-sm px-4">
+              <div className="mt-8 flex flex-col space-y-3">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -110,7 +110,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       key={item.name}
                       to={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center space-x-3 text-sm font-medium p-3 rounded-lg transition-colors ${isActive(item.href)
+                      className={`tap-target flex items-center space-x-3 rounded-lg p-3 text-sm font-medium transition-colors ${isActive(item.href)
                         ? "bg-primary text-primary-foreground"
                         : "hover:bg-accent hover:text-accent-foreground"
                         }`}
@@ -120,6 +120,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </Link>
                   );
                 })}
+              </div>
+              <div className="mt-6 border-t pt-4">
+                {user ? (
+                  <Button variant="outline" className="w-full tap-target" onClick={logout}>
+                    Logout
+                  </Button>
+                ) : (
+                  <Button className="w-full tap-target" onClick={() => setLoginModalOpen(true)}>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Login
+                  </Button>
+                )}
               </div>
             </SheetContent>
           </Sheet>
