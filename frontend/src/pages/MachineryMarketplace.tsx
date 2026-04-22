@@ -102,7 +102,7 @@ export default function MachineryMarketplace() {
           </div>
 
           {/* Search and Filters */}
-          <div className="mobile-section mb-8 shadow-sm">
+          <div className="mobile-section mb-6 sm:mb-8 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -177,14 +177,14 @@ export default function MachineryMarketplace() {
 
           {/* Machinery Grid */}
           {!loading && machinery.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-8">
               {machinery.map((item) => (
                 <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow border-0 shadow-md cursor-pointer flex flex-col h-full" onClick={() => handleViewDetails(item._id!)}>
                   <div className="relative flex-shrink-0">
                     <img
                       src={item.images[0] || 'https://via.placeholder.com/400x300?text=No+Image'}
                       alt={item.name}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-32 sm:h-48 object-cover"
                     />
                     <Badge
                       className={`absolute top-3 right-3 ${item.available ? 'bg-green-500' : 'bg-red-500'} text-white border-0 px-2 py-1 text-xs font-medium`}
@@ -193,29 +193,29 @@ export default function MachineryMarketplace() {
                     </Badge>
                   </div>
 
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
                     <div className="flex items-start justify-between mb-2">
-                      <CardTitle className="text-lg font-semibold leading-tight">
+                      <CardTitle className="text-sm sm:text-lg font-semibold leading-tight line-clamp-2">
                         {item.name}
                       </CardTitle>
                       <div className="flex items-center bg-green-100 text-green-600 px-2 py-1 rounded-full">
                         <Star className="h-3 w-3 fill-current mr-1" />
-                        <span className="text-sm font-medium">{item.rating.toFixed(1)}</span>
+                        <span className="text-xs sm:text-sm font-medium">{item.rating.toFixed(1)}</span>
                       </div>
                     </div>
-                    <CardDescription className="text-sm text-gray-600 leading-relaxed line-clamp-2">
+                    <CardDescription className="text-[11px] sm:text-sm text-gray-600 leading-relaxed line-clamp-2">
                       {item.description}
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent className="pt-0 pb-4 flex-grow">
-                    <div className="space-y-3">
-                      <div className="flex items-center text-sm text-gray-500">
+                  <CardContent className="pt-0 pb-3 sm:pb-4 px-3 sm:px-6 flex-grow">
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center text-[11px] sm:text-sm text-gray-500">
                         <MapPin className="h-4 w-4 mr-2 text-gray-400" />
                         {item.location.city}, {item.location.state}
                       </div>
 
-                      <div className="flex items-center text-sm text-gray-500">
+                      <div className="flex items-center text-[11px] sm:text-sm text-gray-500">
                         <Truck className="h-4 w-4 mr-2 text-gray-400" />
                         Owner: {item.ownerName}
                       </div>
@@ -230,8 +230,8 @@ export default function MachineryMarketplace() {
                     </div>
                   </CardContent>
 
-                  <CardFooter className="flex items-center justify-between pt-0 mt-auto">
-                    <div className="text-xl font-bold text-green-600">
+                  <CardFooter className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-0 mt-auto p-3 sm:p-6">
+                    <div className="text-sm sm:text-xl font-bold text-green-600">
                       ₹{item.pricePerDay}/day
                     </div>
                     <Button
@@ -240,7 +240,7 @@ export default function MachineryMarketplace() {
                         handleBookMachinery(item);
                       }}
                       disabled={!item.available}
-                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium"
+                      className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md font-medium text-xs sm:text-sm"
                     >
                       {item.available ? 'Rent Now' : 'Not Available'}
                     </Button>

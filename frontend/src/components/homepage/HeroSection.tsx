@@ -79,7 +79,7 @@ export default function HeroSection() {
               <button
                 type="button"
                 onClick={() => navigate("/machinery")}
-                className="tap-target col-span-2 flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-left backdrop-blur-md transition hover:bg-white/20 sm:col-auto sm:justify-start"
+                className="tap-target flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-left backdrop-blur-md transition hover:bg-white/20 sm:col-auto sm:justify-start"
               >
                 <Tractor className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" />
                 <span className="text-xs sm:text-sm text-white font-medium">Machinery Marketplace</span>

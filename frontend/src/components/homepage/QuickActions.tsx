@@ -82,24 +82,24 @@ export default function QuickActions() {
   };
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section className="py-10 sm:py-14 bg-muted/30">
       <div className="container px-6">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <Badge variant="outline" className="mb-4">
             <Zap className="w-3 h-3 mr-1" />
             Quick Actions
           </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
             Advanced Farm Management with
             <span className="block text-primary">FarmConnect Solutions</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Access powerful farming tools and resources with just one click.
             The FarmConnect AI-powered platform helps you make better decisions for your crops and land.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
@@ -111,35 +111,35 @@ export default function QuickActions() {
                 {/* Background Gradient */}
                 <div className={`absolute top-0 right-0 w-20 h-20 ${action.color} opacity-10 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500`} />
 
-                <CardHeader className="relative">
+                <CardHeader className="relative p-4 sm:p-6">
                   <div className="flex items-start justify-between">
-                    <div className={`p-3 rounded-lg ${action.color} shadow-lg`}>
-                      <Icon className="w-6 h-6 text-white" />
+                    <div className={`p-2.5 sm:p-3 rounded-lg ${action.color} shadow-lg`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-[10px] sm:text-xs">
                       {action.badge}
                     </Badge>
                   </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                  <CardTitle className="text-sm sm:text-xl group-hover:text-primary transition-colors leading-snug">
                     {action.title}
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground leading-relaxed">
+                <CardContent className="space-y-3 sm:space-y-4 p-4 pt-0 sm:p-6 sm:pt-0">
+                  <p className="text-[11px] sm:text-sm text-muted-foreground leading-snug line-clamp-2">
                     {action.description}
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <TrendingUp className="w-4 h-4 mr-1" />
+                    <div className="flex items-center text-[11px] sm:text-sm text-muted-foreground">
+                      <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
                       {action.stats}
                     </div>
 
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="group-hover:text-primary group-hover:bg-primary/10 transition-colors"
+                      className="h-8 px-2 text-[11px] sm:text-sm group-hover:text-primary group-hover:bg-primary/10 transition-colors"
                     >
                       Try Now
                       <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

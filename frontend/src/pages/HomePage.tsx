@@ -2,7 +2,6 @@ import HeroSection from "@/components/homepage/HeroSection";
 import WhatWeBuilt from "@/components/homepage/WhatWeBuilt";
 import ImpactMetrics from "@/components/homepage/ImpactMetrics";
 import FeaturesWithTech from "@/components/homepage/FeaturesWithTech";
-import EasyAccess from "@/components/homepage/EasyAccess";
 import HowItWorks from "@/components/homepage/HowItWorks";
 import TechStack from "@/components/homepage/TechStack";
 import ProblemSolution from "@/components/homepage/ProblemSolution";
@@ -25,7 +24,6 @@ export default function HomePage() {
                 <TechStack />
                 <ProblemSolution />
                 <ImpactMetrics />
-                <EasyAccess />
                 <CTASection />
             </div>
         </>

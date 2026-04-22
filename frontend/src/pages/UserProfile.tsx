@@ -447,13 +447,13 @@ export default function UserProfile() {
         description="Manage your FarmConnect profile, bookings, machinery listings, and settings."
         url="https://farmbro.vercel.app/profile"
       />
-      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10 p-4 md:p-8">
-        <div className="max-w-6xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10 p-3 sm:p-4 md:p-8">
+        <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6">
           {/* Header */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">My Dashboard</h1>
-              <p className="text-muted-foreground mt-1">Manage your profile, bookings, and machinery</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">My Dashboard</h1>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">Manage your profile, bookings, and machinery</p>
             </div>
             <Button onClick={handleLogout} variant="outline" className="w-full md:w-auto">
               Logout
@@ -462,7 +462,7 @@ export default function UserProfile() {
 
           {/* Main Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="flex flex-wrap w-full gap-2 mb-6 h-auto bg-transparent p-0 border-b">
+            <TabsList className="flex w-full gap-2 mb-6 h-auto bg-transparent p-0 border-b overflow-x-auto whitespace-nowrap">
               <TabsTrigger value="overview" className="text-xs md:text-sm px-3 py-2">Overview</TabsTrigger>
               <TabsTrigger value="profile" className="text-xs md:text-sm px-3 py-2">Profile</TabsTrigger>
               <TabsTrigger value="bookings" className="text-xs md:text-sm px-3 py-2">My Bookings</TabsTrigger>
@@ -761,11 +761,11 @@ export default function UserProfile() {
             {/* My Bookings Tab - NEW */}
             <TabsContent value="bookings" className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold mb-6">My Bookings</h2>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">My Bookings</h2>
 
                 {/* Filter Tabs */}
                 <Tabs value={bookingFilter} onValueChange={setBookingFilter} className="mb-6">
-                  <TabsList className="flex flex-wrap gap-2 bg-transparent h-auto p-0">
+                  <TabsList className="flex gap-2 bg-transparent h-auto p-0 overflow-x-auto whitespace-nowrap">
                     <TabsTrigger
                       value="all"
                       className="px-4 py-2 rounded-full data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -1338,11 +1338,11 @@ export default function UserProfile() {
             </TabsContent>
 
             {/* Unified Messaging Tab */}
-            <TabsContent value="messages" className="space-y-0 min-h-[65vh] border rounded-xl overflow-hidden bg-card shadow-sm md:h-[600px]">
+            <TabsContent value="messages" className="space-y-0 min-h-[60vh] border rounded-xl overflow-hidden bg-card shadow-sm md:h-[600px]">
               <div className="grid grid-cols-1 md:grid-cols-12 h-full">
                 {/* Conversations List */}
                 <div className={`md:col-span-4 border-r bg-muted/20 flex flex-col h-full ${selectedConversation ? 'hidden md:flex' : 'flex'}`}>
-                  <div className="p-4 border-b bg-card">
+                  <div className="p-3 sm:p-4 border-b bg-card">
                     <h3 className="font-bold flex items-center gap-2">
                       <MessageSquare className="w-5 h-5 text-primary" />
                       Messages
@@ -1350,7 +1350,7 @@ export default function UserProfile() {
                   </div>
                   <div className="flex-1 overflow-y-auto">
                     {conversations.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-full p-8 text-center text-muted-foreground">
+                      <div className="flex flex-col items-center justify-center h-full p-5 sm:p-8 text-center text-muted-foreground">
                         <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
                           <MessageSquare className="w-6 h-6" />
                         </div>
@@ -1366,7 +1366,7 @@ export default function UserProfile() {
                             <button
                               key={conversation.conversationId}
                               onClick={() => handleSelectConversation(conversation)}
-                              className={`w-full p-4 flex items-start gap-3 hover:bg-muted/50 transition-colors text-left ${isSelected ? 'bg-primary/5 border-l-2 border-primary' : ''}`}
+                              className={`w-full p-3 sm:p-4 flex items-start gap-3 hover:bg-muted/50 transition-colors text-left ${isSelected ? 'bg-primary/5 border-l-2 border-primary' : ''}`}
                             >
                               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary shrink-0">
                                 {(otherParticipant?.userName || 'U').charAt(0).toUpperCase()}
@@ -1418,7 +1418,7 @@ export default function UserProfile() {
                       </div>
 
                       {/* Messages Body */}
-                      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/5">
+                      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-muted/5">
                         {isMessagesLoading && conversationMessages.length === 0 ? (
                           <div className="flex items-center justify-center h-full">
                             <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -1428,7 +1428,7 @@ export default function UserProfile() {
                             const isMe = msg.senderId === ownerId;
                             return (
                               <div key={msg._id || idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${isMe
+                                <div className={`max-w-[86%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 text-xs sm:text-sm shadow-sm ${isMe
                                   ? 'bg-primary text-primary-foreground rounded-tr-none'
                                   : 'bg-secondary text-secondary-foreground rounded-tl-none'
                                   }`}>
@@ -1444,7 +1444,7 @@ export default function UserProfile() {
                       </div>
 
                       {/* Chat Input */}
-                      <div className="p-4 border-t">
+                      <div className="p-3 sm:p-4 border-t">
                         <form
                           className="flex gap-2"
                           onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
@@ -1455,14 +1455,14 @@ export default function UserProfile() {
                             onChange={(e) => setMessageText(e.target.value)}
                             className="flex-1"
                           />
-                          <Button type="submit" size="icon" disabled={!messageText.trim()}>
+                            <Button type="submit" size="icon" disabled={!messageText.trim()} className="shrink-0">
                             <Plus className="w-4 h-4 rotate-45 scale-125" />
                           </Button>
                         </form>
                       </div>
                     </>
                   ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-center p-12 text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center h-full text-center p-6 sm:p-12 text-muted-foreground">
                       <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                         <MessageSquare className="w-8 h-8 opacity-20" />
                       </div>

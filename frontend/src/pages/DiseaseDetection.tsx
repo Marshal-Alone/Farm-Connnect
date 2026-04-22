@@ -376,10 +376,10 @@ export default function DiseaseDetection() {
         description="Upload a photo of your crop to instantly detect diseases using AI. Get treatment recommendations and save your harvest."
         url="https://farmbro.vercel.app/disease-detection"
       />
-      <div className="min-h-screen bg-background py-8">
-        <div className="container px-6">
+      <div className="min-h-screen bg-background py-5 sm:py-8">
+        <div className="container px-4 sm:px-6">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 sm:mb-8">
             {/* <Badge variant="outline" className="mb-4">
             <Brain className="w-3 h-3 mr-1" />
             AI Disease Detection
@@ -401,7 +401,7 @@ export default function DiseaseDetection() {
                 Powered by AI Analysis
               </span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Upload a photo of your crop to get instant AI-powered disease identification
               with treatment recommendations from agricultural experts.
             </p>
@@ -418,20 +418,20 @@ export default function DiseaseDetection() {
           </div> */}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
             {/* Upload Section */}
             <div className="space-y-6">
               <Card>
-                <CardHeader>
+                <CardHeader className="p-4 sm:p-6 pb-3">
                   <CardTitle className="flex items-center">
                     <Upload className="w-5 h-5 mr-2" />
                     Upload Plant Image
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 sm:p-6 pt-0">
                   {/* Upload Area */}
                   <div
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
+                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 sm:p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
                     onDrop={handleDrop}
                     onDragOver={(e) => e.preventDefault()}
                     onClick={() => fileInputRef.current?.click()}
@@ -449,7 +449,7 @@ export default function DiseaseDetection() {
                         <img
                           src={selectedImage}
                           alt="Selected crop"
-                          className="max-h-64 mx-auto rounded-lg shadow-md"
+                          className="max-h-52 sm:max-h-64 mx-auto rounded-lg shadow-md"
                         />
                         <p className="text-sm text-muted-foreground">
                           Image ready for analysis
@@ -457,12 +457,12 @@ export default function DiseaseDetection() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                          <Camera className="w-8 h-8 text-primary" />
+                        <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                          <Camera className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                         </div>
                         <div>
-                          <p className="text-lg font-medium">Drop your image here</p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm sm:text-lg font-medium">Drop your image here</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground">
                             or click to browse files
                           </p>
                         </div>
@@ -471,7 +471,7 @@ export default function DiseaseDetection() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 mt-6">
+                  <div className="flex flex-col sm:flex-row gap-3 mt-6">
                     <Button
                       variant="outline"
                       onClick={() => fileInputRef.current?.click()}
@@ -542,10 +542,10 @@ export default function DiseaseDetection() {
 
               {/* Tips Card */}
               <Card>
-                <CardHeader>
+                <CardHeader className="p-4 sm:p-6 pb-3">
                   <CardTitle className="text-lg">Photography Tips</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 sm:p-6 pt-0">
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 mr-2 text-success" />
@@ -576,7 +576,7 @@ export default function DiseaseDetection() {
 
                   {/* Detection Result */}
                   <Card>
-                    <CardHeader>
+                    <CardHeader className="p-4 sm:p-6 pb-3">
                       <CardTitle className="flex items-center justify-between">
                         <span className="flex items-center">
                           {result.disease === "Healthy Plant" ? (
@@ -591,22 +591,22 @@ export default function DiseaseDetection() {
                         </Badge>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
                       <div>
-                        <h3 className="text-2xl font-bold">{result.disease}</h3>
-                        <p className="text-muted-foreground">{result.description}</p>
+                        <h3 className="text-xl sm:text-2xl font-bold">{result.disease}</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground">{result.description}</p>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4">
                         <div>
                           <span className="text-sm text-muted-foreground">Confidence Level</span>
-                          <div className="text-xl font-semibold text-primary">
+                          <div className="text-lg sm:text-xl font-semibold text-primary">
                             {result.confidence}%
                           </div>
                         </div>
                         <div>
                           <span className="text-sm text-muted-foreground">Affected Area</span>
-                          <div className="text-xl font-semibold">
+                          <div className="text-lg sm:text-xl font-semibold">
                             {result.affectedArea}%
                           </div>
                         </div>
@@ -626,7 +626,7 @@ export default function DiseaseDetection() {
                     const contextualPlan = buildContextualPlan(result);
                     return (
                       <Card>
-                        <CardHeader>
+                        <CardHeader className="p-4 sm:p-6 pb-3">
                           <CardTitle className="flex items-center justify-between">
                             <span className="flex items-center">
                               <Clock className="w-5 h-5 mr-2" />
@@ -637,7 +637,7 @@ export default function DiseaseDetection() {
                             </Badge>
                           </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
                           <p className="text-sm text-muted-foreground">{contextualPlan.explanation}</p>
                           <div>
                             <h4 className="font-semibold mb-2">Why This Recommendation?</h4>
@@ -697,7 +697,7 @@ export default function DiseaseDetection() {
                           <TabsTrigger value="prevention">Prevention</TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="treatment" className="p-6 space-y-4">
+                        <TabsContent value="treatment" className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                           <h3 className="font-semibold text-lg">Recommended Treatment</h3>
                           <ul className="space-y-3">
                             {result.treatment.map((step, index) => (
@@ -711,7 +711,7 @@ export default function DiseaseDetection() {
                           </ul>
                         </TabsContent>
 
-                        <TabsContent value="prevention" className="p-6 space-y-4">
+                        <TabsContent value="prevention" className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                           <h3 className="font-semibold text-lg">Prevention Methods</h3>
                           <ul className="space-y-3">
                             {result.prevention.map((step, index) => (
@@ -730,7 +730,7 @@ export default function DiseaseDetection() {
                   {/* Similar Cases Modal/Section */}
                   {showSimilarCases && (
                     <Card className="mt-6">
-                      <CardHeader>
+                      <CardHeader className="p-4 sm:p-6 pb-3">
                         <CardTitle className="flex items-center justify-between">
                           <span className="flex items-center">
                             <Users className="w-5 h-5 mr-2" />
@@ -741,7 +741,7 @@ export default function DiseaseDetection() {
                           </Button>
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="p-4 sm:p-6 pt-0">
                         <div className="space-y-4">
                           {similarCases.map((case_, index) => (
                             <div key={index} className="p-4 border rounded-lg bg-muted/20">
@@ -784,7 +784,7 @@ export default function DiseaseDetection() {
                 </>
               ) : (
                 <Card className="text-center py-12">
-                  <CardContent>
+                  <CardContent className="p-4 sm:p-6">
                     <div className="space-y-4">
                       <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                         <Scan className="w-8 h-8 text-muted-foreground" />
@@ -803,22 +803,22 @@ export default function DiseaseDetection() {
           </div>
 
           {/* Recent Activity */}
-          <Card className="mt-8">
-            <CardHeader>
+          <Card className="mt-6 sm:mt-8">
+            <CardHeader className="p-4 sm:p-6 pb-3">
               <CardTitle>Your Recent Detections</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6 pt-0">
               <div className="space-y-4">
                 {recentDetections.length > 0 ? (
                   recentDetections.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                      <div className="flex items-center space-x-3">
+                    <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg gap-2">
+                      <div className="flex items-center space-x-3 min-w-0">
                         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                           <Leaf className="w-5 h-5 text-primary" />
                         </div>
-                        <div>
-                          <div className="font-medium">{item.crop} - {item.disease}</div>
-                          <div className="text-sm text-muted-foreground">
+                        <div className="min-w-0">
+                          <div className="font-medium text-sm sm:text-base truncate">{item.crop} - {item.disease}</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground truncate">
                             {new Date(item.date).toLocaleDateString()} • {item.confidence}% confidence
                           </div>
                         </div>

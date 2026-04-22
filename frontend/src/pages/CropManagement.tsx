@@ -53,32 +53,32 @@ export default function CropManagementPage() {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b">
-          <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className="max-w-6xl mx-auto px-4 py-4 sm:py-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Leaf className="text-green-600" size={24} />
+              <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
+                <Leaf className="text-green-600" size={20} />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">Crop Management</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Crop Management</h1>
             </div>
-            <p className="text-gray-600">Track your crops, log farming actions, and get personalized weather-based recommendations</p>
+            <p className="text-sm sm:text-base text-gray-600">Track your crops, log farming actions, and get personalized weather-based recommendations</p>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-6xl mx-auto px-4 py-4 sm:py-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsList className="grid w-full max-w-md grid-cols-2 h-auto">
               <TabsTrigger value="crops">My Crops</TabsTrigger>
               <TabsTrigger value="actions">Action Log</TabsTrigger>
             </TabsList>
 
             {/* My Crops Tab */}
             <TabsContent value="crops" className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 flex items-start gap-3">
                 <AlertCircle className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
                 <div>
                   <h3 className="font-semibold text-blue-900">Track Your Crops</h3>
-                  <p className="text-sm text-blue-700 mt-1">
+                  <p className="text-xs sm:text-sm text-blue-700 mt-1">
                     Add your active crops to receive personalized weather recommendations and track your farming actions.
                   </p>
                 </div>
@@ -89,11 +89,11 @@ export default function CropManagementPage() {
 
             {/* Action Log Tab */}
             <TabsContent value="actions" className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4 flex items-start gap-3">
                 <AlertCircle className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
                 <div>
                   <h3 className="font-semibold text-green-900">Log Your Actions</h3>
-                  <p className="text-sm text-green-700 mt-1">
+                  <p className="text-xs sm:text-sm text-green-700 mt-1">
                     Record farming activities like sowing, fertilizing, irrigating, and spraying to track your crop lifecycle.
                   </p>
                 </div>
@@ -105,11 +105,11 @@ export default function CropManagementPage() {
         </div>
 
         {/* Info Section */}
-        <div className="bg-white border-t mt-8">
-          <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="bg-white border-t mt-6 sm:mt-8">
+          <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="font-semibold text-lg mb-3">Why Track Your Crops?</h3>
+                <h3 className="font-semibold text-base sm:text-lg mb-3">Why Track Your Crops?</h3>
                 <ul className="space-y-2 text-gray-600">
                   <li className="flex items-start gap-2">
                     <span className="text-green-500 font-bold">✓</span>
@@ -131,7 +131,7 @@ export default function CropManagementPage() {
               </div>
 
               <div>
-                <h3 className="font-semibold text-lg mb-3">Supported Actions</h3>
+                <h3 className="font-semibold text-base sm:text-lg mb-3">Supported Actions</h3>
                 <ul className="space-y-2 text-gray-600 text-sm">
                   <li>🌱 Sowing & Planting</li>
                   <li>💧 Irrigation & Watering</li>

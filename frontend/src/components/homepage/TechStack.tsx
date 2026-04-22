@@ -42,37 +42,37 @@ const stack = [
 
 export default function TechStack() {
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-10 sm:py-14 md:py-24 bg-white">
       <div className="container px-4 sm:px-6">
-        <div className="text-center mb-12 md:mb-16 space-y-4">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16 space-y-3 sm:space-y-4">
           <Badge variant="outline" className="mx-auto">
             <Cpu className="w-3 h-3 mr-1" />
             Technology Stack
           </Badge>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
+          <h2 className="text-xl sm:text-4xl md:text-5xl font-bold text-gray-900">
             Enterprise-Grade Tech
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">
             Built with production-ready technologies
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {stack.map((item, idx) => {
             const Icon = item.icon;
             return (
               <div key={idx} className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-green-200 to-blue-200 rounded-lg opacity-0 group-hover:opacity-50 blur transition duration-1000 group-hover:duration-200" />
-                <div className="relative bg-white px-6 py-8 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Icon className={`w-6 h-6 ${item.color}`} />
-                    <h3 className="text-lg font-bold text-gray-900">{item.category}</h3>
+                <div className="relative bg-white px-4 sm:px-6 py-4 sm:py-8 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${item.color}`} />
+                    <h3 className="text-sm sm:text-lg font-bold text-gray-900">{item.category}</h3>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5 sm:space-y-2">
                     {item.tech.map((t, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-green-500" />
-                        <span className="text-sm text-gray-700 font-mono">{t}</span>
+                        <span className="text-xs sm:text-sm text-gray-700 font-mono line-clamp-1">{t}</span>
                       </div>
                     ))}
                   </div>

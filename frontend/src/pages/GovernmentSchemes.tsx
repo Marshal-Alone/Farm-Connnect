@@ -217,7 +217,7 @@ export default function GovernmentSchemes() {
           </div>
 
           {/* Search and Filters */}
-          <div className="mobile-section mb-8 shadow-sm">
+          <div className="mobile-section mb-6 sm:mb-8 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -258,14 +258,14 @@ export default function GovernmentSchemes() {
           </div>
 
           {/* Schemes Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {schemes.map((scheme) => (
               <Card key={scheme.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
+                <CardHeader className="p-4 sm:p-6 pb-3">
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-lg">{scheme.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{scheme.nameHindi}</p>
+                      <CardTitle className="text-base sm:text-lg">{scheme.name}</CardTitle>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{scheme.nameHindi}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       {getStatusIcon(scheme.status)}
@@ -275,17 +275,17 @@ export default function GovernmentSchemes() {
                       </Badge>
                     </div>
                   </div>
-                  <CardDescription>{scheme.description}</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">{scheme.description}</CardDescription>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
                   {/* Key Details */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="flex items-center space-x-2">
                       <IndianRupee className="h-4 w-4 text-green-600" />
                       <div>
-                        <p className="text-sm font-medium">Max Amount</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm font-medium">Max Amount</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           {scheme.maxAmount === 0 ? 'Free' : `₹${scheme.maxAmount.toLocaleString()}`}
                         </p>
                       </div>
@@ -293,8 +293,8 @@ export default function GovernmentSchemes() {
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-blue-600" />
                       <div>
-                        <p className="text-sm font-medium">Deadline</p>
-                        <p className="text-sm text-muted-foreground">{scheme.deadline}</p>
+                        <p className="text-xs sm:text-sm font-medium">Deadline</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">{scheme.deadline}</p>
                       </div>
                     </div>
                   </div>
@@ -302,7 +302,7 @@ export default function GovernmentSchemes() {
                   {/* Subsidy Percentage */}
                   {scheme.subsidy > 0 && (
                     <div>
-                      <div className="flex justify-between text-sm mb-1">
+                      <div className="flex justify-between text-xs sm:text-sm mb-1">
                         <span>Subsidy Coverage</span>
                         <span>{scheme.subsidy}%</span>
                       </div>
@@ -312,7 +312,7 @@ export default function GovernmentSchemes() {
 
                   {/* Eligibility */}
                   <div>
-                    <p className="text-sm font-medium mb-2">Eligibility</p>
+                    <p className="text-xs sm:text-sm font-medium mb-2">Eligibility</p>
                     <div className="flex flex-wrap gap-1">
                       {scheme.eligibility.slice(0, 2).map((criteria, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
@@ -329,7 +329,7 @@ export default function GovernmentSchemes() {
 
                   {/* Documents Required */}
                   <div>
-                    <p className="text-sm font-medium mb-2">Documents Required</p>
+                    <p className="text-xs sm:text-sm font-medium mb-2">Documents Required</p>
                     <div className="flex flex-wrap gap-1">
                       {scheme.documents.slice(0, 2).map((doc, index) => (
                         <Badge key={index} variant="secondary" className="text-xs">

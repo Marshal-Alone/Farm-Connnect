@@ -122,7 +122,7 @@ export default function BookingHistory() {
                     </div>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-                        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
+                        <TabsList className="flex h-auto w-full justify-start gap-2 bg-transparent p-0 overflow-x-auto whitespace-nowrap">
                             <TabsTrigger value="all">All</TabsTrigger>
                             <TabsTrigger value="pending">Pending</TabsTrigger>
                             <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
@@ -153,10 +153,10 @@ export default function BookingHistory() {
                         <div className="space-y-4">
                             {bookings.map((booking) => (
                                 <Card key={booking._id} className="overflow-hidden">
-                                    <CardHeader className="bg-secondary/20">
+                                    <CardHeader className="bg-secondary/20 p-4 sm:p-6">
                                         <div className="flex items-start justify-between">
                                             <div>
-                                                <CardTitle className="text-xl">{booking.machineryName}</CardTitle>
+                                                <CardTitle className="text-base sm:text-xl">{booking.machineryName}</CardTitle>
                                                 <p className="text-sm text-muted-foreground mt-1">
                                                     Booking #{booking.bookingNumber}
                                                 </p>
@@ -164,25 +164,25 @@ export default function BookingHistory() {
                                             {getStatusBadge(booking.status)}
                                         </div>
                                     </CardHeader>
-                                    <CardContent className="pt-6">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                                    <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
                                             <div className="flex items-start gap-2">
                                                 <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                                                 <div>
-                                                    <p className="text-sm text-muted-foreground">Rental Period</p>
-                                                    <p className="font-semibold">
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">Rental Period</p>
+                                                    <p className="text-sm sm:text-base font-semibold">
                                                         {format(new Date(booking.startDate), 'MMM dd')} - {format(new Date(booking.endDate), 'MMM dd, yyyy')}
                                                     </p>
-                                                    <p className="text-sm text-muted-foreground">{booking.totalDays} days</p>
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">{booking.totalDays} days</p>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-start gap-2">
                                                 <IndianRupee className="h-5 w-5 text-muted-foreground mt-0.5" />
                                                 <div>
-                                                    <p className="text-sm text-muted-foreground">Total Amount</p>
-                                                    <p className="font-semibold text-green-600">₹{booking.finalAmount}</p>
-                                                    <p className="text-sm text-muted-foreground">
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">Total Amount</p>
+                                                    <p className="text-sm sm:text-base font-semibold text-green-600">₹{booking.finalAmount}</p>
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">
                                                         {booking.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
                                                     </p>
                                                 </div>
@@ -191,16 +191,16 @@ export default function BookingHistory() {
                                             <div className="flex items-start gap-2">
                                                 <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
                                                 <div>
-                                                    <p className="text-sm text-muted-foreground">Owner</p>
-                                                    <p className="font-semibold">{booking.ownerName}</p>
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">Owner</p>
+                                                    <p className="text-sm sm:text-base font-semibold">{booking.ownerName}</p>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-start gap-2">
                                                 <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
                                                 <div>
-                                                    <p className="text-sm text-muted-foreground">Booked On</p>
-                                                    <p className="font-semibold">
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">Booked On</p>
+                                                    <p className="text-sm sm:text-base font-semibold">
                                                         {format(new Date(booking.createdAt), 'MMM dd, yyyy')}
                                                     </p>
                                                 </div>
@@ -214,7 +214,7 @@ export default function BookingHistory() {
                                             </div>
                                         )}
 
-                                        <div className="flex gap-2">
+                                        <div className="flex flex-wrap gap-2">
                                             <Button
                                                 variant="outline"
                                                 size="sm"

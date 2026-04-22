@@ -84,24 +84,24 @@ export default function FeaturesWithTech() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-10 sm:py-14 md:py-24 bg-white">
       <div className="container px-4 sm:px-6">
         {/* Header */}
-        <div className="text-center mb-12 md:mb-16 space-y-4">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16 space-y-3 sm:space-y-4">
           <Badge variant="outline" className="mx-auto">
             <Code className="w-3 h-3 mr-1" />
             Feature Breakdown
           </Badge>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
+          <h2 className="text-xl sm:text-3xl md:text-5xl font-bold text-gray-900">
             Features with Technical Depth
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             Each module is built with production-grade architecture
           </p>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
@@ -112,39 +112,47 @@ export default function FeaturesWithTech() {
               >
                 <div className={`absolute top-0 right-0 w-24 h-24 ${feature.color} opacity-5 group-hover:opacity-10 transition-opacity`} />
 
-                <CardHeader className="relative pb-3">
+                <CardHeader className="relative pb-2 sm:pb-3 p-4 sm:p-6">
                   <div className="flex items-start justify-between mb-3">
-                    <div className={`p-3 rounded-lg ${feature.color} shadow-lg`}>
-                      <Icon className="w-6 h-6 text-white" />
+                    <div className={`p-2.5 sm:p-3 rounded-lg ${feature.color} shadow-lg`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <Badge variant="secondary" className="text-xs">System Module</Badge>
+                    <Badge variant="secondary" className="text-[10px] sm:text-xs">System Module</Badge>
                   </div>
-                  <CardTitle className="text-xl text-gray-900 group-hover:text-green-600 transition-colors">
+                  <CardTitle className="text-sm sm:text-xl text-gray-900 group-hover:text-green-600 transition-colors leading-snug">
                     {feature.title}
                   </CardTitle>
-                  <p className="text-sm text-gray-600 mt-1">{feature.description}</p>
+                  <p className="text-[11px] sm:text-sm text-gray-600 mt-1 line-clamp-1 sm:line-clamp-2">{feature.description}</p>
                 </CardHeader>
 
-                <CardContent className="space-y-4 relative">
-                  {/* Tech Stack Box */}
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 space-y-3">
+                <CardContent className="space-y-3 sm:space-y-4 relative p-4 pt-0 sm:p-6 sm:pt-0">
+                  {/* Mobile: compact summary (reduces card height) */}
+                  <div className="sm:hidden rounded-lg bg-gray-50 border border-gray-100 px-3 py-2">
+                    <p className="text-[11px] text-gray-600 leading-snug line-clamp-2">
+                      <span className="font-semibold text-gray-800">Tech:</span>{" "}
+                      <span className="font-mono text-green-700">{feature.tech.model}</span>
+                    </p>
+                  </div>
+
+                  {/* sm+: full tech stack box */}
+                  <div className="hidden sm:block bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-3">
                     <div>
                       <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Input</p>
-                      <p className="text-sm font-mono text-gray-700">{feature.tech.input}</p>
+                      <p className="text-[11px] sm:text-sm font-mono text-gray-700">{feature.tech.input}</p>
                     </div>
-                    <div className="border-t border-gray-200 pt-3">
+                    <div className="border-t border-gray-200 pt-2 sm:pt-3">
                       <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Technology</p>
-                      <p className="text-sm font-mono text-green-700">{feature.tech.model}</p>
+                      <p className="text-[11px] sm:text-sm font-mono text-green-700">{feature.tech.model}</p>
                     </div>
-                    <div className="border-t border-gray-200 pt-3">
+                    <div className="border-t border-gray-200 pt-2 sm:pt-3">
                       <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Output</p>
-                      <p className="text-sm font-mono text-gray-700">{feature.tech.output}</p>
+                      <p className="text-[11px] sm:text-sm font-mono text-gray-700">{feature.tech.output}</p>
                     </div>
                   </div>
 
                   <Button
                     variant="ghost"
-                    className="w-full group-hover:bg-green-50 group-hover:text-green-600 transition-colors"
+                    className="w-full group-hover:bg-green-50 group-hover:text-green-600 transition-colors h-8 sm:h-10 text-xs sm:text-sm"
                   >
                     Try Now
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

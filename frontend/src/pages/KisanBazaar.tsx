@@ -187,40 +187,40 @@ export default function KisanBazaar() {
         </div>
 
         {/* Market Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold">₹2.4L</h3>
-              <p className="text-sm text-muted-foreground">Daily Trading Volume</p>
+              <h3 className="text-xl sm:text-2xl font-bold">₹2.4L</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">Daily Trading Volume</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold">1,250</h3>
-              <p className="text-sm text-muted-foreground">Active Farmers</p>
+              <h3 className="text-xl sm:text-2xl font-bold">1,250</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">Active Farmers</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <ShoppingCart className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold">342</h3>
-              <p className="text-sm text-muted-foreground">Products Listed</p>
+              <h3 className="text-xl sm:text-2xl font-bold">342</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">Products Listed</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold">4.6</h3>
-              <p className="text-sm text-muted-foreground">Average Rating</p>
+              <h3 className="text-xl sm:text-2xl font-bold">4.6</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">Average Rating</p>
             </CardContent>
           </Card>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
+            <TabsList className="grid w-full max-w-md grid-cols-3 h-auto">
               <TabsTrigger value="buy">Buy Products</TabsTrigger>
               <TabsTrigger value="sell">Sell Products</TabsTrigger>
               <TabsTrigger value="requests">Buy Requests</TabsTrigger>
@@ -235,7 +235,7 @@ export default function KisanBazaar() {
           </div>
 
           {/* Search and Filters */}
-          <div className="bg-card rounded-lg shadow-sm border p-6">
+          <div className="bg-card rounded-lg shadow-sm border p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -279,14 +279,14 @@ export default function KisanBazaar() {
 
           {/* Products Grid */}
           <TabsContent value="buy" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
               {filteredProducts.map((product) => (
                 <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
                     <img 
                       src={product.image} 
                       alt={product.name}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-32 sm:h-48 object-cover"
                     />
                     <Badge 
                       className={`absolute top-2 right-2 ${getQualityColor(product.quality)}`}
@@ -295,40 +295,40 @@ export default function KisanBazaar() {
                     </Badge>
                   </div>
                   
-                  <CardHeader>
+                  <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
                     <CardTitle className="flex items-center justify-between">
-                      {product.name}
+                      <span className="text-sm sm:text-base line-clamp-2">{product.name}</span>
                       <div className="flex items-center">
                         <Star className="h-4 w-4 fill-primary text-primary mr-1" />
-                        <span className="text-sm">{product.rating}</span>
+                        <span className="text-xs sm:text-sm">{product.rating}</span>
                       </div>
                     </CardTitle>
-                    <CardDescription>{product.description}</CardDescription>
+                    <CardDescription className="text-[11px] sm:text-sm line-clamp-2">{product.description}</CardDescription>
                   </CardHeader>
 
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-primary">
+                        <span className="text-lg sm:text-2xl font-bold text-primary">
                           ₹{product.price.toLocaleString()}
                         </span>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-xs sm:text-sm text-muted-foreground">
                           per {product.unit}
                         </span>
                       </div>
                       
-                      <div className="flex items-center text-sm text-muted-foreground">
+                      <div className="flex items-center text-[11px] sm:text-sm text-muted-foreground">
                         <MapPin className="h-4 w-4 mr-2" />
                         {product.location}
                       </div>
                       
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center justify-between text-[11px] sm:text-sm">
                         <span>Seller: {product.seller}</span>
                         <span>Available: {product.quantity} {product.unit}s</span>
                       </div>
 
                       {product.harvestDate && (
-                        <div className="flex items-center text-sm text-muted-foreground">
+                        <div className="flex items-center text-[11px] sm:text-sm text-muted-foreground">
                           <Clock className="h-4 w-4 mr-2" />
                           Harvested: {product.harvestDate}
                         </div>
@@ -336,16 +336,16 @@ export default function KisanBazaar() {
                     </div>
                   </CardContent>
 
-                  <CardFooter className="flex space-x-2">
+                  <CardFooter className="flex flex-col sm:flex-row gap-2 p-3 sm:p-6 pt-0">
                     <Button 
                       variant="outline" 
-                      className="flex-1"
+                      className="w-full sm:flex-1 text-xs sm:text-sm"
                       onClick={() => handleContactSeller(product)}
                     >
                       Contact Seller
                     </Button>
                     <Button 
-                      className="flex-1"
+                      className="w-full sm:flex-1 text-xs sm:text-sm"
                       onClick={() => handleAddToCart(product)}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />

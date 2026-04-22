@@ -2,6 +2,8 @@ import express from 'express';
 import { getDatabase, collections } from '../config/database.js';
 import { ObjectId } from 'mongodb';
 import { authenticateToken } from './users.js';
+import crypto from 'crypto';
+import { getRazorpayClient } from '../lib/razorpay.js';
 
 const router = express.Router();
 
@@ -15,6 +17,14 @@ const TRANSITIONS = {
     rejected: new Set([]),
     cancelled: new Set([])
 };
+
+function verifyRazorpaySignature({ orderId, paymentId, signature }) {
+    const secret = process.env.RAZORPAY_KEY_SECRET;
+    if (!secret) return false;
+    const body = `${orderId}|${paymentId}`;
+    const expected = crypto.createHmac('sha256', secret).update(body).digest('hex');
+    return expected === signature;
+}
 
 // Helper function to generate booking number
 function generateBookingNumber() {
@@ -132,6 +142,14 @@ router.post('/', authenticateToken, async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: 'Machinery is not available'
+            });
+        }
+
+        // Prevent self-booking (owner cannot rent their own machinery)
+        if (String(machinery.ownerId) === String(renterId)) {
+            return res.status(400).json({
+                success: false,
+                error: "You can't book your own machinery"
             });
         }
 
@@ -506,6 +524,74 @@ router.put('/:id/status', authenticateToken, async (req, res) => {
     }
 });
 
+// POST /api/bookings/:id/razorpay/order - Create Razorpay order for booking
+router.post('/:id/razorpay/order', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!assertObjectId(id)) {
+            return res.status(400).json({ success: false, error: 'Invalid booking ID' });
+        }
+
+        const db = await getDatabase();
+        const bookingsCollection = db.collection(collections.bookings);
+        const booking = await bookingsCollection.findOne({ _id: new ObjectId(id) });
+        if (!booking) {
+            return res.status(404).json({ success: false, error: 'Booking not found' });
+        }
+        if (booking.renterId !== req.user.userId) {
+            return res.status(403).json({ success: false, error: 'Only renter can create payment order' });
+        }
+        if (booking.paymentStatus === 'paid') {
+            return res.status(400).json({ success: false, error: 'Payment already completed for this booking' });
+        }
+        if (booking.status !== 'pending') {
+            return res.status(400).json({ success: false, error: 'Order can only be created for pending bookings' });
+        }
+
+        const amountPaise = Math.round(Number(booking.finalAmount) * 100);
+        if (!Number.isFinite(amountPaise) || amountPaise <= 0) {
+            return res.status(400).json({ success: false, error: 'Invalid booking amount' });
+        }
+
+        const razorpay = getRazorpayClient();
+        const order = await razorpay.orders.create({
+            amount: amountPaise,
+            currency: 'INR',
+            receipt: String(booking.bookingNumber || booking._id),
+            notes: {
+                bookingId: String(booking._id),
+                machineryId: String(booking.machineryId || '')
+            }
+        });
+
+        await bookingsCollection.updateOne(
+            { _id: new ObjectId(id) },
+            {
+                $set: {
+                    paymentMode: 'razorpay',
+                    razorpayOrderId: order.id,
+                    paymentStatus: 'created',
+                    updatedAt: new Date()
+                }
+            }
+        );
+
+        return res.json({
+            success: true,
+            data: {
+                orderId: order.id,
+                amount: order.amount,
+                currency: order.currency,
+                bookingId: id,
+                keyId: process.env.RAZORPAY_KEY_ID
+            }
+        });
+    } catch (error) {
+        console.error('Error creating Razorpay order:', error);
+        return res.status(500).json({ success: false, error: 'Failed to create Razorpay order' });
+    }
+});
+
 // POST /api/bookings/:id/payment - Process payment
 router.post('/:id/payment', authenticateToken, async (req, res) => {
     try {
@@ -586,7 +672,36 @@ router.post('/:id/payment', authenticateToken, async (req, res) => {
         }
 
         // For Razorpay, verify signature and update
-        // TODO: Add Razorpay signature verification
+        if (paymentMode !== 'razorpay') {
+            return res.status(400).json({
+                success: false,
+                error: 'Unsupported payment mode'
+            });
+        }
+        if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+            return res.status(400).json({
+                success: false,
+                error: 'Missing Razorpay payment details'
+            });
+        }
+        if (booking.razorpayOrderId && String(booking.razorpayOrderId) !== String(razorpayOrderId)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Order ID does not match booking'
+            });
+        }
+        const isValid = verifyRazorpaySignature({
+            orderId: razorpayOrderId,
+            paymentId: razorpayPaymentId,
+            signature: razorpaySignature
+        });
+        if (!isValid) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid payment signature'
+            });
+        }
+
         await bookingsCollection.updateOne(
             { _id: new ObjectId(id) },
             {

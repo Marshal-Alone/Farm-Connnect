@@ -120,19 +120,19 @@ export default function AIInsights() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-background to-muted/30">
+    <section className="py-10 sm:py-14 bg-gradient-to-br from-background to-muted/30">
       <div className="container px-6">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <Badge variant="outline" className="mb-4">
             <Brain className="w-3 h-3 mr-1" />
             AI-Powered Insights
           </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
             Smart Farming
             <span className="block text-primary">Analytics Dashboard</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Get real-time insights about your crops with AI-powered analysis and 
             personalized recommendations for optimal farming decisions.
           </p>
@@ -142,7 +142,7 @@ export default function AIInsights() {
           {/* Insights Cards */}
           <div className="lg:col-span-2 space-y-6">
             {/* Main Insights Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-3 sm:gap-4">
               {insights.map((insight) => {
                 const Icon = insight.icon;
                 return (
@@ -153,7 +153,7 @@ export default function AIInsights() {
                     }`}
                     onClick={() => setSelectedInsight(insight)}
                   >
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pb-2 p-4">
                       <div className="flex items-center justify-between">
                         <div className={`p-2 rounded-lg ${insight.bgColor}`}>
                           <Icon className={`w-5 h-5 ${insight.color}`} />
@@ -169,10 +169,10 @@ export default function AIInsights() {
                         {insight.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="text-2xl font-bold">{insight.value}</div>
-                        <p className="text-xs text-muted-foreground">
+                    <CardContent className="p-4 pt-0">
+                      <div className="space-y-1">
+                        <div className="text-lg sm:text-2xl font-bold leading-tight">{insight.value}</div>
+                        <p className="text-[11px] sm:text-xs text-muted-foreground line-clamp-2">
                           {insight.description}
                         </p>
                       </div>

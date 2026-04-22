@@ -269,7 +269,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md max-h-[90vh] overflow-y-auto relative">
+      <Card className="w-full max-w-md max-h-[92vh] overflow-y-auto relative">
         <Button 
           variant="ghost" 
           size="sm"
@@ -278,7 +278,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         >
           ✕
         </Button>
-        <CardHeader className="text-center pt-8">
+        <CardHeader className="text-center pt-8 pb-4">
           <CardTitle className="flex items-center justify-center space-x-2">
             <Sprout className="h-6 w-6 text-primary" />
             <span>FarmConnect</span>
@@ -288,7 +288,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-5">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
@@ -354,7 +354,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
 
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <Button type="submit" className="flex-1" disabled={loading}>
                         {loading ? (
                           <>

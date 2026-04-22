@@ -230,7 +230,7 @@ export default function OwnerDashboard() {
                 url="https://farmbro.vercel.app/owner/dashboard"
             />
             <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
-                <div className="container mx-auto py-6 sm:py-8">
+                <div className="container mx-auto py-5 sm:py-8">
                     <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h1 className="mobile-title">Owner Dashboard</h1>
@@ -246,7 +246,7 @@ export default function OwnerDashboard() {
                     </div>
 
                     {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium">Total Machinery</CardTitle>
@@ -298,7 +298,7 @@ export default function OwnerDashboard() {
 
                     {/* Tabs */}
                     <Tabs defaultValue="machinery" className="space-y-6">
-                        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
+                        <TabsList className="flex h-auto w-full justify-start gap-2 bg-transparent p-0 overflow-x-auto whitespace-nowrap">
                             <TabsTrigger value="machinery">My Machinery</TabsTrigger>
                             <TabsTrigger value="bookings">Booking Requests</TabsTrigger>
                             <TabsTrigger value="messages">Messages</TabsTrigger>
@@ -309,7 +309,7 @@ export default function OwnerDashboard() {
                         <TabsContent value="machinery" className="space-y-4">
                             {machinery.length === 0 ? (
                                 <Card>
-                                    <CardContent className="py-20 text-center">
+                                    <CardContent className="py-14 sm:py-20 text-center">
                                         <Package className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                                         <h3 className="text-xl font-semibold mb-2">No machinery listed</h3>
                                         <p className="text-muted-foreground mb-6">
@@ -324,30 +324,31 @@ export default function OwnerDashboard() {
                             ) : (
                                 machinery.map((item) => (
                                     <Card key={item._id}>
-                                        <CardContent className="flex items-center justify-between p-6">
-                                            <div className="flex items-center gap-4">
+                                        <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 sm:p-6">
+                                            <div className="flex items-center gap-3 sm:gap-4">
                                                 <img
                                                     src={item.images[0] || 'https://via.placeholder.com/100'}
                                                     alt={item.name}
-                                                    className="w-20 h-20 object-cover rounded-lg"
+                                                    className="w-14 h-14 sm:w-20 sm:h-20 object-cover rounded-lg"
                                                 />
                                                 <div>
-                                                    <h3 className="font-semibold text-lg">{item.name}</h3>
-                                                    <p className="text-sm text-muted-foreground">{item.type}</p>
+                                                    <h3 className="font-semibold text-sm sm:text-lg">{item.name}</h3>
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">{item.type}</p>
                                                     <div className="flex items-center gap-2 mt-2">
                                                         <Badge className={item.available ? 'bg-green-500' : 'bg-red-500'}>
                                                             {item.available ? 'Available' : 'Booked'}
                                                         </Badge>
-                                                        <span className="text-sm font-semibold text-green-600">
+                                                        <span className="text-xs sm:text-sm font-semibold text-green-600">
                                                             ₹{item.pricePerDay}/day
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex w-full sm:w-auto gap-2">
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
+                                                    className="flex-1 sm:flex-none"
                                                     onClick={() => handleEditMachinery(item._id!)}
                                                 >
                                                     Edit
@@ -355,7 +356,7 @@ export default function OwnerDashboard() {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="text-red-600"
+                                                    className="flex-1 sm:flex-none text-red-600"
                                                     onClick={() => handleDeleteMachinery(item._id!, item.name)}
                                                 >
                                                     Delete
@@ -371,7 +372,7 @@ export default function OwnerDashboard() {
                         <TabsContent value="bookings" className="space-y-4">
                             {bookings.length === 0 ? (
                                 <Card>
-                                    <CardContent className="py-20 text-center">
+                                    <CardContent className="py-14 sm:py-20 text-center">
                                         <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                                         <h3 className="text-xl font-semibold mb-2">No booking requests</h3>
                                         <p className="text-muted-foreground">
@@ -382,7 +383,7 @@ export default function OwnerDashboard() {
                             ) : (
                                 bookings.map((booking) => (
                                     <Card key={booking._id}>
-                                        <CardContent className="p-6">
+                                        <CardContent className="p-4 sm:p-6">
                                             <div className="flex items-start justify-between mb-4">
                                                 <div>
                                                     <h3 className="font-semibold text-lg">{booking.machineryName}</h3>
@@ -399,7 +400,7 @@ export default function OwnerDashboard() {
                                                 </Badge>
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                                                 <div>
                                                     <p className="text-sm text-muted-foreground">Renter</p>
                                                     <p className="font-semibold">{booking.renterName}</p>
@@ -412,7 +413,7 @@ export default function OwnerDashboard() {
                                             </div>
 
                                             {booking.status === 'pending' && booking.paymentStatus === 'paid' && (
-                                                <div className="flex gap-2">
+                                                <div className="flex flex-wrap gap-2">
                                                     <Button
                                                         size="sm"
                                                         className="bg-green-600 hover:bg-green-700"
@@ -447,7 +448,7 @@ export default function OwnerDashboard() {
 
                         {/* Messages Tab */}
                         <TabsContent value="messages" className="space-y-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                                 {/* Conversations List */}
                                 <div className="lg:col-span-1">
                                     <Card>
@@ -457,7 +458,7 @@ export default function OwnerDashboard() {
                                                 Conversations
                                             </CardTitle>
                                         </CardHeader>
-                                        <CardContent className="p-0">
+                                        <CardContent className="p-0 max-h-[60vh] overflow-y-auto">
                                             {conversations.length === 0 ? (
                                                 <div className="p-4 text-center text-muted-foreground">
                                                     <p>No conversations yet</p>
@@ -495,7 +496,7 @@ export default function OwnerDashboard() {
                                 {/* Chat Window */}
                                 <div className="lg:col-span-2">
                                     {selectedConversation ? (
-                                        <Card className="flex flex-col h-96">
+                                        <Card className="flex flex-col h-[70vh] sm:h-96">
                                             {/* Chat Header */}
                                             <CardHeader className="border-b">
                                                 <CardTitle>
@@ -506,7 +507,7 @@ export default function OwnerDashboard() {
                                             </CardHeader>
 
                                             {/* Messages */}
-                                            <CardContent className="flex-1 overflow-y-auto space-y-3 p-4">
+                                            <CardContent className="flex-1 overflow-y-auto space-y-3 p-3 sm:p-4">
                                                 {conversationMessages.length === 0 ? (
                                                     <p className="text-center text-muted-foreground py-8">
                                                         No messages yet
@@ -521,7 +522,7 @@ export default function OwnerDashboard() {
                                                                 }`}
                                                         >
                                                             <div
-                                                                className={`max-w-xs rounded-lg p-3 ${message.senderId === ownerId
+                                                                className={`max-w-[85%] sm:max-w-xs rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm ${message.senderId === ownerId
                                                                     ? 'bg-primary text-white'
                                                                     : 'bg-secondary'
                                                                     }`}
@@ -537,7 +538,7 @@ export default function OwnerDashboard() {
                                             </CardContent>
 
                                             {/* Input */}
-                                            <div className="p-4 border-t space-y-2">
+                                            <div className="p-3 sm:p-4 border-t space-y-2">
                                                 <div className="flex gap-2">
                                                     <Input
                                                         placeholder="Type your message..."
@@ -550,7 +551,7 @@ export default function OwnerDashboard() {
                                                     <Button
                                                         onClick={handleSendMessage}
                                                         disabled={!messageText.trim()}
-                                                        className="bg-green-600 hover:bg-green-700"
+                                                        className="bg-green-600 hover:bg-green-700 shrink-0"
                                                     >
                                                         Send
                                                     </Button>
@@ -578,7 +579,7 @@ export default function OwnerDashboard() {
                                 <CardContent>
                                     <div className="text-center py-12">
                                         <IndianRupee className="h-16 w-16 mx-auto mb-4 text-green-600" />
-                                        <h3 className="text-3xl font-bold text-green-600 mb-2">
+                                        <h3 className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">
                                             ₹{stats.totalEarnings.toLocaleString()}
                                         </h3>
                                         <p className="text-muted-foreground">Total Earnings</p>

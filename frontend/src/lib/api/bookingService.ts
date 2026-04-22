@@ -156,6 +156,23 @@ class BookingService {
         }
     }
 
+    // Create Razorpay order for a booking
+    async createRazorpayOrder(id: string): Promise<{ success: boolean; data?: { orderId: string; amount: number; currency: string; bookingId: string; keyId: string }; error?: string }> {
+        try {
+            const response = await fetch(`${API_BASE_URL}/bookings/${id}/razorpay/order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...this.getAuthHeaders()
+                }
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating Razorpay order:', error);
+            return { success: false, error: 'Failed to create Razorpay order' };
+        }
+    }
+
     // Process payment
     async processPayment(id: string, paymentData: PaymentData): Promise<{ success: boolean; message?: string; error?: string }> {
         try {
