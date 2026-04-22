@@ -205,81 +205,24 @@ export default function MachineryDetail() {
         if (!createdBooking?._id) return;
         setPaymentLoading(true);
         try {
-            const orderRes = await bookingService.createRazorpayOrder(createdBooking._id);
-            if (!orderRes.success || !orderRes.data?.orderId || !orderRes.data?.keyId) {
+            const demoRes = await bookingService.processPayment(createdBooking._id, {
+                paymentMode: 'demo',
+                amount: createdBooking.finalAmount
+            });
+            if (demoRes.success) {
                 toast({
-                    title: "Unable to start payment",
-                    description: orderRes.error || "Failed to create Razorpay order",
-                    variant: "destructive"
+                    title: "Payment successful",
+                    description: "Payment completed and booking confirmed."
                 });
+                setTimeout(() => navigate('/bookings'), 1200);
                 return;
             }
 
-            const loaded = await loadRazorpayCheckout();
-            if (!loaded) {
-                toast({
-                    title: "Payment unavailable",
-                    description: "Failed to load Razorpay checkout",
-                    variant: "destructive"
-                });
-                return;
-            }
-
-            const options = {
-                key: orderRes.data.keyId,
-                order_id: orderRes.data.orderId,
-                amount: orderRes.data.amount,
-                currency: orderRes.data.currency || 'INR',
-                name: 'FarmConnect',
-                description: `Machinery booking ${createdBooking.bookingNumber}`,
-                prefill: {
-                    name: userInfo.name,
-                    email: userInfo.email,
-                    contact: userInfo.phone
-                },
-                theme: { color: '#16a34a' },
-                // Hide deprecated UPI collect flow; checkout will show Intent/QR appropriately
-                config: {
-                    display: {
-                        hide: [{ method: 'upi', flows: ['collect'] }]
-                    }
-                },
-                handler: async (rp: RazorpayHandlerResponse) => {
-                    const verifyRes = await bookingService.processPayment(createdBooking._id, {
-                        paymentMode: 'razorpay',
-                        razorpayOrderId: rp.razorpay_order_id,
-                        razorpayPaymentId: rp.razorpay_payment_id,
-                        razorpaySignature: rp.razorpay_signature,
-                        amount: createdBooking.finalAmount
-                    });
-
-                    if (verifyRes.success) {
-                        toast({
-                            title: "Payment successful",
-                            description: "Your booking is now confirmed."
-                        });
-                        setTimeout(() => navigate('/bookings'), 1200);
-                    } else {
-                        toast({
-                            title: "Payment verification failed",
-                            description: verifyRes.error || "Please contact support",
-                            variant: "destructive"
-                        });
-                    }
-                },
-                modal: {
-                    ondismiss: () => {
-                        toast({
-                            title: "Payment cancelled",
-                            description: "You can retry payment anytime from this page."
-                        });
-                    }
-                }
-            };
-
-            const RazorpayCtor = (window as unknown as { Razorpay: RazorpayConstructor }).Razorpay;
-            const razorpay = new RazorpayCtor(options);
-            razorpay.open();
+            toast({
+                title: "Payment failed",
+                description: demoRes.error || "Unable to complete payment",
+                variant: "destructive"
+            });
         } catch (error) {
             toast({
                 title: "Payment Error",

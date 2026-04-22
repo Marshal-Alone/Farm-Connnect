@@ -13,7 +13,7 @@ interface PaymentGatewayProps {
     bookingId: string;
     amount: number;
     onSuccess: () => void;
-    paymentMode?: 'demo' | 'razorpay';
+    paymentMode?: 'demo';
 }
 
 export default function PaymentGateway({
@@ -76,84 +76,9 @@ export default function PaymentGateway({
         }
     };
 
-    const handleRazorpayPayment = async () => {
-        setLoading(true);
-        try {
-            const response = await paymentService.processPayment({
-                bookingId,
-                amount,
-                paymentMode: 'razorpay',
-                paymentMethod: 'card'
-            });
-
-            if (response.success && response.data) {
-                // Load Razorpay script and open payment modal
-                const script = document.createElement('script');
-                script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-                script.async = true;
-                document.body.appendChild(script);
-
-                script.onload = () => {
-                    const options = {
-                        key: response.data.razorpayKeyId,
-                        amount: response.data.amount,
-                        currency: 'INR',
-                        name: 'Farm Connect',
-                        description: `Booking Payment #${bookingId}`,
-                        order_id: response.data.orderId,
-                        handler: async (razorpayResponse: any) => {
-                            // Verify payment
-                            const verifyResponse = await paymentService.verifyPayment({
-                                orderId: response.data.orderId,
-                                paymentId: razorpayResponse.razorpay_payment_id,
-                                signature: razorpayResponse.razorpay_signature
-                            });
-
-                            if (verifyResponse.success) {
-                                setPaymentSuccess(true);
-                                toast({
-                                    title: "Payment Successful!",
-                                    description: `₹${amount} has been paid successfully`
-                                });
-                                setTimeout(() => {
-                                    onSuccess();
-                                    onClose();
-                                }, 2000);
-                            }
-                        },
-                        prefill: {
-                            name: 'Demo User',
-                            email: 'user@example.com',
-                            contact: '9876543210'
-                        },
-                        theme: {
-                            color: '#16a34a'
-                        }
-                    };
-
-                    const razorpay = new (window as any).Razorpay(options);
-                    razorpay.open();
-                };
-            }
-        } catch (error) {
-            console.error('Payment error:', error);
-            toast({
-                title: "Payment Failed",
-                description: "An error occurred during payment",
-                variant: "destructive"
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (paymentMode === 'demo') {
-            handleDemoPayment();
-        } else {
-            handleRazorpayPayment();
-        }
+        handleDemoPayment();
     };
 
     return (
@@ -165,7 +90,7 @@ export default function PaymentGateway({
                         Payment Gateway
                     </DialogTitle>
                     <DialogDescription>
-                        {paymentMode === 'demo' ? 'Demo Mode - No real payment will be processed' : 'Secure payment powered by Razorpay'}
+                        Demo Mode - No real payment will be processed
                     </DialogDescription>
                 </DialogHeader>
 

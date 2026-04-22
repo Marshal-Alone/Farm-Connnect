@@ -71,6 +71,7 @@ export default function UserProfile() {
   const [modelConfig, setModelConfig] = useState<ModelConfig>(getModelConfig());
 
   const ownerId = user?._id || user?.id || '';
+  const isLoggedIn = Boolean(user);
 
   const getOtherParticipant = (conversation: any) =>
     conversation?.participants?.find((p: any) => p.userId !== ownerId);
@@ -1577,7 +1578,19 @@ export default function UserProfile() {
                     <Settings className="w-5 h-5" />
                     AI Model Selection
                   </CardTitle>
-                  <CardDescription>Choose which AI model to use</CardDescription>
+                  <CardDescription className="space-y-2">
+                    <span className="block">Choose which AI model to use</span>
+                    {!isLoggedIn && (
+                      <span className="inline-flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px] sm:text-xs border-amber-500/40 text-amber-700">
+                          Login Required for Groq
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          Assistant falls back to Gemini when you are logged out.
+                        </span>
+                      </span>
+                    )}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>

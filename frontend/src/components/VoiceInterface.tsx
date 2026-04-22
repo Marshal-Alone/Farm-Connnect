@@ -253,7 +253,7 @@ export default function VoiceInterface({ onVoiceQuery, variant = 'compact' }: Vo
         </div>
       </CardHeader>
 
-      <CardContent className={`${compact ? 'p-3 sm:p-4' : 'p-3 sm:p-5 md:p-6'} ${compact ? 'space-y-3 sm:space-y-4' : 'flex flex-1 min-h-0 flex-col gap-3 sm:gap-4'}`}>
+      <CardContent className={`${compact ? 'p-3 sm:p-4 max-h-[68vh] overflow-y-auto' : 'p-3 sm:p-5 md:p-6'} ${compact ? 'space-y-3 sm:space-y-4' : 'flex flex-1 min-h-0 flex-col gap-3 sm:gap-4'}`}>
         <div className={`grid gap-2 ${compact ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-[1fr_auto_auto]'}`}>
           <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
             <SelectTrigger className="h-10">
@@ -305,7 +305,7 @@ export default function VoiceInterface({ onVoiceQuery, variant = 'compact' }: Vo
           ))}
         </div>
 
-        <div className={`rounded-xl border bg-muted/30 overflow-y-auto ${compact ? 'h-48 sm:h-56' : 'flex-1 min-h-[180px]'}`}>
+        <div className={`rounded-xl border bg-muted/30 overflow-y-auto ${compact ? 'h-40 sm:h-48' : 'flex-1 min-h-[180px]'}`}>
           <div className="p-3 sm:p-4 space-y-3">
             {messages.length === 0 && (
               <div className="text-center py-8 text-xs sm:text-sm text-muted-foreground">
@@ -356,7 +356,7 @@ export default function VoiceInterface({ onVoiceQuery, variant = 'compact' }: Vo
           </Button>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className={`flex flex-wrap gap-2 ${compact ? 'hidden' : ''}`}>
           {isListening && (
             <Badge variant="default" className="animate-pulse text-[10px] sm:text-xs">
               <Mic className="h-3 w-3 mr-1" /> Listening
