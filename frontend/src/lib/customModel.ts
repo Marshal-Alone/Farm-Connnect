@@ -175,6 +175,45 @@ class CustomModelService {
     private loadError: string | null = null;
 
     /**
+     * Lightweight browser WebGL capability check.
+     */
+    private supportsWebGL(): boolean {
+        if (typeof document === 'undefined') return false;
+        try {
+            const canvas = document.createElement('canvas');
+            return !!(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+        } catch {
+            return false;
+        }
+    }
+
+    /**
+     * Compatibility shim for TFJS versions/builds where resizeWithPad is missing.
+     */
+    private resizeWithPadCompat(imageTensor: tf.Tensor3D): tf.Tensor3D {
+        const maybeResizeWithPad = (tf.image as unknown as {
+            resizeWithPad?: (image: tf.Tensor3D, targetHeight: number, targetWidth: number) => tf.Tensor3D;
+        }).resizeWithPad;
+
+        if (typeof maybeResizeWithPad === 'function') {
+            return maybeResizeWithPad(imageTensor, IMG_SIZE, IMG_SIZE);
+        }
+
+        const [height, width] = imageTensor.shape;
+        const scale = Math.min(IMG_SIZE / height, IMG_SIZE / width);
+        const resizedHeight = Math.max(1, Math.round(height * scale));
+        const resizedWidth = Math.max(1, Math.round(width * scale));
+
+        const resized = tf.image.resizeBilinear(imageTensor, [resizedHeight, resizedWidth], true);
+        const padTop = Math.floor((IMG_SIZE - resizedHeight) / 2);
+        const padBottom = IMG_SIZE - resizedHeight - padTop;
+        const padLeft = Math.floor((IMG_SIZE - resizedWidth) / 2);
+        const padRight = IMG_SIZE - resizedWidth - padLeft;
+
+        return tf.pad(resized, [[padTop, padBottom], [padLeft, padRight], [0, 0]]) as tf.Tensor3D;
+    }
+
+    /**
      * Check if the model is ready for inference
      */
     isReady(): boolean {
@@ -221,7 +260,8 @@ class CustomModelService {
             console.log('🧠 [CustomModel] Loading model from:', MODEL_URL);
 
             // Try to use WebGL, fallback to CPU if not available
-            try {
+            if (this.supportsWebGL()) {
+                try {
                 // Pre-check for WebGL support to avoid some internal TFJS crashes
                 console.log('🧠 [CustomModel] Checking for WebGL support...');
 
@@ -247,6 +287,11 @@ class CustomModelService {
                     console.error('❌ CPU backend failed:', cpuError);
                     throw cpuError;
                 }
+            } else {
+                console.warn('⚠️ WebGL not supported by browser/device, using CPU backend');
+                await tf.setBackend('cpu');
+                await tf.ready();
+                console.log('✓ Using CPU backend (computations will be slower)');
             }
 
             // Load TensorFlow.js Graph Model (compatible with Keras 3.x)
@@ -264,7 +309,12 @@ class CustomModelService {
             // Warm up the model with a dummy prediction
             console.log('🔥 Warming up model...');
             const warmupTensor = tf.zeros([1, IMG_SIZE, IMG_SIZE, 3]);
-            await this.model.execute(warmupTensor);
+            const warmupOutput = this.model.execute(warmupTensor);
+            if (Array.isArray(warmupOutput)) {
+                warmupOutput.forEach((tensor) => tensor.dispose());
+            } else {
+                warmupOutput.dispose();
+            }
             warmupTensor.dispose();
             console.log('✓ Model warmed up and ready');
 
@@ -294,18 +344,11 @@ class CustomModelService {
 
             img.onload = () => {
                 try {
-                    // Convert image to tensor
-                    let tensor = tf.browser.fromPixels(img);
-
-                    // Resize while keeping aspect ratio (less distortion)
-                    tensor = tf.image.resizeWithPad(tensor, IMG_SIZE, IMG_SIZE);
-
-                    // Add batch dimension [1, 224, 224, 3]
-                    const batched = tensor.expandDims(0) as tf.Tensor4D;
-
-                    // Dispose intermediate tensor
-                    tensor.dispose();
-
+                    const batched = tf.tidy(() => {
+                        const tensor = tf.browser.fromPixels(img);
+                        const resized = this.resizeWithPadCompat(tensor);
+                        return resized.expandDims(0) as tf.Tensor4D;
+                    });
                     resolve(batched);
                 } catch (error) {
                     reject(error);
