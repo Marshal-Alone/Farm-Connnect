@@ -1,4 +1,6 @@
 // Payment Service with Demo and Real (Razorpay) modes
+import { API_BASE_URL } from '@/config/api';
+
 declare global {
     interface Window {
         Razorpay: any;
@@ -146,7 +148,7 @@ class PaymentService {
     async createOrder(amount: number, currency: string = 'INR', notes?: any): Promise<{ success: boolean; orderId?: string; error?: string }> {
         try {
             // This should call your backend API to create a Razorpay order
-            const response = await fetch('/api/payment/create-order', {
+            const response = await fetch(`${API_BASE_URL}/payment/create-order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -167,7 +169,7 @@ class PaymentService {
     // Verify payment signature (backend call)
     async verifyPayment(orderId: string, paymentId: string, signature: string): Promise<{ success: boolean; error?: string }> {
         try {
-            const response = await fetch('/api/payment/verify', {
+            const response = await fetch(`${API_BASE_URL}/payment/verify`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

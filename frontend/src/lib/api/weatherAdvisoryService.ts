@@ -1,6 +1,7 @@
 /**
  * Weather Advisory Service - Frontend API client for crop recommendations
  */
+import { API_BASE_URL } from '@/config/api';
 
 interface WeatherData {
   current?: {
@@ -52,7 +53,7 @@ interface WeatherAdviceResponse {
 }
 
 class WeatherAdvisoryService {
-  private baseURL = '/api';
+  private baseURL = API_BASE_URL;
 
   /**
    * Get AI crop recommendations based on weather
@@ -81,16 +82,20 @@ class WeatherAdvisoryService {
         body: JSON.stringify({ weatherData })
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
+      const payload = isJson ? await response.json() : await response.text();
 
       if (!response.ok) {
         return {
           success: false,
-          error: data.error || 'Failed to get weather advice'
+          error: typeof payload === 'string'
+            ? payload.slice(0, 120)
+            : payload.error || 'Failed to get weather advice'
         };
       }
 
-      return data;
+      return payload as WeatherAdviceResponse;
     } catch (error) {
       console.error('Error fetching weather advice:', error);
       return {
@@ -120,16 +125,20 @@ class WeatherAdvisoryService {
         }
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
+      const payload = isJson ? await response.json() : await response.text();
 
       if (!response.ok) {
         return {
           success: false,
-          error: data.error || 'Failed to fetch last recommendation'
+          error: typeof payload === 'string'
+            ? payload.slice(0, 120)
+            : payload.error || 'Failed to fetch last recommendation'
         };
       }
 
-      return data;
+      return payload as WeatherAdviceResponse;
     } catch (error) {
       console.error('Error fetching last advice:', error);
       return {

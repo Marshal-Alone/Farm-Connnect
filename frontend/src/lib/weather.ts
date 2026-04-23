@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_BASE_URL } from '@/config/api';
 
 // Use relative path for API calls to leverage Vite proxy or direct backend connection
-const API_BASE_URL = '/api/weather';
+const WEATHER_API_BASE_URL = `${API_BASE_URL}/weather`;
 
 export interface WeatherData {
   location: string;
@@ -117,7 +118,7 @@ const mapWeatherResponse = (data: any): WeatherData => {
 // Fetch current weather data (actually fetches forecast which includes current)
 export const getCurrentWeather = async (lat: number, lon: number): Promise<WeatherData> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/forecast`, {
+    const response = await axios.get(`${WEATHER_API_BASE_URL}/forecast`, {
       params: {
         q: `${lat},${lon}`,
         days: 7,
@@ -138,7 +139,7 @@ export const getCurrentWeather = async (lat: number, lon: number): Promise<Weath
 // Fetch weather by city name
 export const getWeatherByCity = async (city: string): Promise<WeatherData> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/forecast`, {
+    const response = await axios.get(`${WEATHER_API_BASE_URL}/forecast`, {
       params: {
         q: city,
         days: 7,

@@ -3,8 +3,9 @@
  */
 
 import { CropAction } from '@/lib/schemas/cropSchema';
+import { API_BASE_URL } from '@/config/api';
 
-const API_BASE_URL = '/api/crops';
+const CROP_API_BASE_URL = `${API_BASE_URL}/crops`;
 
 export class ActionService {
   /**
@@ -12,7 +13,7 @@ export class ActionService {
    */
   static async getActions(cropId: string): Promise<{ success: boolean; data?: CropAction[]; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/${cropId}/actions`, {
+      const response = await fetch(`${CROP_API_BASE_URL}/${cropId}/actions`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ export class ActionService {
     actionData: Omit<CropAction, '_id' | 'userId' | 'cropId' | 'createdAt'>
   ): Promise<{ success: boolean; data?: CropAction; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/${cropId}/actions`, {
+      const response = await fetch(`${CROP_API_BASE_URL}/${cropId}/actions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ export class ActionService {
    */
   static async getRecentActions(): Promise<{ success: boolean; data?: CropAction[]; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/actions/recent`, {
+      const response = await fetch(`${CROP_API_BASE_URL}/actions/recent`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ export class ActionService {
    */
   static async deleteAction(actionId: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/actions/${actionId}`, {
+      const response = await fetch(`${CROP_API_BASE_URL}/actions/${actionId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
