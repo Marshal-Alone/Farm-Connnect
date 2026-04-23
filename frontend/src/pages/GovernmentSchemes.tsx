@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Search, Filter, FileText, Calendar, ExternalLink, CheckCircle, Clock, AlertCircle, Sparkles, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import SEO from '@/components/SEO';
+import { API_BASE_URL } from '@/config/api';
 
 interface Scheme {
   id: string;
@@ -155,8 +156,22 @@ export default function GovernmentSchemes() {
           if (quiz.gender !== 'unknown' && quiz.gender !== 'prefer-not') queryParams.append('quiz_gender', quiz.gender);
         }
 
-        const response = await fetch(`/api/schemes?${queryParams.toString()}`);
-        const result = await response.json();
+        const queryString = queryParams.toString();
+        const response = await fetch(`${API_BASE_URL}/schemes${queryString ? `?${queryString}` : ''}`);
+
+        // Some upstream failures return plain text/HTML; parse safely.
+        const contentType = response.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+        const payload = isJson ? await response.json() : await response.text();
+
+        if (!response.ok) {
+          const detail = typeof payload === 'string'
+            ? payload.slice(0, 120)
+            : (payload as { error?: string })?.error || response.statusText;
+          throw new Error(`Schemes API failed (${response.status}): ${detail}`);
+        }
+
+        const result = payload as { success?: boolean; data?: Scheme[] };
 
         if (result.success) {
           setSchemes(result.data);
