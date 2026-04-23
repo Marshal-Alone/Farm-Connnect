@@ -3,7 +3,7 @@
     "rewrites": [
         {
             "source": "/api/:path*",
-            "destination": "https://luffydtaro-farmconnect.hf.space/api/:path*"
+            "destination": "https://farm-connnect-bn0q.onrender.com/api/:path*"
         },
         {
             "source": "/((?!api|assets|sitemap.xml|robots.txt|.*\\..*).*)",
